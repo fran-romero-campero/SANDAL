@@ -1,0 +1,62 @@
+---
+title: Transcriptomic and physiological responses to seasonal and diurnal cycles in
+  Ostreococcus
+author: "Francisco J. Romero-Campero & Ana B. Romero-Losada"
+date: "August 11, 2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Load data and principal component analysis.**
+
+The matrix containing the gene expression data analyzed in this study can be
+downloaded from [**this link to the GEO data base**](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE155535&format=file&file=GSE155535%5Fgene%5Fexpression%2Etsv%2Egz). Make sure to uncompress this file and rename it to **gene_expression.tsv**. First, the gene expression data is loaded and converted into a 
+numeric matrix. The number of genes 
+
+```{r}
+gene.expression <- read.table(file ="gene_expression.tsv",sep="\t",header=T,as.is=T)
+head(gene.expression[,1:6])
+
+number.genes <- nrow(gene.expression)
+number.genes
+
+gene.ids <- gene.expression$X
+
+gene.expression <- as.matrix(gene.expression[,2:ncol(gene.expression)])
+rownames(gene.expression) <- gene.ids
+head(gene.expression)
+
+which(apply(X = gene.expression,MARGIN = 1,FUN = sum) == 0)
+typeof(gene.expression)
+
+```
+
+
+
+
+The packages **FactoMineR** and **factoextra** are used to performed a **Principal components analysis** of the gene expression data.
+
+```{r}
+library(FactoMineR)
+library(factoextra)
+```
+
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
