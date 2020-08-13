@@ -10,38 +10,71 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## **Experimental design**
+
+In this project we study the transcriptomic and physiological responses to seasonal
+and diurnal cycles in the picoeukaryote *Ostreococcus tauri*. Our favourite microalgae
+was grown in 1.8L column photochemostats under long day conditions (16 hours light : 8 hours dark) representing a summer day and under short day conditions (8 hours light : 16 hours dark) simulating a winter day. After four weeks of entrainment under each condition samples were collected for three days every four hours. Then the program controlling the light in the photochemostats was set to free running conditions consisting on continuous light and samples were again collected every four hours for two days. 
+
 ## **Load data and principal component analysis.**
 
 The matrix containing the gene expression data analyzed in this study can be
-downloaded from [**this link to the GEO data base**](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE155535&format=file&file=GSE155535%5Fgene%5Fexpression%2Etsv%2Egz). Make sure to uncompress this file and rename it to **gene_expression.tsv**. First, the gene expression data is loaded and converted into a 
-numeric matrix. The number of genes 
+downloaded from [**this link from the GEO data base**](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE155535&format=file&file=GSE155535%5Fgene%5Fexpression%2Etsv%2Egz). Make sure to uncompress this file and rename it to **gene_expression.tsv**. First, the gene expression data is loaded and converted into a 
+numeric matrix setting the rownames to gene ids.  
 
-```{r}
+```{r load_data}
 gene.expression <- read.table(file ="gene_expression.tsv",sep="\t",header=T,as.is=T)
-head(gene.expression[,1:6])
-
-number.genes <- nrow(gene.expression)
-number.genes
+head(gene.expression[,1:7])
 
 gene.ids <- gene.expression$X
 
 gene.expression <- as.matrix(gene.expression[,2:ncol(gene.expression)])
 rownames(gene.expression) <- gene.ids
-head(gene.expression)
+head(gene.expression[,1:6])
+```
 
-which(apply(X = gene.expression,MARGIN = 1,FUN = sum) == 0)
-typeof(gene.expression)
+The current version of *Ostreococcus tauri* genome available from [**here**](https://mycocosm.jgi.doe.gov/Ostta4221_3/Ostta4221_3.home.html) identifies 7668 genes. In our experiment only 8 genes were never expressed and 40 genes never presented an expression level greater than 1 FPKM. This shows that practically the entire transcriptome of Ostreococcus is expressed under the seasonal and diurnal cycles studied in this project.
 
+```{r number_genes}
+number.genes <- nrow(gene.expression)
+number.genes
+
+length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) == 0))
+length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) < 1))
 ```
 
 
+We extract from the gene expression matrix the data corresponding to the three long and short days. 
+
+We perform **Principal Component Analysis** and a **Hierarchical clustering** in order to uncover the underlying structure in our data. 
 
 
-The packages **FactoMineR** and **factoextra** are used to performed a **Principal components analysis** of the gene expression data.
 
-```{r}
+```{r pca}
 library(FactoMineR)
 library(factoextra)
+
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ld.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,1:3,sep="_")})
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+sd.zt.i <- sapply(X = sd.zt,FUN = function(x){ paste(x,1:3,sep="_")})
+
+ld.sd.gene.expression <- gene.expression[,c(ld.zt.i,sd.zt.i)]
+
+pca.gene.expression <- data.frame(colnames(ld.sd.gene.expression),t(ld.sd.gene.expression))
+colnames(pca.gene.expression)[1] <- "Time point"
+
+res.pca <- PCA(pca.gene.expression, graph = FALSE,scale.unit = TRUE,quali.sup = 1 )
+res.hcpc <- HCPC(res.pca, graph=FALSE)    
+fviz_dend(res.hcpc,k=3,
+          cex = 1,                       # Label size
+          palette = "jco",               # Color palette see ?ggpubr::ggpar
+          rect = TRUE, rect_fill = TRUE, # Add rectangle around groups
+          rect_border = "jco",           # Rectangle color
+          type="rectangle",
+          labels_track_height = 400      # Augment the room for labels
+)
+
 ```
 
 
