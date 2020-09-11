@@ -3,7 +3,10 @@ title: Transcriptomic and physiological responses to seasonal and diurnal cycles
   Ostreococcus
 author: "Francisco J. Romero-Campero & Ana B. Romero-Losada"
 date: "August 11, 2020"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -36,7 +39,8 @@ head(gene.expression[,1:6])
 The current version of *Ostreococcus tauri* genome available from [**here**](https://mycocosm.jgi.doe.gov/Ostta4221_3/Ostta4221_3.home.html) identifies 7668 genes. In our experiment only 8 genes were never expressed and 40 genes never presented an expression level greater than 1 FPKM. This shows that practically the entire transcriptome of Ostreococcus is expressed under the seasonal and diurnal cycles studied in this project.
 
 ```{r number_genes}
-number.genes <- nrow(gene.expression)
+ostta.genes <- rownames(gene.expression)
+number.genes <- length(ostta.genes)
 number.genes
 
 length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) == 0))
@@ -70,7 +74,7 @@ colnames(pca.gene.expression.ld.sd)[1] <- "Time point"
 res.pca.ld.sd <- PCA(pca.gene.expression.ld.sd, graph = FALSE,scale.unit = TRUE,quali.sup = 1 )
 res.hcpc.ld.sd <- HCPC(res.pca.ld.sd, graph=FALSE)   
 fviz_dend(res.hcpc.ld.sd,k=3,
-          cex = 0,                       # Label size
+          cex = 1,                       # Label size
           palette = "jco",               # Color palette see ?ggpubr::ggpar
           rect = TRUE, rect_fill = TRUE, # Add rectangle around groups
           rect_border = "jco",           # Rectangle color
@@ -82,3 +86,680 @@ fviz_dend(res.hcpc.ld.sd,k=3,
 
 The transcriptomes corresponding to the same time during the three different days under both LD and SD conditions tend to cluster together. This indicates a high circadian synchronization in our cultures. Using hierarchical clustering, the 36 transcriptomes under LD and SD conditions assemble together into three different groups. The first cluster corresponds to **midday**. The transcriptomes at time points ZT4 and ZT8 under LD and ZT4 under SD constitute this cluster. These time points correspond to the moments of maximal incident light irradiance under both LD and SD conditions. The second cluster conforms the **dusk** group. Here the transcriptomes at time points ZT12 and ZT16 under LD and ZT8 under SD are found. These time points coincide with the end of the light period in both LD and SD conditions when light irradiance is low. The third cluster represents **night/dawn** and comprises the transcriptomes at time points ZT20, ZT0 under LD and ZT12, ZT16, ZT20 and ZT0 under SD. The transcriptomes at time points in the LD and SD nights or dark periods constitute two distinct groups suggesting noticeable differences in the transcriptomic responses during the night under LD and SD conditions. It is also noteworthy the higher similarity between the dusk, night/dawn transcriptomes when compare to the midday ones. 
 
+In order to obtain a more precise understanding of the underlying structure in our data we preform PCA separately for the LD and SD data. 
+
+```{r pca_ld}
+ld.gene.expression <- gene.expression[,ld.zt.i]
+pca.gene.expression.ld <- data.frame(colnames(ld.gene.expression),t(ld.gene.expression))
+colnames(pca.gene.expression.ld)[1] <- "Time point"
+
+res.pca.ld <- PCA(pca.gene.expression.ld, graph = FALSE,scale.unit = TRUE,quali.sup = 1 )
+fviz_pca_ind(res.pca.ld, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT04", "ZT04",
+                                     "ZT08", "ZT08", "ZT08", "ZT12", "ZT12", "ZT12",
+                                     "ZT16", "ZT16", "ZT16", "ZT20", "ZT20", "ZT20"), 
+             pointsize=2, pointshape=21,fill="black",
+             repel = TRUE, 
+             addEllipses = TRUE,ellipse.type = "confidence",
+             legend.title="Conditions",
+             title="",
+             show_legend=TRUE,show_guide=TRUE) 
+```
+
+Under LD conditions, we observed that the transcriptomes corresponding to the same time point in the three different days tightly cluster together globally constituting a circular structure. Next, we analyze the SD data.
+
+
+```{r pca_sd}
+sd.gene.expression <- gene.expression[,sd.zt.i]
+pca.gene.expression.sd <- data.frame(colnames(sd.gene.expression),t(sd.gene.expression))
+colnames(pca.gene.expression.sd)[1] <- "Time point"
+
+res.pca.sd <- PCA(pca.gene.expression.sd, graph = FALSE,scale.unit = TRUE,quali.sup = 1 )
+fviz_pca_ind(res.pca.sd, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT04", "ZT04",
+                                     "ZT08", "ZT08", "ZT08", "ZT12", "ZT12", "ZT12",
+                                     "ZT16", "ZT16", "ZT16", "ZT20", "ZT20", "ZT20"), 
+             pointsize=2, pointshape=21,fill="black",
+             repel = TRUE, 
+             addEllipses = TRUE,ellipse.type = "confidence",
+             legend.title="Conditions",
+             title="",
+             show_legend=TRUE,show_guide=TRUE) 
+```
+
+Under SD conditions more variability is observed and the time point transcriptomes form a structure resembling an ellipse. This could indicate that whereas in LD conditions gene expression in globally cycling precisely with a similar period a more complex behavior is expected under SD conditions. Also, it is remarkable the high similarity between the transcriptomes corresponding to ZT0 and ZT20 under SD conditions that is not present under LD conditions. This suggests that the transcriptomic response at the end of a SD night is already preparing all molecular systems for the incoming light availability at dawn whereas this anticipation is not as clearly observed under LD conditions. In overall, these results support that our experimental design grants a high level of synchronization in our data allowing us to proceed to the identification and comparison of genes exhibiting rhythmic expression patterns under LD and SD conditions. 
+
+```{r pca_nd}
+nd.gene.expression <- as.matrix(read.table(file ="nd_gene_expression.tsv",header=T,sep="\t",as.is=T))
+head(nd.gene.expression[,1:7])
+
+pca.gene.expression.nd <- data.frame(colnames(nd.gene.expression),t(nd.gene.expression))
+colnames(pca.gene.expression.nd)[1] <- "Time point"
+
+res.pca.nd <- PCA(pca.gene.expression.nd, graph = FALSE,scale.unit = TRUE,quali.sup = 1 )
+fviz_pca_ind(res.pca.nd, col.ind = c("ZT00", "ZT00", "ZT00", "ZT03", "ZT03", "ZT03",
+                                     "ZT06", "ZT06", "ZT06", "ZT09", "ZT09", "ZT09",
+                                     "ZT12", "ZT12", "ZT12", "ZT15", "ZT15", "ZT15", 
+                                     "ZT18", "ZT18", "ZT18", "ZT21", "ZT21", "ZT21"), 
+             pointsize=2, pointshape=21,fill="black",
+             repel = TRUE, 
+             addEllipses = TRUE,ellipse.type = "confidence",
+             legend.title="Conditions",
+             title="",
+             show_legend=TRUE,show_guide=TRUE) 
+
+
+```
+
+## **Identification of genes exhibiting rhythmic expression patterns under different photoperiods**
+
+Using the bioconductor library **RAIN (Rhythmicity Analysis Incorporating Nonparametric methods)** we identified genes exhibiting periodic or rhythmic expression patterns under the different photoperiods. A p-value of 0.05 was used in all the analysis. Simple rhythmic expression patterns consisting of a single expression peak were identified by searching for patterns with a period of 24 hours. More complex cyclic gene expression patterns such as genes cycling twice or three times in a day were searched by fixing periods of 12 and 8 hours. 
+
+```{r ld_rain}
+library(rain)
+
+results.ld <- rain(t(ld.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=3)
+sum(results.ld$pVal < 0.05)/number.genes
+rhythmic.genes.ld <- rownames(subset(results.ld, pVal < 0.05))
+length(rhythmic.genes.ld)
+
+results.ld.12 <- rain(t(ld.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=3)
+sum(results.ld.12$pVal < 0.05)/number.genes
+rhythmic.genes.ld.12 <- rownames(subset(results.ld.12, pVal < 0.05))
+length(rhythmic.genes.ld.12)
+
+complete.ld.rhythmic.genes <- unique(c(rhythmic.genes.ld,rhythmic.genes.ld.12))
+length(complete.ld.rhythmic.genes)/number.genes
+
+non.rhythmic.ld.genes <- setdiff(ostta.genes,complete.ld.rhythmic.genes)
+length(non.rhythmic.ld.genes)
+length(non.rhythmic.ld.genes)/number.genes
+
+length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12))
+length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12))/number.genes
+
+results.ld.8 <- rain(t(ld.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
+sum(results.ld.8$pVal < 0.05)/number.genes
+```
+
+Under LD conditions we found that 6201 genes constituting 80.87% of the *Ostreococcus tauri* genome exhibit diurnal cycling expression patterns. Most of these genes, 5825 genes covering 75.97% of the entire genome presented a simple rhythmic expression pattern with a 24 hours period and a single expression peak. Only 376 genes presented a more complex rhythmic expression pattern cycling twice in a day presenting two expression peaks with an apparent period of 12 hours. The number of genes with expression patterns cycling three times in a day with an apparent period of 8 hours was negligible, 81 genes representing less than 1% of the genome. We also identified 1467 genes comprising 19.13% of genome that did not present a detectable rhythmic expression pattern.      
+
+```{r nd_rain}
+results.nd <- rain(t(nd.gene.expression), deltat=3, period=24, verbose=FALSE, nr.series=3)
+sum(results.nd$pVal < 0.05)/number.genes
+rhythmic.genes.nd <- intersect(rownames(subset(results.nd, pVal < 0.05)),ostta.genes)
+length(rhythmic.genes.nd)
+
+results.nd.12 <- rain(t(nd.gene.expression), deltat=3, period=12, verbose=FALSE, nr.series=3)
+sum(results.nd.12$pVal < 0.05)/number.genes
+rhythmic.genes.nd.12 <- rownames(subset(results.nd.12, pVal < 0.05))
+length(rhythmic.genes.nd.12)
+
+complete.nd.rhythmic.genes <- unique(c(rhythmic.genes.nd,rhythmic.genes.nd.12))
+length(complete.nd.rhythmic.genes)
+length(complete.nd.rhythmic.genes)/number.genes
+
+non.rhythmic.nd.genes <- setdiff(ostta.genes,complete.nd.rhythmic.genes)
+length(non.rhythmic.nd.genes)
+
+length(setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12))
+length(setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12))/number.genes
+
+results.nd.8 <- rain(t(nd.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
+sum(results.nd.8$pVal < 0.05)/number.genes ## 0.8%
+```
+
+Under ND conditions we found that 6372 genes constituting 83.1% of the *Ostreococcus tauri* genome exhibit diurnal cycling expression patterns. Most of these genes, 5201 genes covering 67.82%% of the entire genome presented a simple rhythmic expression pattern with a 24 hours period and a single expression peak. An increasing number of genes, namely 1171 genes, presented a more complex rhythmic expression pattern cycling twice in a day presenting two expression peaks with an apparent period of 12 hours. The number of genes with expression patterns cycling three times in a day with an apparent period of 8 hours was negligible, 61 genes representing less than 1% of the genome. We also identified 1274 genes comprising 16.61% of genome that did not present a detectable rhythmic expression pattern.
+
+```{r sd_rain}
+results.sd <- rain(t(sd.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=3)
+sum(results.sd$pVal < 0.05)/number.genes
+rhythmic.genes.sd <- rownames(subset(results.sd, pVal < 0.05))
+length(rhythmic.genes.sd)
+
+results.sd.12 <- rain(t(sd.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=3)
+sum(results.sd.12$pVal < 0.05)/number.genes
+rhythmic.genes.sd.12 <- rownames(subset(results.sd.12, pVal < 0.05))
+length(rhythmic.genes.sd.12)
+
+complete.sd.rhythmic.genes <- unique(c(rhythmic.genes.sd,rhythmic.genes.sd.12))
+length(complete.sd.rhythmic.genes)
+length(complete.sd.rhythmic.genes)/number.genes
+
+non.rhythmic.sd.genes <- setdiff(ostta.genes,complete.sd.rhythmic.genes)
+length(non.rhythmic.sd.genes)
+length(non.rhythmic.sd.genes)/number.genes
+
+results.sd.8 <- rain(t(sd.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
+sum(results.sd.8$pVal < 0.05)
+sum(results.sd.8$pVal < 0.05)/number.genes
+```
+
+Under SD conditions we found that 6104 genes constituting 79.6% of the *Ostreococcus tauri* genome exhibit diurnal cycling expression patterns. A substantially reduced number of these genes, 4249 genes covering 55.41%% of the entire genome presented a simple rhythmic expression pattern with a 24 hours period and a single expression peak. An increasing number of genes, namely 1855 genes, presented a more complex rhythmic expression pattern cycling twice in a day presenting two expression peaks with an apparent period of 12 hours. The number of genes with expression patterns cycling three times in a day with an apparent period of 8 hours was negligible, 23 genes representing less than 1% of the genome. We also identified 1564 genes comprising 20.41% of genome that did not present a detectable rhythmic expression pattern.
+
+
+```{r rhythmic_barplot}
+data <- matrix(c(length(rhythmic.genes.ld.12),length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12)),length(non.rhythmic.ld.genes),
+length(rhythmic.genes.nd.12),length(setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12)),length(non.rhythmic.nd.genes),
+length(rhythmic.genes.sd.12),length(setdiff(rhythmic.genes.sd,rhythmic.genes.sd.12)),length(non.rhythmic.sd.genes)),nrow=3)
+
+barplot(data, lwd=2, names.arg = c("LD","ND","SD"),cex.names = 2,cex.axis = 1.5,
+        col=colors()[c(23,89,12)], 
+        border="black", 
+        space=0.25, 
+        font.axis=2, 
+        xlab="",ylim=c(0,8000))
+```
+
+We observed that practically the same number of genes are identified as rhythmic under the three different conditions. Independently from the length of the photoperiod we identified approximately 80% of the genome of *Ostreococcus tauri* as rhythmically expressed. Remarkably, the number of rhythmic genes exhibiting two peaks during a day increases as the photoperiod shortens whereas the number of genes with a single peak in a day decreases. Furthermore, the number of genes that did not exhibit a diurnal rhythmic pattern was similar under the three different photoperiods. 
+
+
+```{r ld_nd_sd_rhythmic_genes}
+library(VennDiagram)
+grid.newpage()
+draw.triple.venn(area1 = length(complete.ld.rhythmic.genes),area2 = length(complete.sd.rhythmic.genes),area3 = length(complete.nd.rhythmic.genes),n12 = length(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes)),n23 = length(intersect(complete.sd.rhythmic.genes,complete.nd.rhythmic.genes)), n13 = length(intersect(complete.ld.rhythmic.genes,complete.nd.rhythmic.genes)), n123 = length(intersect(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes),complete.nd.rhythmic.genes)),lwd = 3,category = c("LD","SD","ND"),euler.d = T,col = c("blue","red","darkgrey"),fill = c(" blue","red","darkgrey"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+length(intersect(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes),complete.nd.rhythmic.genes))
+
+length(intersect(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes),complete.nd.rhythmic.genes))/number.genes
+```
+
+When comparing rhythmically expressed genes under LD, ND and SD conditions we found that 4589 genes comprising 59.84% of the genome exhibit rhythmic expression patterns. Whereas only a few hundreds genes only presented a cycling expression pattern under a specific photoperiod. In order to further explore the differences between rhythmic a non rhythmic genes we compared their expression level under LD and SD conditions. We restrict our analysis to these two conditions since here expression levels are estimated using the same technology namely RNA-seq whereas for ND microarrays were used. 
+
+```{r non_rhythmic_expression}
+
+rhythmic.max.expression <- apply(X = gene.expression[intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes),c(sd.zt.i,ld.zt.i)],MARGIN = 1,FUN = max)
+non.rhythmic.max.expression <- apply(X = gene.expression[intersect(non.rhythmic.ld.genes,non.rhythmic.sd.genes),c(sd.zt.i,ld.zt.i)], MARGIN = 1,FUN = max)
+boxplot(rhythmic.max.expression, non.rhythmic.max.expression, outline=F,col=colors()[c(89,12)],names=c("Rhythmic","Non rhythmic"),ylab="FPKM",cex.lab=1.5,las=2)
+
+wilcox.test(rhythmic.max.expression,3*non.rhythmic.max.expression,alternative="greater")
+```
+
+We found that genes exhibiting rhythmic expression patterns under both LD and SD conditions present a maximal level of expression three times greater than genes identified as non rhythmic. This difference was significant according to p-value of 1.45e-4 computed using Mann-Whitney-Wilcoxson test. The current methods for detecting rhythmic gene expression are known to only perform optimally for highly expressed genes. Therefore, the genes identified as non rhythmic in this study could indeed be rhythmic although their low expression level have prevented our methods to detect them.
+
+Genes maintaining their rhythmic expression pattern in continuous light regimes (LL conditions) independently from the alternating light and dark periods are considered here bona fide circadian genes. Our experimental design includes two days under continuous light representing free running conditions after the three days under either LD or SD conditions. We use RAIN to identify circadian genes. In order to avoid a bias towards days under LD or days under continuous light we selected for this analysis two days under LD followed by two days under continuous light.  
+
+```{r ld_ll_rain}
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ld.ll.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,2:5,sep="_")})
+
+ld.ll.gene.expression <- gene.expression[,ld.ll.zt.i]
+dim(ld.ll.gene.expression)
+
+results.ld.ll <- rain(t(ld.ll.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=4)
+head(results.ld.ll)
+sum(results.ld.ll$pVal < 0.05)/number.genes 
+rhythmic.genes.ld.ll <- rownames(subset(results.ld.ll, pVal < 0.05))
+length(rhythmic.genes.ld.ll)
+rhythmic.genes.ld.ll <- intersect(complete.ld.rhythmic.genes,rhythmic.genes.ld.ll)
+length(rhythmic.genes.ld.ll)/number.genes 
+
+results.ld.ll.12 <- rain(t(ld.ll.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=4)
+sum(results.ld.ll.12$pVal < 0.05)/number.genes
+rhythmic.genes.ld.ll.12 <- rownames(subset(results.ld.ll.12, pVal < 0.05))
+length(rhythmic.genes.ld.ll.12)
+rhythmic.genes.ld.ll.12 <- intersect(rhythmic.genes.ld.ll.12,complete.ld.rhythmic.genes)
+length(rhythmic.genes.ld.ll.12)
+
+complete.ld.ll.rhythmic.genes <- unique(c(rhythmic.genes.ld.ll,rhythmic.genes.ld.ll.12))
+
+length(complete.ld.ll.rhythmic.genes)
+length(setdiff(complete.ld.rhythmic.genes, complete.ld.ll.rhythmic.genes))
+length(complete.ld.ll.rhythmic.genes)/number.genes
+length(complete.ld.ll.rhythmic.genes)/length(complete.ld.rhythmic.genes)
+
+length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes))
+
+data.ld.ll <- matrix(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
+
+sum(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)))
+
+barplot(data.ld.ll, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+        col=c("blue","lightblue","white"), 
+        border="black", 
+        font.axis=2, 
+        xlab="",ylim=c(0,8000))
+```
+We found that 82.71% of the genes identified previously as rhythmic under LD conditions still presented cycling expression patterns when transferred to free running conditions. Specifically, we identified 5129 circadian genes under LD conditions comprising 66.89% of the entire genome. The 1072 remaining genes cycling under LD conditions presented either a flat or noisy expression profile under LL conditions.      
+
+```{r sd_ll_rain}
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+sd.ll.zt.i <- sapply(X = sd.zt,FUN = function(x){ paste(x,2:5,sep="_")})
+
+sd.ll.gene.expression <- gene.expression[,sd.ll.zt.i]
+
+results.sd.ll <- rain(t(sd.ll.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=4)
+head(results.sd.ll)
+sum(results.sd.ll$pVal < 0.05)/number.genes ## 31.53%
+rhythmic.genes.sd.ll <- rownames(subset(results.sd.ll, pVal < 0.05))
+rhythmic.genes.sd.ll <- intersect(rhythmic.genes.sd.ll, complete.sd.rhythmic.genes)
+length(rhythmic.genes.sd.ll)
+
+results.sd.ll.12 <- rain(t(sd.ll.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=4)
+sum(results.sd.ll.12$pVal < 0.05)/number.genes ## 11.2%
+rhythmic.genes.sd.ll.12 <- rownames(subset(results.sd.ll.12, pVal < 0.05))
+rhythmic.genes.sd.ll.12 <- intersect(rhythmic.genes.sd.ll.12, complete.sd.rhythmic.genes)
+length(rhythmic.genes.sd.ll.12)
+
+length(intersect(rhythmic.genes.sd.ll.12,rhythmic.genes.sd.12))
+length(intersect(rhythmic.genes.sd.ll.12,rhythmic.genes.sd.12)) / length(rhythmic.genes.sd.12) #33.32%
+
+complete.sd.ll.rhythmic.genes <- unique(c(rhythmic.genes.sd.ll,rhythmic.genes.sd.ll.12))
+length(complete.sd.ll.rhythmic.genes)
+length(complete.sd.ll.rhythmic.genes)/length(complete.sd.rhythmic.genes)
+length(complete.sd.ll.rhythmic.genes)/number.genes
+
+length(setdiff(complete.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes))
+
+data.sd.ll <- matrix(c(length(complete.sd.ll.rhythmic.genes),length(setdiff(complete.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes)),length(non.rhythmic.sd.genes)),nrow=3)
+sum(c(length(complete.sd.ll.rhythmic.genes),length(setdiff(complete.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes)),length(non.rhythmic.sd.genes)))
+
+barplot(data.sd.ll, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+        col=c("red","lightpink","white"), 
+        border="black", 
+        font.axis=2, 
+        xlab="",ylim=c(0,8000))
+
+length(intersect(complete.ld.ll.rhythmic.genes,complete.sd.ll.rhythmic.genes))
+length(setdiff(complete.ld.ll.rhythmic.genes,complete.sd.ll.rhythmic.genes))
+length(setdiff(complete.sd.ll.rhythmic.genes,complete.ld.ll.rhythmic.genes))
+
+complete.ld.sd.rhythmic.genes <- intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes)
+
+grid.newpage()
+draw.pairwise.venn(area1 = length(intersect(complete.ld.sd.rhythmic.genes,complete.ld.ll.rhythmic.genes)),area2 = length(intersect(complete.ld.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes)),cross.area = length(intersect(complete.ld.sd.rhythmic.genes,intersect(complete.ld.ll.rhythmic.genes,complete.sd.ll.rhythmic.genes))),lwd = 3,category = c("LD","SD"),euler.d = T,col = c("blue","red"),fill = c(" blue","red"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+
+length(intersect(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes),setdiff(complete.sd.ll.rhythmic.genes,complete.ld.ll.rhythmic.genes)))
+
+length(intersect(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes),setdiff(complete.ld.ll.rhythmic.genes,complete.sd.ll.rhythmic.genes)))
+
+
+```
+
+Unlike the analysis for LD conditions, we found that only 47.1% of the genes identified previously as rhythmic under SD conditions still presented cycling expression patterns when transferred to free running conditions. Specifically, we only identified 2874 circadian genes under SD conditions comprising 37.48% of the entire genome. When comparing circadian genes under LD and SD conditions we found that most circadian genes in SD conditions are also circadian under LD conditions. Nonetheless, 2129 circadian genes were specific under LD conditions. This suggests that rhythmic expression under SD conditions is very dependent on the presence of a long period of dark whereas rhythmic expression under LD conditions due to the presence of a short period of dark is better maintained under continuous light.        
+
+In order to explore the effect of the transition to continuous light on rhythmic gene expression patterns we compared three rhythmic characteristics of the expression profiles under LD or SD to the corresponding ones under LL. Specifically we compared amplitude or half of the difference between the peak and trough of the expression profile; mesor or mean expression level around which the expression profile oscillates and phase or time at which the expression profile peaks. This was carried out using the R package circacompare that performs a fitting to the data as cosinusoidal curve with a particular parametrization that is used to test for statistical significant differences between the two circadian patterns under comparison. 
+
+```{r ld_ll_amplitude_mesor_phase}
+library(circacompare)
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+circacompare.ld.ll <- matrix(nrow=length(complete.ld.ll.rhythmic.genes),ncol=15)
+rownames(circacompare.ld.ll) <- complete.ld.ll.rhythmic.genes
+
+for(i in 1:length(complete.ld.ll.rhythmic.genes))
+{
+  gene.i <- complete.ld.ll.rhythmic.genes[i]
+  
+  ld.expression.i <- ld.ll.gene.expression[gene.i,c(paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  ll.expression.i <- ld.ll.gene.expression[gene.i,c(paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
+  
+  time.points <- seq(from=0,by=4,length.out = 12)
+  
+  ld.ll.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(ld.expression.i, ll.expression.i),
+                         group=c(rep("ld",12),rep("ll",12)))
+  
+  out.i <- circacompare(x = ld.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  circacompare.ld.ll[i,] <- out.i[[2]][,2]
+ }
+
+colnames(circacompare.ld.ll) <- out.i[[2]][,1]
+
+par(lwd=3)
+boxplot(circacompare.ld.ll[,"ld amplitude estimate" ],circacompare.ld.ll[,"ll amplitude estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
+sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0)
+sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0) / length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)
+sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+
+boxplot(circacompare.ld.ll[,"ld mesor estimate" ],circacompare.ld.ll[,"ll mesor estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
+sum(circacompare.ld.ll[,"Mesor difference estimate" ] < 0) /length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"Mesor difference estimate" ] > 0) /length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+
+sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)
+```
+
+Most circadian genes under LD conditions, 97.68%, presented a sharp decrease in amplitude when transferred to LL, being significant in more than half of them with p-value < 0.05. Nevertheless, no clear effect was observed over the mesor or phase of gene expression profiles that remained in LL similar to the values in LD. 
+
+Next we perform the analysis for circadian genes under SD conditions. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
+
+```{r sd_ll_amplitude_mesor_phase}
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+circacompare.sd.ll <- matrix(nrow=length(complete.sd.ll.rhythmic.genes),ncol=15)
+rownames(circacompare.sd.ll) <- complete.sd.ll.rhythmic.genes
+
+for(i in 1:length(complete.sd.ll.rhythmic.genes))
+{
+  gene.i <- complete.sd.ll.rhythmic.genes[i]
+  
+  sd.expression.i <- sd.ll.gene.expression[gene.i,c(paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  ll.expression.i <- sd.ll.gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+  
+  time.points <- seq(from=0,by=4,length.out = 12)
+  
+  sd.ll.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(sd.expression.i, ll.expression.i),
+                         group=c(rep("sd",12),rep("ll",12)))
+  
+  out.i <- circacompare(x = sd.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  circacompare.sd.ll[i,] <- out.i[[2]][,2]
+}
+
+colnames(circacompare.sd.ll) <- out.i[[2]][,1]
+
+par(lwd=3)
+boxplot(circacompare.sd.ll[,"sd amplitude estimate" ],circacompare.sd.ll[,"ll amplitude estimate" ],outline=F,col=c("red","lightsalmon"),names=c("SD","LL"),cex.axis=2)
+sum(circacompare.sd.ll[,"Amplitude difference estimate" ] > 0)
+sum(circacompare.sd.ll[,"Amplitude difference estimate" ] > 0) / length(complete.sd.ll.rhythmic.genes)
+sum(circacompare.sd.ll[,"P-value for amplitude difference" ] < 0.05)
+sum(circacompare.sd.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.sd.ll.rhythmic.genes)
+
+boxplot(circacompare.sd.ll[,"sd mesor estimate" ],circacompare.sd.ll[,"ll mesor estimate" ],outline=F,col=c("red","lightsalmon"),names=c("SD","LL"),cex.axis=2)
+sum(circacompare.sd.ll[,"Mesor difference estimate" ] < 0) /length(complete.sd.ll.rhythmic.genes)
+sum(circacompare.sd.ll[,"Mesor difference estimate" ] > 0) /length(complete.sd.ll.rhythmic.genes)
+sum(circacompare.sd.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.sd.ll.rhythmic.genes)
+
+sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
+```
+Similar to the results under LD conditons, we observed that most circadian genes under SD conditions, 93.11%, presented a sharp decrease in amplitude when transferred to LL, being significant in almost half of them with p-value < 0.05. Nevertheless, no clear effect was observed over the mesor or phase of gene expression profiles that remained in LL similar to the values in SD. 
+
+The observed drastic reduction in amplitude toghether with the conservation in mesor and phase of the rhythmic gene expression profiles when transferred from LD or SD to LL conditions could be explained by two different scenarios. Under LD and SD conditions the entire cell culture is highly synchronous with most cells presenting coordinated rhythmic gene expression profiles. The transition to continuous light could produce the cell culture to become asynchronous. Individual cells would still be presenting an almost completely rhythmic transcriptome with a conservation in amplitude and mesor but out of phase with respect to the other cells in the culture. Since our data only capture the average transcriptomic state of the entire culture we observe a decrease in amplitude but a conservation in mesor and phase. In the other plausible scenario the entire cell culture would remain synchronous and the continuous light condition would produce an actual  reduction in amplitude reflecting a deterioration in individual cell rhythmic transcriptomes. In order to discriminate between these two possible scenarios single cell RNA-seq data would be required.    
+
+```{r profile_function, eval= FALSE}
+plot.ld.nd.sd <- function(gene.id, gene.name, ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=T,scale=T)
+{
+  if(nd)
+  {
+    scale <- T
+  }
+  
+  current.gene.expression.ld <- 0
+  current.gene.expression.nd <- 0
+  current.gene.expression.sd <- 0
+
+  if(ld)
+  {
+    ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+    current.gene.expression.ld <- ld.gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+    if(scale)
+    {
+      current.gene.expression.ld <- scale(current.gene.expression.ld)
+    } 
+  }
+
+  if(sd)
+  {
+    sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+    current.gene.expression.sd <-        sd.gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+    if(scale)
+    {
+      current.gene.expression.sd <- scale(current.gene.expression.sd)
+    }
+}
+
+  if(nd)
+  {
+  nd.zt <- paste0("ZT",seq(from=0,to=21,by=3))
+  current.gene.expression.nd <- scale(nd.gene.expression[gene.id,c(paste(nd.zt,1,sep="_"),paste(nd.zt,2,sep="_"),paste(nd.zt,3,sep="_"))])
+}
+
+  max.expr <- max(c(current.gene.expression.ld, current.gene.expression.nd, current.gene.expression.sd))
+  min.expr <- min(c(current.gene.expression.ld, current.gene.expression.nd, current.gene.expression.sd))
+  
+  plot(x = -10,y= -10,axes=F,xlab="",ylab="",
+       ylim=c(min.expr-2, max.expr),xlim=c(0,72),
+       main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
+  
+  if(!scale)
+  {
+    axis(side=2,lwd=3)
+  }
+
+  if(ld)
+  {
+  lines(x = seq(from=0,by=4,to=68),current.gene.expression.ld,type="o",lwd=3,col="blue")
+}
+
+  if(sd)
+  {
+  lines(x = seq(from=0,by=4,to=68),current.gene.expression.sd,type="o",lwd=3,col="red")
+}
+
+  if(nd)
+  {
+  lines(x = seq(from=0,by=3,to=69),current.gene.expression.nd,type="o",lwd=3,col="black")
+}
+
+  for(i in 0:2)
+  {
+  current.line <- 0.5
+  
+  if(ld)
+  {
+    polygon(x = c(24*i, 24*i+16, 24*i+16, 24*i),
+            y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+            lwd=2,border="blue")
+    polygon(x = c(24*i+16,24*(i+1),24*(i+1),24*i+16),
+            y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+            lwd=2,border="blue",col="blue")
+    current.line <- current.line + 0.5
+  }
+  
+  if(nd)
+  {
+    polygon(x = c(24*i, 24*i+12, 24*i+12, 24*i),
+            y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+            lwd=2,border="black")
+    polygon(x = c(24*i+12,24*(i+1),24*(i+1),24*i+12),
+            y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+            lwd=2,border="black",col="black")
+    current.line <- current.line + 0.5
+  }
+
+  if(sd)
+  {
+    polygon(x = c(24*i, 24*i+8, 24*i+8, 24*i),
+            y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+            lwd=2,border="red")
+    polygon(x = c(24*i+8,24*(i+1),24*(i+1),24*i+8),
+            y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+            lwd=2,border="red",col="red")
+  }
+}
+
+  return(0)  
+}
+
+plot.ld.nd.sd(gene.id = "ostta01g02580",gene.name = "MCM6", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=F,nd=F,scale=F)
+
+plot.ld.nd.sd(gene.id = "ostta04g00450",gene.name = "MCM5", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=T)
+
+plot.ld.nd.sd(gene.id = "ostta01g01370",gene.name = "???", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=F)
+
+
+# i <- 1
+# plot.ld.nd.sd(gene.id = common.12.nd.sd[i],gene.name = "???", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=F,sd=T,nd=T)
+# i <- i + 1
+# 
+# i <- i - 1
+# plot.ld.nd.sd(gene.id = common.12.nd.sd[i],gene.name = "???", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=F)
+
+i <- 1
+plot.ld.nd.sd(gene.id = sd.specific.rhythmic.genes[i],gene.name = "???", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=F)
+i <- i + 1
+i <- i - 1
+
+
+plot.ld.nd.sd(gene.id = "ostta13g01820",gene.name = "???", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=F)
+
+
+
+plot.ld.ll <- function(gene.id, gene.name, gene.expression)
+{
+    ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+    current.gene.expression.ld.ll <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"),paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
+
+    min.expression <- min(current.gene.expression.ld.ll)
+    max.expression <- max(current.gene.expression.ld.ll)
+    range.expression <- max.expression - min.expression
+    
+    expression.step <- floor(range.expression / 5)
+    
+    plot(current.gene.expression.ld.ll,type="o",lwd=3,col="blue",axes=F,xlab="",ylab="FPKM",
+         ylim=c(min.expression-expression.step,max.expression),
+         cex.lab=1.3,main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
+    axis(side=2,lwd=3)
+    axis(side = 1,pos = min.expression - 1.1*expression.step, at = seq(from=1,to=30),
+         labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
+    
+    polygon(x = c(1,5,5,1),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="blue")
+    
+    polygon(x = c(5,7,7,5),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="blue",col="blue")
+    
+    polygon(x = c(7,11,11,7),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue")
+    
+    polygon(x = c(11,13,13,11),y=c(min.expression-expression.step/2,
+                                   min.expression-expression.step/2,
+                                   min.expression-expression.step,
+                                   min.expression-expression.step),lwd=2,border="blue",col="blue")
+    
+    polygon(x = c(13,17,17,13),y=c(min.expression-expression.step/2,
+                                   min.expression-expression.step/2,
+                                   min.expression-expression.step,
+                                   min.expression-expression.step),lwd=2,border="blue")
+    
+    polygon(x = c(17,19,19,17),y=c(min.expression-expression.step/2,
+                                   min.expression-expression.step/2,
+                                   min.expression-expression.step,
+                                   min.expression-expression.step),lwd=2,border="blue",col="blue")
+    
+    polygon(x = c(19,23,23,19),y=c(min.expression-expression.step/2,
+                                   min.expression-expression.step/2,
+                                   min.expression-expression.step,
+                                   min.expression-expression.step),lwd=2,border="blue")
+    
+    polygon(x = c(23,25,25,23),y=c(min.expression-expression.step/2,
+                                   min.expression-expression.step/2,
+                                   min.expression-expression.step,
+                                   min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+    
+    polygon(x = c(25,29,29,25),y=c(min.expression-expression.step/2,
+                                   min.expression-expression.step/2,
+                                   min.expression-expression.step,
+                                   min.expression-expression.step),lwd=2,border="blue")
+    polygon(x = c(29,30,30,29),y=c(min.expression-expression.step/2,
+                                   min.expression-expression.step/2,
+                                   min.expression-expression.step,
+                                   min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+    
+}
+
+
+i <- 1
+plot.ld.ll(gene.id = "ostta04g00450",gene.name = "MCM5", gene.expression)
+
+
+i <- 1
+plot.ld.ll(gene.id = complete.ld.ll.rhythmic.genes[i],gene.name = i, gene.expression)
+i <- i + 1
+
+
+plot.sd.ll <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, mean.expression.sd)
+{
+    sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+    current.gene.expression.sd.ll <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"),paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+  
+  min.expression <- min(current.gene.expression.sd.ll)
+  max.expression <- max(current.gene.expression.sd.ll)
+  range.expression <- max.expression - min.expression
+  
+  expression.step <- floor(range.expression / 5)
+  
+  plot(current.gene.expression.sd.ll,type="o",lwd=3,col="red",axes=F,xlab="",ylab="FPKM",
+       ylim=c(min.expression-expression.step,max.expression),
+       cex.lab=1.3,main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
+  axis(side=2,lwd=3)
+  axis(side = 1,pos = min.expression - 1.1*expression.step, at = seq(from=1,to=30),
+       labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
+  
+  polygon(x = c(1,3,3,1),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="red")
+  
+  polygon(x = c(3,7,7,3),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(7,9,9,7),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="red")
+  
+  polygon(x = c(9,13,13,9),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(13,15,15,13),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  
+  polygon(x = c(15,19,19,15),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(19,21,21,19),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  
+  polygon(x = c(21,25,25,21),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="lightsalmon")
+  
+  polygon(x = c(25,27,27,25),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  polygon(x = c(27,30,30,27),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="lightsalmon")
+  
+}
+
+
+i <- 1
+plot.sd.ll(gene.id = big.amplitude[i],gene.name = i, gene.expression)
+i <- i + 1
+
+
+sd.non.rhythmic.ll <- setdiff(complete.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes)
+plot.sd.ll(gene.id = sd.non.rhythmic.ll[i],gene.name = i, gene.expression)
+i <- i + 1
+
+
+plot.sd.ll(gene.id = rhythmic.genes.sd.12[i],gene.name = i, gene.expression)
+i <- i + 1
+
+i <- 1
+plot.ld.ll(gene.id = complete.ld.ll.rhythmic.genes[i],gene.name = "Nitrogen regulatory PII-like, alpha/beta", gene.expression)
+i <- i + 1
+i <- i - 1
+```
