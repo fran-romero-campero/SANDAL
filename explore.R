@@ -1059,7 +1059,7 @@ sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),se
 
 circacompare.sd.ll <- matrix(nrow=length(complete.sd.ll.rhythmic.genes),ncol=15)
 rownames(circacompare.sd.ll) <- complete.sd.ll.rhythmic.genes
-
+i <- 1
 for(i in 1:length(complete.sd.ll.rhythmic.genes))
 {
   gene.i <- complete.sd.ll.rhythmic.genes[i]
@@ -1074,6 +1074,9 @@ for(i in 1:length(complete.sd.ll.rhythmic.genes))
                          group=c(rep("sd",12),rep("ll",12)))
   
   out.i <- circacompare(x = sd.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  out.i[[1]]
+  plot.sd.ll(gene.id = gene.i,gene.name = "",gene.expression = gene.expression)
+  out.i[[2]]
   circacompare.sd.ll[i,] <- out.i[[2]][,2]
 }
 
@@ -1097,3 +1100,153 @@ draw.pairwise.venn(area1 = length(intersect(complete.ld.sd.rhythmic.genes,comple
 
 grid.newpage()
 draw.pairwise.venn(area1 = length(complete.ld.ll.rhythmic.genes),area2 = length(complete.sd.ll.rhythmic.genes),cross.area = length(intersect(complete.ld.ll.rhythmic.genes,complete.sd.ll.rhythmic.genes)),lwd = 3,category = c("LD","SD"),euler.d = T,col = c("blue","red"),fill = c(" blue","red"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+
+
+wave.form <- function(mesor, amplitude,period,phase,time=seq(from=0,to=48,by=0.01))
+{
+  y <- mesor + amplitude*cos(0.0174533*period*(time - phase))
+  return(y)
+}
+
+
+## effect on synchronization
+plot(x=0,y=0,col="white",ylim=c(20,80),xlim=c(0,120),xlab="",ylab="",axes=F)
+time <- seq(from=0,to=72,by=0.01)
+time.2 <- seq(from=72,to=120,by=0.01)
+N <- 50
+norm.random.1 <- rnorm(n = N,mean = 0,sd = 1)
+norm.random.2 <- rnorm(n = N,mean = 0,sd = 6)
+syn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+asyn.waves <- matrix(data = 0,nrow = N,ncol = length(time.2))
+
+for(i in 1:N)
+{
+  syn.waves[i,] <- wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16+norm.random.1[i],time=time)
+  asyn.waves[i,] <- wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16+norm.random.2[i],time=time.2)
+  lines(time,syn.waves[i,],type="l",lwd=1,col="azure2")
+  lines(time.2,asyn.waves[i,],type="l",lwd=1,col="azure2")
+  
+}
+
+lines(x=c(time,time.2),y=c(colMeans(syn.waves),colMeans(asyn.waves)),type="l",lwd=5,col="blue")
+
+polygon(x = c(0,16,16,0),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(16,24,24,16),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(40,48,48,40),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(64,72,72,64),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(72,88,88,72),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(88,96,96,88),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+polygon(x = c(96,112,112,96),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(112,120,120,112),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+
+
+## effect on amplitude
+plot(x=0,y=0,col="white",ylim=c(20,80),xlim=c(0,120),xlab="",ylab="",axes=F)
+time <- seq(from=0,to=72,by=0.01)
+time.2 <- seq(from=72,to=120,by=0.01)
+N <- 50
+norm.random.1 <- - abs(rnorm(n = N,mean = 0,sd = 5))
+norm.random.2 <- -abs(rnorm(n = N,mean = 0,sd = 15))
+syn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+asyn.waves <- matrix(data = 0,nrow = N,ncol = length(time.2))
+for(i in 1:N)
+{
+  syn.waves[i,] <- wave.form(mesor = 50,amplitude = 20+norm.random.1[i],period = 15,phase = 16,time=time)
+  asyn.waves[i,] <- wave.form(mesor = 50,amplitude = abs(15+norm.random.2[i]),period = 15,phase = 16,time=time.2)
+  lines(time,syn.waves[i,],type="l",lwd=1,col="azure2")
+  lines(time.2,asyn.waves[i,],type="l",lwd=1,col="azure2")
+  
+}
+
+lines(x=c(time,time.2),y=c(colMeans(syn.waves),colMeans(asyn.waves)),type="l",lwd=5,col="blue")
+polygon(x = c(0,16,16,0),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(16,24,24,16),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(40,48,48,40),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(64,72,72,64),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(72,88,88,72),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(88,96,96,88),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+polygon(x = c(96,112,112,96),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(112,120,120,112),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+
+
+## effect on synchronization + amplitude
+plot(x=0,y=0,col="white",ylim=c(20,80),xlim=c(0,120),xlab="",ylab="",axes=F)
+time <- seq(from=0,to=72,by=0.01)
+time.2 <- seq(from=72,to=120,by=0.01)
+N <- 50
+norm.random.1 <- - abs(rnorm(n = N,mean = 0,sd = 1))
+norm.random.2 <- -abs(rnorm(n = N,mean = 0,sd = 8))
+norm.random.3 <- rnorm(n = N,mean = 0,sd = 1)
+norm.random.4 <- rnorm(n = N,mean = 0,sd = 4)
+
+syn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+asyn.waves <- matrix(data = 0,nrow = N,ncol = length(time.2))
+for(i in 1:N)
+{
+  syn.waves[i,] <- wave.form(mesor = 50,amplitude = 20+norm.random.1[i],period = 15+norm.random.3[i],phase = 16,time=time)
+  asyn.waves[i,] <- wave.form(mesor = 50,amplitude = abs(20+norm.random.2[i]),period = 15+norm.random.4[i],phase = 16,time=time.2)
+  lines(time,syn.waves[i,],type="l",lwd=1,col="azure2")
+  lines(time.2,asyn.waves[i,],type="l",lwd=1,col="azure2")
+  
+}
+
+lines(x=c(time,time.2),y=c(colMeans(syn.waves),colMeans(asyn.waves)),type="l",lwd=5,col="blue")
+polygon(x = c(0,16,16,0),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(16,24,24,16),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(40,48,48,40),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(64,72,72,64),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(72,88,88,72),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(88,96,96,88),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+polygon(x = c(96,112,112,96),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(112,120,120,112),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+
+
+
+
+
+
+
+
+## Effect over amplitude
+N <- 50
+time <- seq(from=0,to=72,by=0.01)
+norm.random <- rnorm(n = N,mean = 0,sd = 1)
+syn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+plot(time,wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16,time=time),type="l",lwd=4,col="white",axes=F,xlab="",ylab="")
+#colors <- rainbow(N)
+for(i in 1:N)
+{
+  syn.waves[i,] <- wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16+norm.random[i],time=time)
+  lines(time,wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16+norm.random[i],time=time),type="l",lwd=1,col="azure2")
+}
+
+lines(time,colMeans(syn.waves),type="l",lwd=5,col="blue")
+
+
+N <- 50
+time <- seq(from=0,to=48,by=0.01)
+norm.random <- -abs(rnorm(n = N,mean = 0,sd = 10))
+asyn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+plot(time,wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16,time=time),type="l",lwd=4,col="white",axes=F,xlab="",ylab="")
+#colors <- rainbow(N)
+for(i in 1:N)
+{
+  asyn.waves[i,] <- wave.form(mesor = 50,amplitude = 20+norm.random[i],period = 15,phase = 16,time=time)
+  lines(time,wave.form(mesor = 50,amplitude = 20+norm.random[i],period = 15,phase = 16,time=time),type="l",lwd=1,col="azure2")
+}
+
+lines(time,colMeans(asyn.waves),type="l",lwd=5,col="blue")
+
+
+
+
+
+
+lines(time,wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16),type="l",lwd=4,col="blue")

@@ -465,7 +465,117 @@ sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
 ```
 Similar to the results under LD conditons, we observed that most circadian genes under SD conditions, 93.11%, presented a sharp decrease in amplitude when transferred to LL, being significant in almost half of them with p-value < 0.05. Nevertheless, no clear effect was observed over the mesor or phase of gene expression profiles that remained in LL similar to the values in SD. 
 
-The observed drastic reduction in amplitude toghether with the conservation in mesor and phase of the rhythmic gene expression profiles when transferred from LD or SD to LL conditions could be explained by two different scenarios. Under LD and SD conditions the entire cell culture is highly synchronous with most cells presenting coordinated rhythmic gene expression profiles. The transition to continuous light could produce the cell culture to become asynchronous. Individual cells would still be presenting an almost completely rhythmic transcriptome with a conservation in amplitude and mesor but out of phase with respect to the other cells in the culture. Since our data only capture the average transcriptomic state of the entire culture we observe a decrease in amplitude but a conservation in mesor and phase. In the other plausible scenario the entire cell culture would remain synchronous and the continuous light condition would produce an actual  reduction in amplitude reflecting a deterioration in individual cell rhythmic transcriptomes. In order to discriminate between these two possible scenarios single cell RNA-seq data would be required.    
+The observed drastic reduction in amplitude together with the conservation in mesor and phase of the rhythmic gene expression profiles when transferred from LD or SD to LL conditions could be explained by two different scenarios. Under LD and SD conditions the entire cell culture is highly synchronous with most cells presenting coordinated rhythmic gene expression profiles. The transition to continuous light could produce the cell culture to become asynchronous. Individual cells would still be presenting an almost completely rhythmic transcriptome with a conservation in amplitude and mesor but out of phase with respect to the other cells in the culture. Since our data only capture the average transcriptomic state of the entire culture we observe a decrease in amplitude but a conservation in mesor and phase. In the other plausible scenario the entire cell culture would remain synchronous and the continuous light condition would produce an actual reduction in amplitude reflecting a deterioration in individual cell rhythmic transcriptomes. In a third possible scenario a combination of the two previous scenarios would take place. In order to discriminate between these possible scenarios for each individual gene single cell RNA-seq data would be required.    
+
+The following instructions recreate the three possible scenarios and their effect over rhythmic gene expression patterns.
+
+```{r three_scenarios}
+wave.form <- function(mesor, amplitude,period,phase,time=seq(from=0,to=48,by=0.01))
+{
+  y <- mesor + amplitude*cos(0.0174533*period*(time - phase))
+  return(y)
+}
+
+
+## effect on synchronization
+plot(x=0,y=0,col="white",ylim=c(20,80),xlim=c(0,120),xlab="",ylab="",axes=F)
+time <- seq(from=0,to=72,by=0.01)
+time.2 <- seq(from=72,to=120,by=0.01)
+N <- 50
+norm.random.1 <- rnorm(n = N,mean = 0,sd = 1)
+norm.random.2 <- rnorm(n = N,mean = 0,sd = 6)
+syn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+asyn.waves <- matrix(data = 0,nrow = N,ncol = length(time.2))
+
+for(i in 1:N)
+{
+  syn.waves[i,] <- wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16+norm.random.1[i],time=time)
+  asyn.waves[i,] <- wave.form(mesor = 50,amplitude = 20,period = 15,phase = 16+norm.random.2[i],time=time.2)
+  lines(time,syn.waves[i,],type="l",lwd=1,col="azure2")
+  lines(time.2,asyn.waves[i,],type="l",lwd=1,col="azure2")
+  
+}
+
+lines(x=c(time,time.2),y=c(colMeans(syn.waves),colMeans(asyn.waves)),type="l",lwd=5,col="blue")
+
+polygon(x = c(0,16,16,0),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(16,24,24,16),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(40,48,48,40),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(64,72,72,64),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(72,88,88,72),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(88,96,96,88),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+polygon(x = c(96,112,112,96),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(112,120,120,112),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+
+
+## effect on amplitude
+plot(x=0,y=0,col="white",ylim=c(20,80),xlim=c(0,120),xlab="",ylab="",axes=F)
+time <- seq(from=0,to=72,by=0.01)
+time.2 <- seq(from=72,to=120,by=0.01)
+N <- 50
+norm.random.1 <- - abs(rnorm(n = N,mean = 0,sd = 5))
+norm.random.2 <- -abs(rnorm(n = N,mean = 0,sd = 15))
+syn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+asyn.waves <- matrix(data = 0,nrow = N,ncol = length(time.2))
+for(i in 1:N)
+{
+  syn.waves[i,] <- wave.form(mesor = 50,amplitude = 20+norm.random.1[i],period = 15,phase = 16,time=time)
+  asyn.waves[i,] <- wave.form(mesor = 50,amplitude = abs(15+norm.random.2[i]),period = 15,phase = 16,time=time.2)
+  lines(time,syn.waves[i,],type="l",lwd=1,col="azure2")
+  lines(time.2,asyn.waves[i,],type="l",lwd=1,col="azure2")
+  
+}
+
+lines(x=c(time,time.2),y=c(colMeans(syn.waves),colMeans(asyn.waves)),type="l",lwd=5,col="blue")
+polygon(x = c(0,16,16,0),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(16,24,24,16),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(40,48,48,40),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(64,72,72,64),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(72,88,88,72),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(88,96,96,88),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+polygon(x = c(96,112,112,96),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(112,120,120,112),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+
+
+## effect on synchronization + amplitude
+plot(x=0,y=0,col="white",ylim=c(20,80),xlim=c(0,120),xlab="",ylab="",axes=F)
+time <- seq(from=0,to=72,by=0.01)
+time.2 <- seq(from=72,to=120,by=0.01)
+N <- 50
+norm.random.1 <- - abs(rnorm(n = N,mean = 0,sd = 1))
+norm.random.2 <- -abs(rnorm(n = N,mean = 0,sd = 8))
+norm.random.3 <- rnorm(n = N,mean = 0,sd = 1)
+norm.random.4 <- rnorm(n = N,mean = 0,sd = 4)
+
+syn.waves <- matrix(data = 0,nrow = N,ncol = length(time))
+asyn.waves <- matrix(data = 0,nrow = N,ncol = length(time.2))
+for(i in 1:N)
+{
+  syn.waves[i,] <- wave.form(mesor = 50,amplitude = 20+norm.random.1[i],period = 15+norm.random.3[i],phase = 16,time=time)
+  asyn.waves[i,] <- wave.form(mesor = 50,amplitude = abs(20+norm.random.2[i]),period = 15+norm.random.4[i],phase = 16,time=time.2)
+  lines(time,syn.waves[i,],type="l",lwd=1,col="azure2")
+  lines(time.2,asyn.waves[i,],type="l",lwd=1,col="azure2")
+  
+}
+
+lines(x=c(time,time.2),y=c(colMeans(syn.waves),colMeans(asyn.waves)),type="l",lwd=5,col="blue")
+polygon(x = c(0,16,16,0),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(16,24,24,16),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(40,48,48,40),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(64,72,72,64),y=c(25,25,22,22),lwd=4,border="blue",col="blue")
+polygon(x = c(72,88,88,72),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(88,96,96,88),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+polygon(x = c(96,112,112,96),y=c(25,25,22,22),lwd=4,border="blue")
+polygon(x = c(112,120,120,112),y=c(25,25,22,22),lwd=4,border="blue",col="lightblue")
+```
+
+
 
 ```{r profile_function, eval= FALSE}
 plot.ld.nd.sd <- function(gene.id, gene.name, ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=T,scale=T)
