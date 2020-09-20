@@ -236,6 +236,20 @@ sum(results.sd.8$pVal < 0.05)/number.genes
 Under SD conditions we found that 6104 genes constituting 79.6% of the *Ostreococcus tauri* genome exhibit diurnal cycling expression patterns. A substantially reduced number of these genes, 4249 genes covering 55.41%% of the entire genome presented a simple rhythmic expression pattern with a 24 hours period and a single expression peak. An increasing number of genes, namely 1855 genes, presented a more complex rhythmic expression pattern cycling twice in a day presenting two expression peaks with an apparent period of 12 hours. The number of genes with expression patterns cycling three times in a day with an apparent period of 8 hours was negligible, 23 genes representing less than 1% of the genome. We also identified 1564 genes comprising 20.41% of genome that did not present a detectable rhythmic expression pattern.
 
 
+```{r creinhardtii_two_peaks}
+expression.level <- read.table(file = "creinhardtii_expression_level.txt",header=T,as.is=T)
+
+cre.expression <- as.matrix(expression.level[,2:ncol(expression.level)])
+rownames(cre.expression) <- expression.level$gene
+
+results.cre <- rain(t(cre.expression), deltat=3, period=12, verbose=FALSE, nr.series=2)
+sum(results.cre$pVal < 0.05)/nrow(cre.expression)
+rhythmic.genes.cre.12 <- rownames(subset(results.cre, pVal < 0.05))
+length(rhythmic.genes.cre.12)
+```
+
+The existence of genes exhibiting commplex rhythmic expression patterns consisting of two peaks over a complete day is present in the transcriptome of other microalgae not being restricted only to Ostreococcus. We reanalyzed previously published RNA-seq data generated in Chlamydomonas under ND conditions and found that 2190 genes comprising 14.02% of the entire genome exhibit two expression peaks per day with an apparent period of 12 hours.
+
 ```{r rhythmic_barplot}
 data <- matrix(c(length(rhythmic.genes.ld.12),length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12)),length(non.rhythmic.ld.genes),
 length(rhythmic.genes.nd.12),length(setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12)),length(non.rhythmic.nd.genes),
