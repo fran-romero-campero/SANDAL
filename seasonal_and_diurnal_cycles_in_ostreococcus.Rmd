@@ -17,13 +17,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In this project we study the transcriptomic, proteomic and physiological responses to seasonal
 and diurnal cycles in the picoeukaryote *Ostreococcus tauri*. Our favourite microalgae
-was grown in 1.8L column photochemostats under long day conditions (16 hours light : 8 hours dark) representing a summer day and under short day conditions (8 hours light : 16 hours dark) simulating a winter day. After four weeks of entrainment under each condition samples were collected for three days every four hours. Then the program controlling the lights in the photochemostats was set to free running conditions consisting on continuous light (LL) in half the systems and continuous darkness (DD) in the other half. After a day, samples were again collected every four hours for two days under LL and DD. 
+was grown in 1.8L column photochemostats under long day conditions (16 hours light : 8 hours dark) representing a summer day and under short day conditions (8 hours light : 16 hours dark) simulating a winter day. After four weeks of entrainment under each condition samples were collected for three days every four hours. Then the program controlling the lights in the photochemostats was set to free running conditions consisting on constant light (LL) in half the systems and constant darkness (DD) in the other half. After a day, samples were again collected every four hours for two days under LL and DD. 
 
 ## **Load data and principal component analysis.**
 
 The matrix containing the gene expression data analyzed in this study can be
 downloaded from [**this link from the GEO data base**](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE155535&format=file&file=GSE155535%5Fgene%5Fexpression%2Etsv%2Egz). Make sure to uncompress this file and rename it to **gene_expression.tsv**. First, the gene expression data is loaded and converted into a 
-numeric matrix setting the rownames to gene ids.  
+numeric matrix setting the rownames to gene ids. We also load gene annotation.
 
 ```{r load_data}
 gene.expression <- read.table(file ="gene_expression.tsv",sep="\t",header=T,as.is=T)
@@ -34,6 +34,9 @@ gene.ids <- gene.expression$X
 gene.expression <- as.matrix(gene.expression[,2:ncol(gene.expression)])
 rownames(gene.expression) <- gene.ids
 head(gene.expression[,1:6])
+
+gene.annotation <- read.table(file="annotation/ostreococcus_tauri_annotation.tsv",header = T, as.is=T,sep="\t",quote = "")
+head(gene.annotation)
 ```
 
 The current version of *Ostreococcus tauri* genome available from [**here**](https://mycocosm.jgi.doe.gov/Ostta4221_3/Ostta4221_3.home.html) identifies 7668 genes. In our experiment only 3 genes were never expressed and 40, 164 and 260 genes never presented an expression level greater than 1, 5 and 10 FPKM respectively. This shows that practically the entire transcriptome of Ostreococcus is expressed under the seasonal and diurnal cycles studied in this project.
@@ -43,6 +46,8 @@ ostta.genes <- rownames(gene.expression)
 number.genes <- length(ostta.genes)
 number.genes
 
+dim(gene.expression)
+
 length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) == 0))
 length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) < 1))
 length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) < 5))
@@ -50,7 +55,7 @@ length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) < 10))
 ```
 
 
-We focus on the data generated under long and short days cycles by extracting them from the gene expression matrix. The resulting matrix has 7668 rows representing genes and 36 columns. This number of columns correspond to 36 different data points, each day is represented by 6 data points and we took samples for three days under both long and short day conditions.
+We focus on the data generated under long and short days cycles by extracting them from the gene expression matrix. The resulting matrix has 7668 rows representing genes and 36 columns. This number of columns correspond to 36 different data points, each day is represented by 6 data points and we took samples for three days under long day conditions, and short day conditions.
 
 
 ```{r extract_sd_ld}
@@ -182,6 +187,9 @@ length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12))/number.genes
 
 results.ld.8 <- rain(t(ld.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
 sum(results.ld.8$pVal < 0.05)/number.genes
+
+write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.ld.genes),file="gene_sets/LD_non_rhythmic_genes.tsv",row.names = F)
+
 ```
 
 Under LD conditions we found that 6201 genes constituting 80.87% of the *Ostreococcus tauri* genome exhibit diurnal rhythmic expression patterns. Most of these genes, 5825 genes covering 75.97% of the entire genome presented a simple rhythmic expression pattern with a 24 hours period and a single expression peak. Only 376 genes presented a more complex rhythmic expression pattern presenting two expression peaks with an apparent period of 12 hours in a single day. The number of genes with expression patterns presenting three peaks in a single day with an apparent period of 8 hours was negligible, 81 genes representing less than 1% of the genome. We also identified 1467 genes comprising 19.13% of genome that did not present a detectable rhythmic expression pattern.      
@@ -293,7 +301,9 @@ wilcox.test(rhythmic.max.expression,3*non.rhythmic.max.expression,alternative="g
 
 We found that genes exhibiting rhythmic expression patterns under both LD and SD conditions present a maximal level of expression three times greater than genes identified as non rhythmic. This difference was significant according to p-value of 1.45e-4 computed using Mann-Whitney-Wilcoxson test. The current methods for detecting rhythmic gene expression are known to only perform optimally for highly expressed genes. Therefore, the genes identified as non rhythmic in this study could indeed be rhythmic although their low expression level have prevented our methods to detect them.
 
-Genes maintaining their rhythmic expression pattern in continuous light regimes (LL conditions) independently from the alternating light and dark periods are considered here bona fide circadian genes. Our experimental design includes two days under continuous light representing free running conditions after the three days under either LD or SD conditions. We use RAIN to identify circadian genes. In order to avoid a bias towards days under LD or days under continuous light we selected for this analysis two days under LD followed by two days under continuous light.  
+## **Identification of bona fide circadian genes and light/dark regulated genes under different photoperiods**
+
+Genes maintaining their rhythmic expression pattern in continuous light regimes (LL conditions) independently from the alternating light and dark periods are considered here bona fide circadian genes. Our experimental design includes two days under continuous light representing free running conditions after the three days under either LD or SD conditions. We use RAIN to identify circadian genes. 
 
 ```{r ld_ll_rain}
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -325,11 +335,6 @@ length(complete.ld.ll.rhythmic.genes)/number.genes
 
 length(setdiff(complete.ld.rhythmic.genes, complete.ld.ll.rhythmic.genes))
 
-
-
-
-
-
 length(intersect(rhythmic.genes.ld.ll.12,rhythmic.genes.ld.12))
 length(intersect(rhythmic.genes.ld.ll,rhythmic.genes.ld.12))
 
@@ -337,37 +342,36 @@ length(rhythmic.genes.ld.ll.12)
 
 length(rhythmic.genes.ld.12)
 
-
 non.rhythmic.ld.ll.genes <- setdiff(complete.ld.rhythmic.genes, complete.ld.ll.rhythmic.genes)
 length(complete.ld.ll.rhythmic.genes)/number.genes
 length(complete.ld.ll.rhythmic.genes)/length(complete.ld.rhythmic.genes)
 
 length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes))
 
-data.ld.ll <- matrix(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
+# data.ld.ll <- matrix(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
+# 
+# sum(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)))
+# 
+# barplot(data.ld.ll, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+#         col=c("blue","lightblue","white"), 
+#         border="black", 
+#         font.axis=2, 
+#         xlab="",ylim=c(0,8000))
 
-sum(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)))
 
-barplot(data.ld.ll, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
-        col=c("blue","lightblue","white"), 
-        border="black", 
-        font.axis=2, 
-        xlab="",ylim=c(0,8000))
+#ll.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,4:5,sep="_")})
+#max.expression.non.rhythmic.ld.ll <- apply(X = gene.expression[non.rhythmic.ld.ll.genes,ll.zt.i],MARGIN = 1,FUN = max)
 
+#length(max.expression.non.rhythmic.ld.ll)
+#sum(max.expression.non.rhythmic.ld.ll < 5)
+#sum(max.expression.non.rhythmic.ld.ll < 10)
+#sum(max.expression.non.rhythmic.ld.ll > 50)
 
-ll.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,4:5,sep="_")})
-max.expression.non.rhythmic.ld.ll <- apply(X = gene.expression[non.rhythmic.ld.ll.genes,ll.zt.i],MARGIN = 1,FUN = max)
+#var.expression.non.rhythmic.ld.ll <- apply(X = gene.expression[non.rhythmic.ld.ll.genes,ll.zt.i],MARGIN = 1,FUN = var)
 
-length(max.expression.non.rhythmic.ld.ll)
-sum(max.expression.non.rhythmic.ld.ll < 5)
-sum(max.expression.non.rhythmic.ld.ll < 10)
-sum(max.expression.non.rhythmic.ld.ll > 50)
-
-var.expression.non.rhythmic.ld.ll <- apply(X = gene.expression[non.rhythmic.ld.ll.genes,ll.zt.i],MARGIN = 1,FUN = var)
-
-sum(var.expression.non.rhythmic.ld.ll < 5)
+#sum(var.expression.non.rhythmic.ld.ll < 5)
 ```
-We found that 45.22% of the genes identified previously as rhythmic under LD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant light (LL). Specifically, we identified 2804 circadian genes under LD conditions comprising 36.57% of the entire genome. The 33397 remaining genes cycling under LD conditions presented either a flat or noisy expression profile under LL conditions.      
+We found that 45.22% of the genes identified previously as rhythmic under LD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant light (LL). Specifically, we identified 2804 circadian genes under LD conditions comprising 36.57% of the entire genome. The 3397 remaining genes cycling under LD conditions presented either a flat or noisy expression profile under LL conditions.      
 
 ```{r ld_dd_rain}
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -413,32 +417,32 @@ length(rhythmic.genes.ld.12)
 
 
 
-data.ld.dd <- matrix(c(length(complete.ld.dd.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.dd.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
+#data.ld.dd <- matrix(c(length(complete.ld.dd.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.dd.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
 
-sum(c(length(complete.ld.dd.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.dd.rhythmic.genes)),length(non.rhythmic.ld.genes)))
+#sum(c(length(complete.ld.dd.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.dd.rhythmic.genes)),length(non.rhythmic.ld.genes)))
 
-barplot(data.ld.dd, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
-        col=c("blue","lightblue","white"), 
-        border="black", 
-        font.axis=2, 
-        xlab="",ylim=c(0,8000))
+#barplot(data.ld.dd, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+#        col=c("blue","lightblue","white"), 
+#        border="black", 
+#        font.axis=2, 
+#        xlab="",ylim=c(0,8000))
 
 rhythmic.ld.ll.dd <- intersect(complete.ld.dd.rhythmic.genes,complete.ld.ll.rhythmic.genes)
 length(rhythmic.ld.ll.dd)
 
-rhythmic.ld.ll <- setdiff(complete.ld.ll.rhythmic.genes,complete.ld.dd.rhythmic.genes)
-length(rhythmic.ld.ll)
+#rhythmic.ld.ll <- setdiff(complete.ld.ll.rhythmic.genes,complete.ld.dd.rhythmic.genes)
+#length(rhythmic.ld.ll)
 
-rhythmic.ld.dd <- setdiff(complete.ld.dd.rhythmic.genes,complete.ld.ll.rhythmic.genes)
-length(rhythmic.ld.dd)
+#rhythmic.ld.dd <- setdiff(complete.ld.dd.rhythmic.genes,complete.ld.ll.rhythmic.genes)
+#length(rhythmic.ld.dd)
 
-rhythmic.ld <- setdiff(non.rhythmic.ld.dd.genes, complete.ld.ll.rhythmic.genes)
-length(rhythmic.ld)
+#rhythmic.ld <- setdiff(non.rhythmic.ld.dd.genes, complete.ld.ll.rhythmic.genes)
+#length(rhythmic.ld)
 
-length(non.rhythmic.ld.genes)
+#length(non.rhythmic.ld.genes)
 ```
 
-We found that 53.39% of the genes identified previously as rhythmic under LD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 3311 circadian genes under LD conditions comprising 53.39% of the entire genome. The 2890 remaining genes cycling under LD conditions presented either a flat or noisy expression profile under DD conditions.      
+We found that 53.39% of the genes identified previously as rhythmic under LD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 3311 circadian genes under DD conditions comprising 53.39% of the entire genome. The 2890 remaining genes cycling under LD conditions presented either a flat or noisy expression profile under DD conditions.      
 
 ```{r ld_dd_activated_repressed_by_darkness}
 non.rhythmic.ld.dd.mean.expression.cycle <- apply(X = gene.expression[non.rhythmic.ld.dd.genes,ld.zt.i],MARGIN = 1,FUN = mean)
@@ -489,6 +493,16 @@ ld.no.clear.effect.light <- setdiff(non.rhythmic.ld.ll.genes,
                                    c(ld.light.activated,ld.light.repressed))
 length(ld.no.clear.effect.light)
 ```
+
+
+
+
+
+
+
+
+
+
 
 ```{r sd_ll_rain}
 sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
