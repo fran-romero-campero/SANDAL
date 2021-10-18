@@ -296,6 +296,31 @@ i <- i + 1
 
 dev.off()
 
+
+only.ld.ll.no.dd <- setdiff(complete.ld.ll.rhythmic.genes,rhythmic.ld.ll.dd)
+
+i <- 1
+par(mfrow=c(2,2))
+par(mfrow=c(1,2))
+gene.set <- setdiff(rhythmic.ld.ll.dd,rhythmic.sd.ll.dd)
+gene.set <- intersect(rhythmic.genes.sd.12,intersect(rhythmic.genes.sd.ll,rhythmic.genes.sd.dd))
+length(gene.set)
+
+current.gene <- gene.set[i]
+# plot.ld.ll(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+# results.ld.ll[current.gene,]
+# plot.ld.dd(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+# results.ld.dd[current.gene,]
+plot.sd.ll(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+plot.sd.dd(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+i <- i + 1
+
+write.table(x=gene.set,file="sd_2_peaks_ll_dd_1_peak.tsv",quote = F,row.names = F,col.names = F)
+
+dev.off()
+
+
+
 length(complete.ld.dd.rhythmic.genes)
 length(complete.ld.ll.rhythmic.genes)
 
@@ -565,10 +590,15 @@ plot.sd.dd <- function(gene.id, gene.name, gene.expression)
 par(mfrow=c(2,1))
 i <- 1
 print(i)
-current.gene <- sd.dark.repressed[i]
+current.gene <- gene.i#sd.dark.repressed[i]
 plot.sd.ll(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
 plot.sd.dd(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
 i <- i + 1
+
+
+
+
+
 
 
 i <- 1
@@ -1300,7 +1330,7 @@ plot.ld <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, m
   
   expression.step <- floor(range.expression / 5)
   
-  png(filename = paste(paste(c("ld_three_days",gene.name,gene.id),collapse="_"),".png",sep=""),width = 1000)
+#  png(filename = paste(paste(c("ld_three_days",gene.name,gene.id),collapse="_"),".png",sep=""),width = 1000)
   plot(current.gene.expression.ld.ll,type="o",lwd=5,col="blue",axes=F,xlab="",ylab="FPKM",
        ylim=c(min.expression-expression.step,max.expression),
        cex.lab=1.3,main=gene.id,cex.main=2)
@@ -1357,7 +1387,7 @@ plot.ld <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, m
   #                                min.expression-expression.step,
   #                                min.expression-expression.step),lwd=2,border="blue",col="lightblue")
   
-  dev.off()
+ # dev.off()
   return(0)  
   
   
@@ -1459,7 +1489,7 @@ plot.sd <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, m
   
   expression.step <- floor(range.expression / 5)
 
-  png(filename = paste(paste(c("sd_three_days",gene.name,gene.id),collapse="_"),".png",sep=""),width = 1000)
+ # png(filename = paste(paste(c("sd_three_days",gene.name,gene.id),collapse="_"),".png",sep=""),width = 1000)
   plot(current.gene.expression.sd,type="o",lwd=5,col="red",axes=F,xlab="",ylab="FPKM",
        ylim=c(min.expression-expression.step,max.expression),
        cex.lab=1.3,main=gene.id,cex.main=2)
@@ -1496,7 +1526,7 @@ plot.sd <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, m
                                  min.expression-expression.step/2,
                                  min.expression-expression.step,
                                  min.expression-expression.step),lwd=2,border="red",col="red")
-  dev.off()
+#  dev.off()
   
 }
 
@@ -3344,3 +3374,337 @@ plot.ld.ll(gene.id = "ostta20g00470",gene.name = "?",gene.expression = gene.expr
 
 plot.ld.sd(gene.id = "ostta11g02490",gene.name = "WRKY",gene.expression = gene.expression )
 plot.ld.ll(gene.id = "ostta11g02490",gene.name = "WRKY",gene.expression = gene.expression )
+
+
+
+library(circacompare)
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+circacompare.ld.ll <- matrix(nrow=length(complete.ld.ll.rhythmic.genes),ncol=15)
+rownames(circacompare.ld.ll) <- complete.ld.ll.rhythmic.genes
+
+for(i in 1:length(complete.ld.ll.rhythmic.genes))
+{
+  print(i)
+  gene.i <- complete.ld.ll.rhythmic.genes[i]
+  print(gene.i)
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  ll.expression.i <- gene.expression[gene.i,c(paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
+  
+  time.points <- seq(from=0,by=4,length.out = 12)
+  
+  ld.ll.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(ld.expression.i, ll.expression.i),
+                         group=c(rep("ld",12),rep("ll",12)))
+  
+  out.i <- circacompare(x = ld.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  circacompare.ld.ll[i,] <- out.i[[2]][,2]
+}
+
+colnames(circacompare.ld.ll) <- out.i[[2]][,1]
+
+par(lwd=3)
+boxplot(circacompare.ld.ll[,"ld amplitude estimate" ],circacompare.ld.ll[,"ll amplitude estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
+sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0)
+sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0) / length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)
+sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+
+boxplot(circacompare.ld.ll[,"ld mesor estimate" ],circacompare.ld.ll[,"ll mesor estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
+sum(circacompare.ld.ll[,"Mesor difference estimate" ] < 0) /length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"Mesor difference estimate" ] > 0) /length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+
+boxplot(circacompare.ld.ll[,"Phase difference estimate"],outline=F,col=c("lightblue"),cex.axis=2)
+
+sum(circacompare.ld.ll[,] > 0)
+sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)
+
+summary(circacompare.ld.ll[,"Phase difference estimate"])
+
+png(filename = "LD_LL_DD.png",width = 500,height = 500)
+grid.newpage()
+draw.pairwise.venn(area1 = length(complete.ld.ll.rhythmic.genes),
+                   area2 = length(complete.ld.dd.rhythmic.genes),
+                   cross.area = length(intersect(complete.ld.ll.rhythmic.genes,complete.ld.dd.rhythmic.genes)),
+                   lwd = 6,alpha = 0.7,fill = c("lightblue","darkblue"),cex = 3,category = c("LD/LL","LD/DD"),cat.cex = 3,cat.pos = c(-10,10))
+dev.off()
+
+i <- 1                   
+current.gene <- ld.dark.repressed[i]
+plot.ld.dd(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+i <- i + 1
+
+
+i <- 1                   
+current.gene <- ld.light.repressed.dark.activated[i]
+plot.ld.dd(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+plot.ld.ll(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+i <- i + 1
+
+
+## rhythmicity circacompare
+## LD LL
+nrow(gene.expression)
+number.genes
+library(circacompare)
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+genes <- rownames(gene.expression)
+
+circacompare.ld.ll <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.ld.ll) <- genes
+
+i <- 1
+
+time.points.ld <- seq(from=0,by=4,length.out = 18)
+time.points.ll <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  ll.expression.i <- gene.expression[gene.i,c(paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
+  
+  ld.ll.df <- data.frame(time=c(time.points.ld,time.points.ll),
+                         measure=c(ld.expression.i, ll.expression.i),
+                         group=c(rep("ld",18),rep("ll",12)))
+  
+  out.i <- circacompare(x = ld.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.ld.ll[i,] <- out.i[[2]][,2]
+  }
+}
+
+rhythmic.ld <- genes[circacompare.ld.ll[,1] < 0.05]
+rhythmic.ld.ll <- intersect(rhythmic.ld, genes[circacompare.ld.ll[,2] < 0.05])
+length(rhythmic.ld)
+length(rhythmic.ld.ll)
+
+## LD DD
+library(circacompare)
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+genes <- rownames(gene.expression)
+
+circacompare.ld.dd <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.ld.dd) <- genes
+
+i <- 1
+
+time.points.ld <- seq(from=0,by=4,length.out = 18)
+time.points.dd <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  dd.expression.i <- gene.expression[gene.i,c(paste(ld.zt,6,sep="_"),paste(ld.zt,7,sep="_"))]
+  
+  ld.dd.df <- data.frame(time=c(time.points.ld,time.points.dd),
+                         measure=c(ld.expression.i, dd.expression.i),
+                         group=c(rep("ld",18),rep("dd",12)))
+  
+  out.i <- circacompare(x = ld.dd.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.ld.dd[i,] <- out.i[[2]][,2]
+  }
+}
+
+rhythmic.ld <- genes[circacompare.ld.dd[,2] < 0.05]
+rhythmic.ld.dd <- intersect(rhythmic.ld, genes[circacompare.ld.dd[,1] < 0.05])
+length(rhythmic.ld)
+length(rhythmic.ld.dd)
+
+rhythmic.ld.ll.dd <- intersect(rhythmic.ld.ll, rhythmic.ld.dd)
+length(rhythmic.ld.ll.dd)
+
+## SD LL
+nrow(gene.expression)
+number.genes
+library(circacompare)
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+genes <- rownames(gene.expression)
+
+circacompare.sd.ll <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.ld.ll) <- genes
+
+i <- 1
+
+time.points.ld <- seq(from=0,by=4,length.out = 18)
+time.points.ll <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  sd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  ll.expression.i <- gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+  
+  sd.ll.df <- data.frame(time=c(time.points.ld,time.points.ll),
+                         measure=c(sd.expression.i, ll.expression.i),
+                         group=c(rep("ld",18),rep("ll",12)))
+  
+  out.i <- circacompare(x = sd.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.sd.ll[i,] <- out.i[[2]][,2]
+  }
+}
+
+rhythmic.sd <- genes[circacompare.sd.ll[,1] < 0.05]
+rhythmic.sd.ll <- intersect(rhythmic.sd, genes[circacompare.sd.ll[,2] < 0.05])
+length(rhythmic.sd)
+length(rhythmic.sd.ll)
+
+## SD DD
+library(circacompare)
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+genes <- rownames(gene.expression)
+
+circacompare.sd.dd <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.sd.dd) <- genes
+
+i <- 1
+
+time.points.sd <- seq(from=0,by=4,length.out = 18)
+time.points.dd <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  sd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  dd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,6,sep="_"),paste(sd.zt,7,sep="_"))]
+  
+  sd.dd.df <- data.frame(time=c(time.points.sd,time.points.dd),
+                         measure=c(sd.expression.i, dd.expression.i),
+                         group=c(rep("sd",18),rep("dd",12)))
+  
+  out.i <- circacompare(x = sd.dd.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.sd.dd[i,] <- out.i[[2]][,2]
+  }
+}
+
+rhythmic.sd <- genes[circacompare.sd.dd[,2] < 0.05]
+rhythmic.sd.dd <- intersect(rhythmic.sd, genes[circacompare.sd.dd[,1] < 0.05])
+length(rhythmic.sd)
+length(rhythmic.sd.dd)
+
+rhythmic.sd.ll.dd <- intersect(rhythmic.sd.ll, rhythmic.sd.dd)
+length(rhythmic.sd.ll.dd)
+
+rhythmic.sd.ld.ll.dd <- intersect(rhythmic.sd.ll.dd, rhythmic.ld.ll.dd)
+length(rhythmic.sd.ld.ll.dd)
+length(rhythmic.sd.ld.ll.dd)/number.genes
+
+length(intersect(rhythmic.sd.ll,rhythmic.ld.ll))
+
+
+
+## Two peaks become one single peak
+i <- 1
+gene.i <- genes.two.peaks.sd.one.peak.ll.dd[i]
+
+sd.ll.expression.i <- gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),
+                                               paste(sd.zt,5,sep="_"))]
+sd.dd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,6,sep="_"),
+                                               paste(sd.zt,7,sep="_"))]
+
+time.points <- seq(from=0,by=4,length.out = 12)
+
+sd.ll.dd.df <- data.frame(time=c(time.points,time.points),
+                          measure=c(sd.ll.expression.i, sd.dd.expression.i),
+                          group=c(rep("ll",12),rep("dd",12)))
+
+out.i <- circacompare(x = sd.ll.dd.df, col_time = "time", 
+                      col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+
+
+current.gene <- gene.i#sd.dark.repressed[i]
+plot.sd.ll(gene.id = current.gene,gene.name = current.gene, 
+           gene.expression = gene.expression)
+lines(c(out.i$fit$m$fitted()[1:6],
+        out.i$fit$m$fitted()[1:12],
+        out.i$fit$m$fitted()[1:12]),lty=2,lwd=3,col="salmon")
+
+
+plot.sd.dd(gene.id = current.gene,gene.name = current.gene, 
+           gene.expression = gene.expression)
+lines(c(out.i$fit$m$fitted()[13:18],
+        out.i$fit$m$fitted()[13:24],
+        out.i$fit$m$fitted()[13:24]),lty=2,lwd=3,col="brown3")
+
+
+plot.sd(gene.id = current.gene,gene.name = current.gene,gene.expression)
+lines(c(out.i$fit$m$fitted()[1:6],
+        out.i$fit$m$fitted()[1:12]),lty=2,lwd=3,col="salmon")
+lines(c(out.i$fit$m$fitted()[13:18],
+        out.i$fit$m$fitted()[13:24]),lty=2,lwd=3,col="brown3")
+
+ld.ll.expression.i <- gene.expression[gene.i,c(paste(ld.zt,4,sep="_"),
+                                               paste(ld.zt,5,sep="_"))]
+ld.dd.expression.i <- gene.expression[gene.i,c(paste(ld.zt,6,sep="_"),
+                                               paste(ld.zt,7,sep="_"))]
+
+time.points <- seq(from=0,by=4,length.out = 12)
+
+ld.ll.dd.df <- data.frame(time=c(time.points,time.points),
+                          measure=c(ld.ll.expression.i, ld.dd.expression.i),
+                          group=c(rep("ll",12),rep("dd",12)))
+
+out.i <- circacompare(x = ld.ll.dd.df, col_time = "time", 
+                      col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+
+current.gene <- gene.i#sd.dark.repressed[i]
+plot.ld.ll(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+lines(c(out.i$fit$m$fitted()[1:6],
+        out.i$fit$m$fitted()[1:12],
+        out.i$fit$m$fitted()[1:12]),lty=2,lwd=3,col="lightblue")
+
+
+plot.ld.dd(gene.id = current.gene,gene.name = current.gene, gene.expression = gene.expression)
+lines(c(out.i$fit$m$fitted()[13:18],
+        out.i$fit$m$fitted()[13:24],
+        out.i$fit$m$fitted()[13:24]),lty=2,lwd=3,col="blue4")
+
+
+plot.ld(gene.id = current.gene,gene.name = current.gene,gene.expression)
+lines(c(out.i$fit$m$fitted()[1:6],
+        out.i$fit$m$fitted()[1:12]),lty=2,lwd=3,col="lightblue")
+lines(c(out.i$fit$m$fitted()[13:18],
+        out.i$fit$m$fitted()[13:24]),lty=2,lwd=3,col="blue4")
+
+plot(x=1,y=1)
+i <- i + 1
+
+#ostta01g01410
+#ostta01g02230
+#ostta01g02910
+#ostta01g03450
+#ostta01g03910 se ve bien ld
+#ostta03g01980
+#ostta03g02050
+#ostta03g03980
+#ostta03g04470
+#ostta04g00430
+#ostta04g00580
+#ostta04g01910
+i <- 11
