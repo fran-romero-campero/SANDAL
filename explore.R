@@ -3456,8 +3456,6 @@ genes <- rownames(gene.expression)
 circacompare.ld.ll <- matrix(nrow=number.genes,ncol=15)
 rownames(circacompare.ld.ll) <- genes
 
-i <- 1
-
 time.points.ld <- seq(from=0,by=4,length.out = 18)
 time.points.ll <- seq(from=0,by=4,length.out = 12)
 
@@ -3487,15 +3485,8 @@ length(rhythmic.ld)
 length(rhythmic.ld.ll)
 
 ## LD DD
-library(circacompare)
-ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-
-genes <- rownames(gene.expression)
-
 circacompare.ld.dd <- matrix(nrow=number.genes,ncol=15)
 rownames(circacompare.ld.dd) <- genes
-
-i <- 1
 
 time.points.ld <- seq(from=0,by=4,length.out = 18)
 time.points.dd <- seq(from=0,by=4,length.out = 12)
@@ -3529,17 +3520,10 @@ rhythmic.ld.ll.dd <- intersect(rhythmic.ld.ll, rhythmic.ld.dd)
 length(rhythmic.ld.ll.dd)
 
 ## SD LL
-nrow(gene.expression)
-number.genes
-library(circacompare)
 sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-
-genes <- rownames(gene.expression)
 
 circacompare.sd.ll <- matrix(nrow=number.genes,ncol=15)
 rownames(circacompare.ld.ll) <- genes
-
-i <- 1
 
 time.points.ld <- seq(from=0,by=4,length.out = 18)
 time.points.ll <- seq(from=0,by=4,length.out = 12)
@@ -3570,15 +3554,8 @@ length(rhythmic.sd)
 length(rhythmic.sd.ll)
 
 ## SD DD
-library(circacompare)
-sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-
-genes <- rownames(gene.expression)
-
 circacompare.sd.dd <- matrix(nrow=number.genes,ncol=15)
 rownames(circacompare.sd.dd) <- genes
-
-i <- 1
 
 time.points.sd <- seq(from=0,by=4,length.out = 18)
 time.points.dd <- seq(from=0,by=4,length.out = 12)
@@ -3617,12 +3594,19 @@ length(rhythmic.sd.ld.ll.dd)/number.genes
 
 length(intersect(rhythmic.sd.ll,rhythmic.ld.ll))
 
-
+write(x = genes.two.peaks.sd.one.peak.ll.dd,file = "genes_two_peaks_sd_one_peak_ll_dd.txt")
 
 ## Two peaks become one single peak
-i <- 1
+i <- 57
 gene.i <- genes.two.peaks.sd.one.peak.ll.dd[i]
-
+#gene.i <- "ostta04g05380"
+#gene.i <- "ostta01g03910"
+#gene.i <- "ostta04g05380"
+#gene.i <- "ostta05g02930"
+#gene.i <- "ostta05g04830"
+#gene.i <- "ostta08g00330"
+#gene.i <- "ostta09g01760"
+#gene.i <- "ostta17g02120"
 sd.ll.expression.i <- gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),
                                                paste(sd.zt,5,sep="_"))]
 sd.dd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,6,sep="_"),
@@ -3639,12 +3623,19 @@ out.i <- circacompare(x = sd.ll.dd.df, col_time = "time",
 
 
 current.gene <- gene.i#sd.dark.repressed[i]
+#current.gene <- "ostta04g05380"
+#current.gene <- "ostta01g03910"
+#current.gene <- "ostta04g05380"
+#current.gene <- "ostta05g02930"
+#current.gene <- "ostta05g04830"
+#current.gene <- "ostta08g00330"
+#current.gene <- "ostta09g01760"
+#current.gene <- "ostta17g02120"
 plot.sd.ll(gene.id = current.gene,gene.name = current.gene, 
            gene.expression = gene.expression)
 lines(c(out.i$fit$m$fitted()[1:6],
         out.i$fit$m$fitted()[1:12],
         out.i$fit$m$fitted()[1:12]),lty=2,lwd=3,col="salmon")
-
 
 plot.sd.dd(gene.id = current.gene,gene.name = current.gene, 
            gene.expression = gene.expression)
@@ -3707,4 +3698,295 @@ i <- i + 1
 #ostta04g00430
 #ostta04g00580
 #ostta04g01910
+#ostta04g02530
+#ostta04g02640
+#ostta04g02740
+#ostta04g03390
+#ostta04g04000
+#ostta04g03730
+#ostta04g04350
+#ostta04g04900
+#ostta04g05380 -----------
+#ostta05g01610
+#ostta05g01730
+#ostta05g02930 ---------
+#ostta05g03730
+#ostta05g04830 ---------
+#ostta06g01570
+#ostta07g00740
+#ostta07g02570
+#ostta07g04510
+#ostta08g00330 ---------- PSI2 phytochrome signalling 2
+#ostta09g01760 --
+#ostta10g01980
+#ostta10g03130
+#ostta10g03480
+#ostta12g01690
+#ostta14g01350
+#ostta14g01470
+#ostta15g00340
+#ostta17g02120 --------
+
+two.peaks.genes <- read.table(file = "two_peaks.txt",header = F,as.is = T)[[1]]
+
+subset(gene.annotation, geneID %in% two.peaks.genes)
+
+ostta2atha <- read.table(file = "annotation/ostta2atha.tsv",header = F)
+
+write(x = subset(ostta2atha, V1 %in% two.peaks.genes)$V2,file = "atha.txt")
+
+
 i <- 11
+
+which(genes.two.peaks.sd.one.peak.ll.dd == "ostta05g01730")
+
+
+## Dynamic change from LD to SD
+wave <- function(k, alpha, phi, x)
+{
+  res <- (k  + alpha * cos((2*pi/24) * (x - phi))) 
+  res[res < 0] <- 0
+  return(res)
+}
+
+gene.id <- "ostta08g00710"
+gene.id <- "ostta13g02440"
+gene.id <- "ostta10g00920"
+
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+
+
+max.expr <- ceiling(max(c(current.gene.expression.ld, current.gene.expression.sd)))
+min.expr <- floor(min(c(current.gene.expression.ld, current.gene.expression.sd)))
+range.expr <- max.expr - min.expr
+
+width.rectangule <- floor(range.expr / 10)
+
+time.points <- seq(from=0,by=4,length.out = 18)
+
+ld.sd.df <- data.frame(time=c(time.points,time.points),
+                        measure=c(current.gene.expression.ld, 
+                                  current.gene.expression.sd),
+                        group=c(rep("ld",18),rep("sd",18)))
+
+out.i <- circacompare(x = ld.sd.df, col_time = "time", 
+                      col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+
+circa.values <- out.i$summary$value
+names(circa.values) <- out.i$summary$parameter
+
+mesor.ld <- circa.values["ld mesor estimate"]
+mesor.sd <- circa.values["sd mesor estimate"]
+
+amplitude.ld <- circa.values["ld amplitude estimate"]
+amplitude.sd <- circa.values["sd amplitude estimate"]
+  
+phase.ld <- circa.values["ld peak time hours"]
+phase.sd <- circa.values["sd peak time hours"]
+
+transitions.sd.ld <- matrix(nrow = 48,ncol=18)
+mesors <- seq(from=mesor.sd,to=mesor.ld,length.out = 48)
+amplitudes <- seq(from=amplitude.sd,to=amplitude.ld,length.out = 48)
+
+if(phase.sd <= phase.ld)
+{
+  phases <- seq(from=phase.sd,to=phase.ld,length.out = 48)
+} else
+{
+  until.dawn <- 24 - phase.sd
+  
+  phases <- seq(from=0,to=phase.ld+until.dawn,length.out = 48)-until.dawn
+  phases[phases < 0] <- phases[phases < 0] + 24
+}
+
+for(i in 1:48)
+{
+  transitions.sd.ld[i,] <- wave(k = mesors[i], alpha = amplitudes[i], 
+                                phi = phases[i],x = time.points)   
+}
+
+months <- c("January", "February", "March", "April","May", "June", "July", 
+            "August", "September", "October", "November", "December")
+
+months <- rep(months,each=8)
+colors <- colorRampPalette(c("red","blue"))(48)
+dusk <- seq(from=8,to=16,length.out = 48)
+k <- 1
+for(j in 1:3)
+{
+  for(i in 1:48)
+  {
+    plot(time.points,current.gene.expression.ld,type="o",col="blue",lwd=0.25,pch=19,cex=0.5,
+         main=paste(c(months[k], " (Day ",floor(dusk[i]), " hours : Night ",
+                      24-floor(dusk[i]), " hours)"),collapse=""),
+         ylim=c(min.expr - 2 * width.rectangule,max.expr),axes=F,xlab="",ylab="")
+    lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
+    
+    for(l in 0:2)
+    {
+      polygon(x = c(24*l, 24*l+dusk[i], 24*l+dusk[i], 24*l),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i])
+      polygon(x = c(24*l+dusk[i],24*(l+1),24*(l+1),24*l+dusk[i]),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i],col=colors[i])
+    }
+    
+    lines(time.points,transitions.sd.ld[i,],type="l",col=colors[i],lwd=2)
+    k <- k + 1
+    Sys.sleep(0.25)
+    print(i)
+  }
+  
+  for(i in 48:1)
+  {
+    # plot(time.points,current.gene.expression.ld,type="o",col="blue",lwd=0.25,pch=19,cex=0.5,
+    #      main=months[k],ylim=c(min.expr - 2 * width.rectangule,max.expr))
+    # lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
+    
+    plot(time.points,current.gene.expression.ld,type="o",col="blue",lwd=0.25,pch=19,cex=0.5,
+         main=paste(c(months[k], " (Day ",floor(dusk[i]), " hours : Night ",
+                      24-floor(dusk[i]), " hours)"),collapse=""),
+         ylim=c(min.expr - 2 * width.rectangule,max.expr),axes=F,xlab="",ylab="")
+    lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
+    
+    
+    for(l in 0:2)
+    {
+      polygon(x = c(24*l, 24*l+dusk[i], 24*l+dusk[i], 24*l),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i])
+      polygon(x = c(24*l+dusk[i],24*(l+1),24*(l+1),24*l+dusk[i]),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i],col=colors[i])
+    }
+    
+    lines(time.points,transitions.sd.ld[i,],type="l",col=colors[i],lwd=2)
+    k <- k + 1
+    Sys.sleep(0.25)
+    print(i)
+  }
+  k <- 1
+}
+
+
+
+plot.ld.nd.sd <- function(gene.id, gene.name, ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=T,scale=T)
+{
+  if(nd)
+  {
+    scale <- T
+  }
+  
+  current.gene.expression.ld <- 0
+  current.gene.expression.nd <- 0
+  current.gene.expression.sd <- 0
+  
+  if(ld)
+  {
+    ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+    current.gene.expression.ld <- ld.gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+    if(scale)
+    {
+      current.gene.expression.ld <- scale(as.numeric(current.gene.expression.ld))[,1]
+    } 
+  }
+  
+  if(sd)
+  {
+    sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+    current.gene.expression.sd <-        sd.gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+    if(scale)
+    {
+      current.gene.expression.sd <- scale(as.numeric(current.gene.expression.sd))[,1]
+    }
+  }
+  
+  if(nd)
+  {
+    nd.zt <- paste0("ZT",seq(from=0,to=21,by=3))
+    current.gene.expression.nd <- scale(nd.gene.expression[gene.id,c(paste(nd.zt,1,sep="_"),paste(nd.zt,2,sep="_"),paste(nd.zt,3,sep="_"))])[,1]
+  }
+  
+  max.expr <- max(c(current.gene.expression.ld, current.gene.expression.nd, current.gene.expression.sd))
+  min.expr <- min(c(current.gene.expression.ld, current.gene.expression.nd, current.gene.expression.sd))
+  
+  plot(x = -10,y= -10,axes=F,xlab="",ylab="",
+       ylim=c(min.expr-2, max.expr),xlim=c(0,72),
+       main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
+  
+  if(!scale)
+  {
+    axis(side=2,lwd=3)
+  }
+  
+  if(ld)
+  {
+    lines(x = seq(from=0,by=4,to=68),current.gene.expression.ld,type="o",lwd=3,col="blue")
+  }
+  
+  if(sd)
+  {
+    lines(x = seq(from=0,by=4,to=68),current.gene.expression.sd,type="o",lwd=3,col="red")
+  }
+  
+  if(nd)
+  {
+    lines(x = seq(from=0,by=3,to=69),current.gene.expression.nd,type="o",lwd=3,col="black")
+  }
+  
+  for(i in 0:2)
+  {
+    current.line <- 0.5
+    
+    if(ld)
+    {
+      polygon(x = c(24*i, 24*i+16, 24*i+16, 24*i),
+              y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+              lwd=2,border="blue")
+      polygon(x = c(24*i+16,24*(i+1),24*(i+1),24*i+16),
+              y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+              lwd=2,border="blue",col="blue")
+      current.line <- current.line + 0.5
+    }
+    
+    if(nd)
+    {
+      polygon(x = c(24*i, 24*i+12, 24*i+12, 24*i),
+              y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+              lwd=2,border="black")
+      polygon(x = c(24*i+12,24*(i+1),24*(i+1),24*i+12),
+              y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+              lwd=2,border="black",col="black")
+      current.line <- current.line + 0.5
+    }
+    
+    if(sd)
+    {
+      polygon(x = c(24*i, 24*i+8, 24*i+8, 24*i),
+              y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+              lwd=2,border="red")
+      polygon(x = c(24*i+8,24*(i+1),24*(i+1),24*i+8),
+              y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
+              lwd=2,border="red",col="red")
+    }
+  }
+  
+  return(0)  
+}
+
+plot.ld.nd.sd(gene.id = "ostta01g02580",gene.name = "MCM6", 
+              ld.gene.expression,nd.gene.expression,sd.gene.expression,
+              ld=T,sd=T,nd=T,scale=T)
+
+gene.id <- "ostta10g00920"
+
+

@@ -1667,3 +1667,197 @@ plot.ld.nd.sd(gene.id = "ostta01g05650",gene.name = "ATG8", ld.gene.expression,n
 
 
 ```
+
+
+
+```{r circa_rythmicity_analysis}
+## rhythmicity circacompare
+## LD LL
+nrow(gene.expression)
+number.genes
+library(circacompare)
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+genes <- rownames(gene.expression)
+
+circacompare.ld.ll <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.ld.ll) <- genes
+
+time.points.ld <- seq(from=0,by=4,length.out = 18)
+time.points.ll <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  ll.expression.i <- gene.expression[gene.i,c(paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
+  
+  ld.ll.df <- data.frame(time=c(time.points.ld,time.points.ll),
+                         measure=c(ld.expression.i, ll.expression.i),
+                         group=c(rep("ld",18),rep("ll",12)))
+  
+  out.i <- circacompare(x = ld.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.ld.ll[i,] <- out.i[[2]][,2]
+  }
+}
+
+circa.rhythmic.ld <- genes[circacompare.ld.ll[,1] < 0.05]
+circa.rhythmic.ld.ll <- intersect(rhythmic.ld, genes[circacompare.ld.ll[,2] < 0.05])
+length(circa.rhythmic.ld)
+length(circa.rhythmic.ld.ll)
+
+## LD DD
+circacompare.ld.dd <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.ld.dd) <- genes
+
+time.points.ld <- seq(from=0,by=4,length.out = 18)
+time.points.dd <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  dd.expression.i <- gene.expression[gene.i,c(paste(ld.zt,6,sep="_"),paste(ld.zt,7,sep="_"))]
+  
+  ld.dd.df <- data.frame(time=c(time.points.ld,time.points.dd),
+                         measure=c(ld.expression.i, dd.expression.i),
+                         group=c(rep("ld",18),rep("dd",12)))
+  
+  out.i <- circacompare(x = ld.dd.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.ld.dd[i,] <- out.i[[2]][,2]
+  }
+}
+
+circa.rhythmic.ld <- genes[circacompare.ld.dd[,2] < 0.05]
+circa.rhythmic.ld.dd <- intersect(circa.rhythmic.ld, genes[circacompare.ld.dd[,1] < 0.05])
+length(circa.rhythmic.ld)
+length(circa.rhythmic.ld.dd)
+
+circa.rhythmic.ld.ll.dd <- intersect(circa.rhythmic.ld.ll, circa.rhythmic.ld.dd)
+length(circa.rhythmic.ld.ll.dd)
+write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.ld.ll.dd),file="circa_gene_sets/circa_LD_LL_DD_rhythmic_genes.tsv",row.names = F)
+
+circa.rhythmic.only.ll.or.dd <- setdiff(unique(c(circa.rhythmic.ld.dd,circa.rhythmic.ld.ll)),circa.rhythmic.ld.ll.dd)
+length(circa.rhythmic.only.ll.or.dd)
+length(circa.rhythmic.only.ll.or.dd) / number.genes
+
+write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.only.ll.or.dd),file="circa_gene_sets/circa_LD_and_LL_or_DD_rhythmic_genes.tsv",row.names = F)
+
+circa.ld.rhythmic.only.ll <- setdiff(circa.rhythmic.ld.ll,circa.rhythmic.ld.ll.dd)
+length(circa.ld.rhythmic.only.ll)
+write.table(x =  subset(gene.annotation, geneID %in% circa.ld.rhythmic.only.ll), file="circa_gene_sets/circa_LD_and_LL_rhythmic_genes.tsv",row.names = F)
+
+circa.ld.rhythmic.only.dd <- setdiff(circa.rhythmic.ld.dd,circa.rhythmic.ld.ll.dd)
+length(circa.ld.rhythmic.only.dd)
+write.table(x = subset(gene.annotation, geneID %in% circa.ld.rhythmic.only.dd), file="circa_gene_sets/circa_LD_and_DD_rhythmic_genes.tsv",row.names = F)
+
+
+## SD LL
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+circacompare.sd.ll <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.ld.ll) <- genes
+
+time.points.ld <- seq(from=0,by=4,length.out = 18)
+time.points.ll <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  sd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  ll.expression.i <- gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+  
+  sd.ll.df <- data.frame(time=c(time.points.ld,time.points.ll),
+                         measure=c(sd.expression.i, ll.expression.i),
+                         group=c(rep("ld",18),rep("ll",12)))
+  
+  out.i <- circacompare(x = sd.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.sd.ll[i,] <- out.i[[2]][,2]
+  }
+}
+
+circa.rhythmic.sd <- genes[circacompare.sd.ll[,1] < 0.05]
+circa.rhythmic.sd.ll <- intersect(rhythmic.sd, genes[circacompare.sd.ll[,2] < 0.05])
+length(circa.rhythmic.sd)
+length(circa.rhythmic.sd.ll)
+
+## SD DD
+circacompare.sd.dd <- matrix(nrow=number.genes,ncol=15)
+rownames(circacompare.sd.dd) <- genes
+
+time.points.sd <- seq(from=0,by=4,length.out = 18)
+time.points.dd <- seq(from=0,by=4,length.out = 12)
+
+for(i in 1:length(genes))
+{
+  print(i)
+  gene.i <- genes[i]
+  
+  sd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  dd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,6,sep="_"),paste(sd.zt,7,sep="_"))]
+  
+  sd.dd.df <- data.frame(time=c(time.points.sd,time.points.dd),
+                         measure=c(sd.expression.i, dd.expression.i),
+                         group=c(rep("sd",18),rep("dd",12)))
+  
+  out.i <- circacompare(x = sd.dd.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.sd.dd[i,] <- out.i[[2]][,2]
+  }
+}
+
+circa.rhythmic.sd <- genes[circacompare.sd.dd[,2] < 0.05]
+circa.rhythmic.sd.dd <- intersect(circa.rhythmic.sd, genes[circacompare.sd.dd[,1] < 0.05])
+length(circa.rhythmic.sd)
+length(circa.rhythmic.sd.dd)
+
+circa.rhythmic.sd.ll.dd <- intersect(circa.rhythmic.sd.ll, circa.rhythmic.sd.dd)
+length(circa.rhythmic.sd.ll.dd)
+
+rhythmic.sd.ld.ll.dd <- intersect(rhythmic.sd.ll.dd, rhythmic.ld.ll.dd)
+length(rhythmic.sd.ld.ll.dd)
+length(rhythmic.sd.ld.ll.dd)/number.genes
+
+circa.rhythmic.ld.ll.dd <- intersect(circa.rhythmic.ld.ll, circa.rhythmic.ld.dd)
+length(circa.rhythmic.ld.ll.dd)
+write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.ld.ll.dd),file="circa_gene_sets/circa_LD_LL_DD_rhythmic_genes.tsv",row.names = F)
+
+circa.rhythmic.only.ll.or.dd <- setdiff(unique(c(circa.rhythmic.ld.dd,circa.rhythmic.ld.ll)),circa.rhythmic.ld.ll.dd)
+length(circa.rhythmic.only.ll.or.dd)
+length(circa.rhythmic.only.ll.or.dd) / number.genes
+
+write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.only.ll.or.dd),file="circa_gene_sets/circa_LD_and_LL_or_DD_rhythmic_genes.tsv",row.names = F)
+
+circa.ld.rhythmic.only.ll <- setdiff(circa.rhythmic.ld.ll,circa.rhythmic.ld.ll.dd)
+length(circa.ld.rhythmic.only.ll)
+write.table(x =  subset(gene.annotation, geneID %in% circa.ld.rhythmic.only.ll), file="circa_gene_sets/circa_LD_and_LL_rhythmic_genes.tsv",row.names = F)
+
+circa.ld.rhythmic.only.dd <- setdiff(circa.rhythmic.ld.dd,circa.rhythmic.ld.ll.dd)
+length(circa.ld.rhythmic.only.dd)
+write.table(x = subset(gene.annotation, geneID %in% circa.ld.rhythmic.only.dd), file="circa_gene_sets/circa_LD_and_DD_rhythmic_genes.tsv",row.names = F)
+
+
+
+
+
+write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.sd.ll.dd),file="circa_gene_sets/circa_SD_LL_DD_rhythmic_genes.tsv",row.names = F)
+
+
+```
