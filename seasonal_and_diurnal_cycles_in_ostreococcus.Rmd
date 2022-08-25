@@ -2,7 +2,7 @@
 title: Multiomic responses to seasonal and diurnal cycles in
   Ostreococcus
 author: "Francisco J. Romero-Campero & Ana B. Romero-Losada"
-date: "August 11, 2020"
+date: "Autumn, 2022"
 output:
   pdf_document: default
   html_document:
@@ -31,7 +31,8 @@ day, samples were again collected every four hours for two days under LL and DD.
 The matrix containing the gene expression data analyzed in this study can be
 downloaded from [**this link from the GEO data base**](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE155535&format=file&file=GSE155535%5Fgene%5Fexpression%2Etsv%2Egz). Make sure to uncompress this file and rename it to **gene_expression.tsv**. 
 First, the gene expression data is loaded and converted into a numeric matrix 
-setting the rownames to gene ids. We also load gene annotation.
+setting the rownames to gene ids. We also load gene annotation and potential
+Arabidopsis orthologs to Ostreococcus genes. 
 
 ```{r load_data}
 gene.expression <- read.table(file ="gene_expression.tsv",sep="\t",header=T,as.is=T)
@@ -45,6 +46,8 @@ head(gene.expression[,1:6])
 
 gene.annotation <- read.table(file="annotation/ostreococcus_tauri_annotation.tsv",header = T, as.is=T,sep="\t",quote = "")
 head(gene.annotation)
+ostta2atha <- read.table(file = "annotation/ostta2atha.tsv",header=T,as.is=T,sep="\t",quote="")
+head(ostta2atha)
 ```
 
 The current version of *Ostreococcus tauri* genome available from [**here**](https://mycocosm.jgi.doe.gov/Ostta4221_3/Ostta4221_3.home.html) 
@@ -256,7 +259,11 @@ length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12))/number.genes
 results.ld.8 <- rain(t(ld.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
 sum(results.ld.8$pVal < 0.05)/number.genes
 
+write.table(x = subset(gene.annotation, geneID %in% complete.ld.rhythmic.genes),file="gene_sets/LD_rhythmic_genes.tsv",row.names = F)
+
 write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.ld.genes),file="gene_sets/LD_non_rhythmic_genes.tsv",row.names = F)
+
+write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12)),file="gene_sets/LD_rhythmic_genes_1_peak.tsv",row.names = F)
 
 write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.ld.12),file="gene_sets/LD_rhythmic_genes_2_peaks.tsv",row.names = F)
 ```
@@ -296,7 +303,11 @@ length(setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12))/number.genes
 results.nd.8 <- rain(t(nd.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
 sum(results.nd.8$pVal < 0.05)/number.genes
 
+write.table(x = subset(gene.annotation, geneID %in% complete.nd.rhythmic.genes),file="gene_sets/ND_rhythmic_genes.tsv",row.names = F)
+
 write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.nd.genes),file="gene_sets/ND_non_rhythmic_genes.tsv",row.names = F)
+
+write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12)),file="gene_sets/ND_rhythmic_genes_1_peak.tsv",row.names = F)
 
 write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.nd.12),file="gene_sets/ND_rhythmic_genes_2_peaks.tsv",row.names = F)
 ```
@@ -335,7 +346,11 @@ results.sd.8 <- rain(t(sd.gene.expression), deltat=4, period=8, verbose=FALSE, n
 sum(results.sd.8$pVal < 0.05)
 sum(results.sd.8$pVal < 0.05)/number.genes
 
+write.table(x = subset(gene.annotation, geneID %in% complete.sd.rhythmic.genes),file="gene_sets/SD_rhythmic_genes.tsv",row.names = F)
+
 write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.sd.genes),file="gene_sets/SD_non_rhythmic_genes.tsv",row.names = F)
+
+write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.sd,rhythmic.genes.sd.12)),file="gene_sets/SD_rhythmic_genes_1_peak.tsv",row.names = F)
 
 write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.sd.12),file="gene_sets/SD_rhythmic_genes_2_peaks.tsv",row.names = F)
 ```
@@ -412,8 +427,30 @@ and non rhythmic genes we compared their expression level under LD and SD condit
 We restrict our analysis to these two conditions since here expression levels are 
 estimated using the same technology namely RNA-seq whereas for ND microarrays were used. 
 
-```{r non_rhythmic_expression}
+```{r ld_sd_rhythmic_genes}
+library(VennDiagram)
+grid.newpage()
+draw.pairwise.venn(area1 = length(complete.ld.rhythmic.genes),area2 = length(complete.sd.rhythmic.genes),cross.area =  length(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes)),lwd = 3,category = c("LD","SD"),euler.d = T,col = c("blue","red"),fill = c(" blue","red"),alpha = 0.3,cex = 2,cat.cex = 2)
 
+length(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes))
+
+length(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes))/number.genes
+
+length(setdiff(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes))
+length(setdiff(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes))/length(complete.ld.rhythmic.genes)
+
+length(setdiff(complete.sd.rhythmic.genes,complete.ld.rhythmic.genes))
+length(setdiff(complete.sd.rhythmic.genes,complete.ld.rhythmic.genes))/length(complete.sd.rhythmic.genes)
+```
+When comparing rhythmically expressed genes under LD and SD conditions we found 
+that 5271 genes comprising 68.75% of the genome exhibit rhythmic expression patterns
+under both different seasonal photoperiods. Whereas only a few hundreds genes only 
+presented a cycling expression pattern under a specific photoperiod. In order to further 
+explore the rhythmicity and determine bona fide circadina genes free running 
+conditions consisting of constant light (LL) and constant darkness (DD) are next
+analysed.
+
+```{r non_rhythmic_expression}
 rhythmic.max.expression <- apply(X = gene.expression[intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes),c(sd.zt.i,ld.zt.i)],MARGIN = 1,FUN = max)
 non.rhythmic.max.expression <- apply(X = gene.expression[intersect(non.rhythmic.ld.genes,non.rhythmic.sd.genes),c(sd.zt.i,ld.zt.i)], MARGIN = 1,FUN = max)
 boxplot(rhythmic.max.expression, non.rhythmic.max.expression, outline=F,col=colors()[c(89,12)],names=c("Rhythmic","Non rhythmic"),ylab="FPKM",cex.lab=1.5,las=2)
@@ -484,6 +521,7 @@ length(complete.ld.ll.rhythmic.genes)/length(complete.ld.rhythmic.genes)
 
 length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes))
 
+
 # data.ld.ll <- matrix(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
 # 
 # sum(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)))
@@ -514,7 +552,7 @@ We found that 45.22% of the genes identified previously as rhythmic under LD con
 still presented cycling expression patterns when transferred to free running 
 conditions consisting of constant light (LL). Specifically, we identified 2804 genes 
 comprising 36.57% of the entire genome that maintain rhythmicity under constant 
-light after entraiment in LD conditions. The 3397 remaining genes cycling under 
+light after entrainment in LD conditions. The 3397 remaining genes cycling under 
 LD conditions presented either a flat or noisy expression profile under LL conditions.      
 
 
@@ -556,6 +594,7 @@ sum(circacompare.ld.ll[,"Mesor difference estimate" ] < 0) /length(complete.ld.l
 sum(circacompare.ld.ll[,"Mesor difference estimate" ] > 0) /length(complete.ld.ll.rhythmic.genes)
 sum(circacompare.ld.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
 
+hist(circacompare.ld.ll[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="lightblue",border="blue",main="",lwd=2)
 sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)
 sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)/length(complete.ld.ll.rhythmic.genes)
 sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)
@@ -604,7 +643,7 @@ length(intersect(rhythmic.genes.ld.dd.12,rhythmic.genes.ld.12))
 length(intersect(rhythmic.genes.ld.dd,rhythmic.genes.ld.12))
 
 genes.two.peaks.ld.one.peak.dd <- intersect(rhythmic.genes.ld.dd,rhythmic.genes.ld.12)
-
+length(genes.two.peaks.ld.one.peak.dd)
 length(rhythmic.genes.ld.dd.12)
 length(rhythmic.genes.ld.12)
 
@@ -644,7 +683,6 @@ ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),se
 
 circacompare.ld.dd <- matrix(nrow=length(complete.ld.dd.rhythmic.genes),ncol=15)
 rownames(circacompare.ld.dd) <- complete.ld.dd.rhythmic.genes
-i <- 1
 for(i in 1:length(complete.ld.dd.rhythmic.genes))
 {
   gene.i <- complete.ld.dd.rhythmic.genes[i]
@@ -676,6 +714,7 @@ sum(circacompare.ld.dd[,"Mesor difference estimate" ] < 0) /length(complete.ld.d
 sum(circacompare.ld.dd[,"Mesor difference estimate" ] > 0) /length(complete.ld.dd.rhythmic.genes)
 sum(circacompare.ld.dd[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
 
+hist(-circacompare.ld.dd[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="darkblue",border="blue",main="",lwd=2)
 sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)
 sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)/length(complete.ld.dd.rhythmic.genes)
 sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)
@@ -685,6 +724,8 @@ sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)/length(compl
 Most circadian genes under LD conditions, 79.43%, presented a sharp decrease in amplitude when transferred to DD, being significant in 31.62% of the genes exhibiting rythmicity under DD with p-value < 0.05. In contrast to the case under constant light we observed a decrease in phase under constant darkness. Specifically, 87.32% of the rhythmic genes under DD presented an anticipation in phase that was significant in 34.16% of them. No clear effect was observed over the mesor of gene expression profiles that remained in DD similar to the values in LD. 
 
 ```{r ld_rhytmic_ll_dd}
+length(complete.ld.dd.rhythmic.genes)
+length(complete.ld.ll.rhythmic.genes)
 rhythmic.ld.ll.dd <- intersect(complete.ld.dd.rhythmic.genes,complete.ld.ll.rhythmic.genes)
 length(rhythmic.ld.ll.dd)
 
@@ -711,9 +752,17 @@ write.table(x = ld.rhythmic.only.ll, file="gene_sets/LD_and_LL_rhythmic_genes.ts
 ld.rhythmic.only.dd <- setdiff(complete.ld.dd.rhythmic.genes,rhythmic.ld.ll.dd)
 length(ld.rhythmic.only.dd)
 write.table(x = ld.rhythmic.only.dd, file="gene_sets/LD_and_DD_rhythmic_genes.tsv",row.names = F)
+
+
+length(intersect(non.rhythmic.ld.ll.genes, non.rhythmic.ld.dd.genes))
+non.rhythmic.ld.ll.dd.genes <- intersect(non.rhythmic.ld.ll.genes, non.rhythmic.ld.dd.genes)
+write.table(x = non.rhythmic.ld.ll.dd.genes, file="gene_sets/LD_LL_and_DD_non_rhythmic_genes.tsv",row.names = F)
 ```
 
-Integrating the results from the two free running conditions analysed in this study, namely, constant light and constant dark we identified 1647 genes whose rhythmicity is independent from the alternating light/dark cycles after LD entrainment. In contrast, 2821 genes (36.79%) only maintained its rhythmicity after LD entrainment either under constant light or dark. Specifically, 1664 genes exhibiting only rhythmicity under constant dark and 1157 genes under constant light. These genes need either an light or dark input to maintain their rhythmicity loosing it under the free running conditions excluding the corresponding necessary input. 
+Integrating the results from the two free running conditions analysed in this study, namely, constant light and constant dark we identified 1647 genes whose rhythmicity is independent from the alternating light/dark cycles after LD entrainment. These genes can be referred to as bona fide circadian genes after LD entrainment.
+In contrast, 2821 genes (36.79%) only maintained its rhythmicity after LD entrainment either under constant light or dark. Specifically, 1664 genes exhibit rhythmicity only under constant dark and 1157 genes under constant light. These genes need either a light or dark input to maintain their rhythmicity losing it under the free running conditions excluding the corresponding necessary input. We also identified 1733 genes that lose rhythmicity 
+under both constant light and constant dark. These genes need both a dark and light period to present
+a rhythmic expression pattern.
 
 Next, we analyse the data under winter short day conditions.
 
@@ -744,6 +793,7 @@ length(intersect(rhythmic.genes.sd.ll,rhythmic.genes.sd.12))
 length(intersect(rhythmic.genes.sd.ll,rhythmic.genes.sd.12)) / length(rhythmic.genes.sd.12) #15.09%
 
 genes.two.peaks.sd.one.peak.ll <- intersect(rhythmic.genes.sd.ll,rhythmic.genes.sd.12)
+length(genes.two.peaks.sd.one.peak.ll)
 
 complete.sd.ll.rhythmic.genes <- unique(c(rhythmic.genes.sd.ll,rhythmic.genes.sd.ll.12))
 length(complete.sd.ll.rhythmic.genes)
@@ -824,6 +874,7 @@ length(intersect(rhythmic.genes.sd.dd,rhythmic.genes.sd.12))
 length(intersect(rhythmic.genes.sd.dd,rhythmic.genes.sd.12)) / length(rhythmic.genes.sd.12) #74.39%
 
 genes.two.peaks.sd.one.peak.dd <- intersect(rhythmic.genes.sd.dd,rhythmic.genes.sd.12)
+length(genes.two.peaks.sd.one.peak.dd)
 
 genes.two.peaks.sd.one.peak.ll.dd <- intersect(genes.two.peaks.sd.one.peak.ll,
                                                genes.two.peaks.sd.one.peak.dd)
@@ -872,9 +923,64 @@ write.table(x = sd.rhythmic.only.ll, file="gene_sets/SD_and_LL_rhythmic_genes.ts
 sd.rhythmic.only.dd <- setdiff(complete.sd.dd.rhythmic.genes,rhythmic.sd.ll.dd)
 length(sd.rhythmic.only.dd)
 write.table(x = rhythmic.only.dd, file="gene_sets/SD_and_DD_rhythmic_genes.tsv",row.names = F)
+
+length(intersect(non.rhythmic.sd.ll.genes, non.rhythmic.sd.dd.genes))
+non.rhythmic.sd.ll.dd.genes <- intersect(non.rhythmic.sd.ll.genes, non.rhythmic.sd.dd.genes)
+write.table(x = non.rhythmic.sd.ll.dd.genes, file="gene_sets/SD_LL_and_DD_non_rhythmic_genes.tsv",row.names = F)
+
 ```
 
-Integrating the results from the two free running conditions analysed in this study, namely, constant light and constant dark we identified 1647 genes whose rhythmicity is independent from the alternating light/dark cycles after LD entrainment. In contrast, 2821 genes (36.79%) only maintained its rhythmicity after LD entrainment either under constant light or dark. Specifically, 1664 genes exhibiting only rhythmicity under constant dark and 1157 genes under constant light. These genes need either an light or dark input to maintain their rhythmicity loosing it under the free running conditions excluding the corresponding necessary input.
+Integrating the results from the two free running conditions analysed in this study, namely, constant light and constant dark we identified 1034 genes whose rhythmicity is independent from the alternating light/dark cycles after SD entrainment. These genes can be referred to as bona fide circadian genes after SD entrainment.
+In contrast, 3464 genes (45.17%) only maintained its rhythmicity after SD entrainment either under constant light or dark. Specifically, 2972 genes exhibit rhythmicity only under constant dark and 492 genes under constant light. This
+shows the key role played by dark periods in mainting rhythmicity after SD entrainment. We also identified 1606 genes that lose rhythmicity under both constant light and constant dark. These genes need both a dark and light period to present a rhythmic expression pattern.
+
+In order to explore the effect of the transition to continuous light on rhythmic gene expression patterns we compared three rhythmic characteristics of the expression profiles under LD or SD to the corresponding ones under LL. Specifically we compared amplitude or half of the difference between the peak and trough of the expression profile; mesor or mean expression level around which the expression profile oscillates and phase or time at which the expression profile peaks. This was carried out using the R package circacompare that performs a fitting to the data as cosinusoidal curve with a particular parametrization that is used to test for statistical significant differences between the two circadian patterns under comparison. 
+
+Next we perform the analysis for circadian genes under SD conditions. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
+
+```{r sd_ll_amplitude_mesor_phase}
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+circacompare.sd.ll <- matrix(nrow=length(complete.sd.ll.rhythmic.genes),ncol=15)
+rownames(circacompare.sd.ll) <- complete.sd.ll.rhythmic.genes
+
+for(i in 1:length(complete.sd.ll.rhythmic.genes))
+{
+  gene.i <- complete.sd.ll.rhythmic.genes[i]
+  
+  sd.expression.i <- sd.ll.gene.expression[gene.i,c(paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  ll.expression.i <- sd.ll.gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+  
+  time.points <- seq(from=0,by=4,length.out = 12)
+  
+  sd.ll.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(sd.expression.i, ll.expression.i),
+                         group=c(rep("sd",12),rep("ll",12)))
+  
+  out.i <- circacompare(x = sd.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  circacompare.sd.ll[i,] <- out.i[[2]][,2]
+}
+
+colnames(circacompare.sd.ll) <- out.i[[2]][,1]
+
+par(lwd=3)
+boxplot(circacompare.sd.ll[,"sd amplitude estimate" ],circacompare.sd.ll[,"ll amplitude estimate" ],outline=F,col=c("red","lightsalmon"),names=c("SD","LL"),cex.axis=2)
+sum(circacompare.sd.ll[,"Amplitude difference estimate" ] > 0)
+sum(circacompare.sd.ll[,"Amplitude difference estimate" ] > 0) / length(complete.sd.ll.rhythmic.genes)
+sum(circacompare.sd.ll[,"P-value for amplitude difference" ] < 0.05)
+sum(circacompare.sd.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.sd.ll.rhythmic.genes)
+
+boxplot(circacompare.sd.ll[,"sd mesor estimate" ],circacompare.sd.ll[,"ll mesor estimate" ],outline=F,col=c("red","lightsalmon"),names=c("SD","LL"),cex.axis=2)
+sum(circacompare.sd.ll[,"Mesor difference estimate" ] < 0) /length(complete.sd.ll.rhythmic.genes)
+sum(circacompare.sd.ll[,"Mesor difference estimate" ] > 0) /length(complete.sd.ll.rhythmic.genes)
+sum(circacompare.sd.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.sd.ll.rhythmic.genes)
+
+sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
+```
+
+
+
+
 
 ## **Identification of light/dark regulated genes after LD entrainment**
 
