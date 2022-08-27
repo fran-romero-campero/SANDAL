@@ -668,6 +668,7 @@ write.table(x = ld.rhythmic.only.dd, file="gene_sets/LD_and_DD_rhythmic_genes.ts
 
 length(intersect(non.rhythmic.ld.ll.genes, non.rhythmic.ld.dd.genes))
 non.rhythmic.ld.ll.dd.genes <- intersect(non.rhythmic.ld.ll.genes, non.rhythmic.ld.dd.genes)
+length(non.rhythmic.ld.ll.dd.genes)/number.genes
 write.table(x = non.rhythmic.ld.ll.dd.genes, file="gene_sets/LD_LL_and_DD_non_rhythmic_genes.tsv",row.names = F)
 ```
 
@@ -675,6 +676,24 @@ Integrating the results from the two free running conditions analysed in this st
 In contrast, 2821 genes (36.79%) only maintained its rhythmicity after LD entrainment either under constant light or dark. Specifically, 1664 genes exhibit rhythmicity only under constant dark and 1157 genes under constant light. These genes need either a light or dark input to maintain their rhythmicity losing it under the free running conditions excluding the corresponding necessary input. We also identified 1733 genes that lose rhythmicity 
 under both constant light and constant dark. These genes need both a dark and light period to present
 a rhythmic expression pattern.
+
+```{r barplot_summary_rhythmicity_ld}
+data.ld.ll.dd <- matrix(rev(c(length(non.rhythmic.ld.genes),
+                          length(non.rhythmic.ld.ll.dd.genes),
+                          length(ld.rhythmic.only.ll),
+                          length(ld.rhythmic.only.dd),
+                          length(rhythmic.ld.ll.dd))),nrow=5)
+
+sum(data.ld.ll.dd)
+par(lwd=3)
+barplot(data.ld.ll.dd, lwd=3, names.arg = "",cex.names = 2,cex.axis = 1.5,
+        col=c("blue","darkblue", "lightblue","azure2", "white"),
+        #col=colorRampPalette(c("blue", "white"))(20)[c(1,10,14,17,20)], 
+        border="black", 
+        font.axis=2, 
+        xlab="",ylim=c(0,8000))
+```
+
 
 Next, we analyse the data under winter short day conditions.
 
@@ -845,6 +864,24 @@ write.table(x = non.rhythmic.sd.ll.dd.genes, file="gene_sets/SD_LL_and_DD_non_rh
 Integrating the results from the two free running conditions analysed in this study, namely, constant light and constant dark we identified 1034 genes whose rhythmicity is independent from the alternating light/dark cycles after SD entrainment. These genes can be referred to as bona fide circadian genes after SD entrainment.
 In contrast, 3464 genes (45.17%) only maintained its rhythmicity after SD entrainment either under constant light or dark. Specifically, 2972 genes exhibit rhythmicity only under constant dark and 492 genes under constant light. This
 shows the key role played by dark periods in mainting rhythmicity after SD entrainment. We also identified 1606 genes that lose rhythmicity under both constant light and constant dark. These genes need both a dark and light period to present a rhythmic expression pattern.
+
+```{r barplot_summary_rhythmicity_ld}
+data.sd.ll.dd <- matrix(rev(c(length(non.rhythmic.sd.genes),
+                          length(non.rhythmic.sd.ll.dd.genes),
+                          length(sd.rhythmic.only.ll),
+                          length(sd.rhythmic.only.dd),
+                          length(rhythmic.sd.ll.dd))),nrow=5)
+
+sum(data.sd.ll.dd)
+par(lwd=3)
+barplot(data.sd.ll.dd, lwd=3, names.arg = "",cex.names = 2,cex.axis = 1.5,
+        col=c("red","firebrick4", "salmon","mistyrose", "white"),
+        #col=colorRampPalette(c("blue", "white"))(20)[c(1,10,14,17,20)], 
+        border="black", 
+        font.axis=2, 
+        xlab="",ylim=c(0,8000))
+```
+
 
 In order to explore the effect of the transition to continuous light on rhythmic gene expression patterns we compared three rhythmic characteristics of the expression profiles under LD or SD to the corresponding ones under LL. Specifically we compared amplitude or half of the difference between the peak and trough of the expression profile; mesor or mean expression level around which the expression profile oscillates and phase or time at which the expression profile peaks. This was carried out using the R package circacompare that performs a fitting to the data as cosinusoidal curve with a particular parametrization that is used to test for statistical significant differences between the two circadian patterns under comparison. 
 
