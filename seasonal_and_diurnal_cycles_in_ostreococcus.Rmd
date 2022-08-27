@@ -222,7 +222,10 @@ fviz_pca_ind(res.pca.nd, col.ind = c("ZT00", "ZT00", "ZT00", "ZT03", "ZT03", "ZT
 
 ```
 
-## **Identification of genes exhibiting rhythmic expression patterns under different 
+## **Analysis of the rhythmicity in the transcriptome of Ostreococcus tauri under
+different photoperids**
+
+### **Identification of genes exhibiting rhythmic expression patterns under different 
 photoperiods**
 
 Using the bioconductor library **RAIN (Rhythmicity Analysis Incorporating Nonparametric 
@@ -467,7 +470,7 @@ expressed genes. Therefore, the genes identified as non rhythmic in this study a
 either never expressed or could indeed be rhythmic although their low expression 
 level have prevented our methods from detecting them.
 
-## **Identification of bona fide circadian genes and light/dark regulated genes under different photoperiods**
+### **Identification of bona fide circadian genes under different photoperiods**
 
 Genes maintaining their rhythmic expression pattern under free running conditions
 consisting of constant light regimes (LL conditions) and constant dark regimes (DD
@@ -556,52 +559,6 @@ light after entrainment in LD conditions. The 3397 remaining genes cycling under
 LD conditions presented either a flat or noisy expression profile under LL conditions.      
 
 
-```{r ld_ll_amplitude_mesor_phase}
-library(circacompare)
-ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-
-circacompare.ld.ll <- matrix(nrow=length(complete.ld.ll.rhythmic.genes),ncol=15)
-rownames(circacompare.ld.ll) <- complete.ld.ll.rhythmic.genes
-
-for(i in 1:length(complete.ld.ll.rhythmic.genes))
-{
-  gene.i <- complete.ld.ll.rhythmic.genes[i]
-  
-  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
-  ll.expression.i <- gene.expression[gene.i,c(paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
-  
-  time.points <- seq(from=0,by=4,length.out = 12)
-  
-  ld.ll.df <- data.frame(time=c(time.points,time.points),
-                         measure=c(ld.expression.i, ll.expression.i),
-                         group=c(rep("ld",12),rep("ll",12)))
-  
-  out.i <- circacompare(x = ld.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
-  circacompare.ld.ll[i,] <- out.i[[2]][,2]
- }
-
-colnames(circacompare.ld.ll) <- out.i[[2]][,1]
-
-par(lwd=3)
-boxplot(circacompare.ld.ll[,"ld amplitude estimate" ],circacompare.ld.ll[,"ll amplitude estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
-sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0)
-sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0) / length(complete.ld.ll.rhythmic.genes)
-sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)
-sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
-
-boxplot(circacompare.ld.ll[,"ld mesor estimate" ],circacompare.ld.ll[,"ll mesor estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
-sum(circacompare.ld.ll[,"Mesor difference estimate" ] < 0) /length(complete.ld.ll.rhythmic.genes)
-sum(circacompare.ld.ll[,"Mesor difference estimate" ] > 0) /length(complete.ld.ll.rhythmic.genes)
-sum(circacompare.ld.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
-
-hist(circacompare.ld.ll[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="lightblue",border="blue",main="",lwd=2)
-sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)
-sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)/length(complete.ld.ll.rhythmic.genes)
-sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)
-sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
-```
-
-Most circadian genes under LD conditions, 97.68%, presented a sharp decrease in amplitude when transferred to LL, being significant in more than half of them with p-value < 0.05. We also observed an increase in phase in 76.28% of the genes being significant in 14.98% of the genes exhibiting rhythmicity under constant light. Nevertheless, no clear effect was observed over the mesor that remained in LL similar to the values in LD. 
 
 
 ```{r ld_dd_rain}
@@ -677,51 +634,6 @@ write.table(x = subset(gene.annotation, geneID %in% complete.ld.dd.rhythmic.gene
 
 We found that 53.39% of the genes identified previously as rhythmic under LD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 3311 genes under DD conditions comprising 53.39% of the entire genome that maintain rhythmicity under constant darkness after entrainment in LD conditions. The 2890 remaining genes cycling under LD conditions presented either a flat or noisy expression profile under DD conditions.      
 
-```{r ld_dd_amplitude_mesor_phase}
-library(circacompare)
-ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-
-circacompare.ld.dd <- matrix(nrow=length(complete.ld.dd.rhythmic.genes),ncol=15)
-rownames(circacompare.ld.dd) <- complete.ld.dd.rhythmic.genes
-for(i in 1:length(complete.ld.dd.rhythmic.genes))
-{
-  gene.i <- complete.ld.dd.rhythmic.genes[i]
-  
-  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
-  dd.expression.i <- gene.expression[gene.i,c(paste(ld.zt,6,sep="_"),paste(ld.zt,7,sep="_"))]
-  
-  time.points <- seq(from=0,by=4,length.out = 12)
-  
-  ld.dd.df <- data.frame(time=c(time.points,time.points),
-                         measure=c(ld.expression.i, dd.expression.i),
-                         group=c(rep("ld",12),rep("dd",12)))
-  
-  out.i <- circacompare(x = ld.dd.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
-  circacompare.ld.dd[i,] <- out.i[[2]][,2]
- }
-
-colnames(circacompare.ld.dd) <- out.i[[2]][,1]
-
-par(lwd=3)
-boxplot(circacompare.ld.dd[,"ld amplitude estimate" ],circacompare.ld.dd[,"dd amplitude estimate" ],outline=F,col=c("blue","darkblue"),names=c("LD","DD"),cex.axis=2)
-sum(circacompare.ld.dd[,"Amplitude difference estimate" ] > 0)
-sum(circacompare.ld.dd[,"Amplitude difference estimate" ] > 0) / length(complete.ld.dd.rhythmic.genes)
-sum(circacompare.ld.dd[,"P-value for amplitude difference" ] < 0.05)
-sum(circacompare.ld.dd[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.dd.rhythmic.genes)
-
-boxplot(circacompare.ld.dd[,"ld mesor estimate" ],circacompare.ld.dd[,"dd mesor estimate" ],outline=F,col=c("blue","darkblue"),names=c("LD","DD"),cex.axis=2)
-sum(circacompare.ld.dd[,"Mesor difference estimate" ] < 0) /length(complete.ld.dd.rhythmic.genes)
-sum(circacompare.ld.dd[,"Mesor difference estimate" ] > 0) /length(complete.ld.dd.rhythmic.genes)
-sum(circacompare.ld.dd[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
-
-hist(-circacompare.ld.dd[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="darkblue",border="blue",main="",lwd=2)
-sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)
-sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)/length(complete.ld.dd.rhythmic.genes)
-sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)
-sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)/length(complete.ld.dd.rhythmic.genes)
-```
-
-Most circadian genes under LD conditions, 79.43%, presented a sharp decrease in amplitude when transferred to DD, being significant in 31.62% of the genes exhibiting rythmicity under DD with p-value < 0.05. In contrast to the case under constant light we observed a decrease in phase under constant darkness. Specifically, 87.32% of the rhythmic genes under DD presented an anticipation in phase that was significant in 34.16% of them. No clear effect was observed over the mesor of gene expression profiles that remained in DD similar to the values in LD. 
 
 ```{r ld_rhytmic_ll_dd}
 length(complete.ld.dd.rhythmic.genes)
@@ -906,7 +818,7 @@ grid.newpage()
 draw.pairwise.venn(area1 = length(complete.sd.ll.rhythmic.genes),
                    area2 = length(complete.sd.dd.rhythmic.genes),
                    cross.area = length(intersect(complete.sd.ll.rhythmic.genes,complete.sd.dd.rhythmic.genes)),
-                   lwd = 6,alpha = 0.7,fill = c("lightred","red"),cex = 3,category = c("SD/LL","SD/DD"),cat.cex = 3,cat.pos = c(-10,10))
+                   lwd = 6,alpha = 0.7,fill = c("salmon","red"),cex = 3,category = c("SD/LL","SD/DD"),cat.cex = 3,cat.pos = c(-10,10))
 
 write.table(x = subset(gene.annotation, geneID %in% rhythmic.sd.ll.dd),file="gene_sets/SD_LL_DD_rhythmic_genes.tsv",row.names = F)
 
@@ -936,6 +848,101 @@ shows the key role played by dark periods in mainting rhythmicity after SD entra
 
 In order to explore the effect of the transition to continuous light on rhythmic gene expression patterns we compared three rhythmic characteristics of the expression profiles under LD or SD to the corresponding ones under LL. Specifically we compared amplitude or half of the difference between the peak and trough of the expression profile; mesor or mean expression level around which the expression profile oscillates and phase or time at which the expression profile peaks. This was carried out using the R package circacompare that performs a fitting to the data as cosinusoidal curve with a particular parametrization that is used to test for statistical significant differences between the two circadian patterns under comparison. 
 
+
+```{r ld_ll_amplitude_mesor_phase}
+library(circacompare)
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+circacompare.ld.ll <- matrix(nrow=length(complete.ld.ll.rhythmic.genes),ncol=15)
+rownames(circacompare.ld.ll) <- complete.ld.ll.rhythmic.genes
+
+for(i in 1:length(complete.ld.ll.rhythmic.genes))
+{
+  gene.i <- complete.ld.ll.rhythmic.genes[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  ll.expression.i <- gene.expression[gene.i,c(paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
+  
+  time.points <- seq(from=0,by=4,length.out = 12)
+  
+  ld.ll.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(ld.expression.i, ll.expression.i),
+                         group=c(rep("ld",12),rep("ll",12)))
+  
+  out.i <- circacompare(x = ld.ll.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  circacompare.ld.ll[i,] <- out.i[[2]][,2]
+ }
+
+colnames(circacompare.ld.ll) <- out.i[[2]][,1]
+
+par(lwd=3)
+boxplot(circacompare.ld.ll[,"ld amplitude estimate" ],circacompare.ld.ll[,"ll amplitude estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
+sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0)
+sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0) / length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)
+sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+
+boxplot(circacompare.ld.ll[,"ld mesor estimate" ],circacompare.ld.ll[,"ll mesor estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
+sum(circacompare.ld.ll[,"Mesor difference estimate" ] < 0) /length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"Mesor difference estimate" ] > 0) /length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+
+hist(circacompare.ld.ll[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="lightblue",border="blue",main="",lwd=2)
+sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)
+sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)/length(complete.ld.ll.rhythmic.genes)
+sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)
+sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+```
+
+Most circadian genes under LD conditions, 97.68%, presented a sharp decrease in amplitude when transferred to LL, being significant in more than half of them with p-value < 0.05. We also observed an increase in phase in 76.28% of the genes being significant in 14.98% of the genes exhibiting rhythmicity under constant light. Nevertheless, no clear effect was observed over the mesor that remained in LL similar to the values in LD. 
+
+```{r ld_dd_amplitude_mesor_phase}
+library(circacompare)
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+circacompare.ld.dd <- matrix(nrow=length(complete.ld.dd.rhythmic.genes),ncol=15)
+rownames(circacompare.ld.dd) <- complete.ld.dd.rhythmic.genes
+for(i in 1:length(complete.ld.dd.rhythmic.genes))
+{
+  gene.i <- complete.ld.dd.rhythmic.genes[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  dd.expression.i <- gene.expression[gene.i,c(paste(ld.zt,6,sep="_"),paste(ld.zt,7,sep="_"))]
+  
+  time.points <- seq(from=0,by=4,length.out = 12)
+  
+  ld.dd.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(ld.expression.i, dd.expression.i),
+                         group=c(rep("ld",12),rep("dd",12)))
+  
+  out.i <- circacompare(x = ld.dd.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  circacompare.ld.dd[i,] <- out.i[[2]][,2]
+ }
+
+colnames(circacompare.ld.dd) <- out.i[[2]][,1]
+
+par(lwd=3)
+boxplot(circacompare.ld.dd[,"ld amplitude estimate" ],circacompare.ld.dd[,"dd amplitude estimate" ],outline=F,col=c("blue","darkblue"),names=c("LD","DD"),cex.axis=2)
+sum(circacompare.ld.dd[,"Amplitude difference estimate" ] > 0)
+sum(circacompare.ld.dd[,"Amplitude difference estimate" ] > 0) / length(complete.ld.dd.rhythmic.genes)
+sum(circacompare.ld.dd[,"P-value for amplitude difference" ] < 0.05)
+sum(circacompare.ld.dd[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.dd.rhythmic.genes)
+
+boxplot(circacompare.ld.dd[,"ld mesor estimate" ],circacompare.ld.dd[,"dd mesor estimate" ],outline=F,col=c("blue","darkblue"),names=c("LD","DD"),cex.axis=2)
+sum(circacompare.ld.dd[,"Mesor difference estimate" ] < 0) /length(complete.ld.dd.rhythmic.genes)
+sum(circacompare.ld.dd[,"Mesor difference estimate" ] > 0) /length(complete.ld.dd.rhythmic.genes)
+sum(circacompare.ld.dd[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+
+hist(-circacompare.ld.dd[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="darkblue",border="blue",main="",lwd=2)
+sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)
+sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)/length(complete.ld.dd.rhythmic.genes)
+sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)
+sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)/length(complete.ld.dd.rhythmic.genes)
+```
+
+Most circadian genes under LD conditions, 79.43%, presented a sharp decrease in amplitude when transferred to DD, being significant in 31.62% of the genes exhibiting rythmicity under DD with p-value < 0.05. In contrast to the case under constant light we observed a decrease in phase under constant darkness. Specifically, 87.32% of the rhythmic genes under DD presented an anticipation in phase that was significant in 34.16% of them. No clear effect was observed over the mesor of gene expression profiles that remained in DD similar to the values in LD. 
+
+
 Next we perform the analysis for circadian genes under SD conditions. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
 
 ```{r sd_ll_amplitude_mesor_phase}
@@ -948,8 +955,8 @@ for(i in 1:length(complete.sd.ll.rhythmic.genes))
 {
   gene.i <- complete.sd.ll.rhythmic.genes[i]
   
-  sd.expression.i <- sd.ll.gene.expression[gene.i,c(paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
-  ll.expression.i <- sd.ll.gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+  sd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  ll.expression.i <- gene.expression[gene.i,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
   
   time.points <- seq(from=0,by=4,length.out = 12)
   
@@ -976,9 +983,58 @@ sum(circacompare.sd.ll[,"Mesor difference estimate" ] > 0) /length(complete.sd.l
 sum(circacompare.sd.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.sd.ll.rhythmic.genes)
 
 sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
+
+hist(-circacompare.sd.ll[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="lightblue",border="blue",main="",lwd=2)
+sum(-circacompare.sd.ll[,"Phase difference estimate"] > 0)
+sum(-circacompare.sd.ll[,"Phase difference estimate"] > 0)/length(complete.sd.ll.rhythmic.genes)
+sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
+sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)/length(complete.sd.ll.rhythmic.genes)
+
 ```
 
+```{r sd_dd_amplitude_mesor_phase}
+library(circacompare)
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
 
+circacompare.sd.dd <- matrix(nrow=length(complete.sd.dd.rhythmic.genes),ncol=15)
+rownames(circacompare.sd.dd) <- complete.sd.dd.rhythmic.genes
+for(i in 1:length(complete.sd.dd.rhythmic.genes))
+{
+  gene.i <- complete.sd.dd.rhythmic.genes[i]
+  
+  sd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  dd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,6,sep="_"),paste(sd.zt,7,sep="_"))]
+  
+  time.points <- seq(from=0,by=4,length.out = 12)
+  
+  sd.dd.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(sd.expression.i, dd.expression.i),
+                         group=c(rep("sd",12),rep("dd",12)))
+  
+  out.i <- circacompare(x = sd.dd.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  circacompare.sd.dd[i,] <- out.i[[2]][,2]
+ }
+
+colnames(circacompare.sd.dd) <- out.i[[2]][,1]
+
+par(lwd=3)
+boxplot(circacompare.sd.dd[,"sd amplitude estimate" ],circacompare.sd.dd[,"dd amplitude estimate" ],outline=F,col=c("blue","darkblue"),names=c("SD","DD"),cex.axis=2)
+sum(circacompare.sd.dd[,"Amplitude difference estimate" ] > 0)
+sum(circacompare.sd.dd[,"Amplitude difference estimate" ] > 0) / length(complete.sd.dd.rhythmic.genes)
+sum(circacompare.sd.dd[,"P-value for amplitude difference" ] < 0.05)
+sum(circacompare.sd.dd[,"P-value for amplitude difference" ] < 0.05)/length(complete.sd.dd.rhythmic.genes)
+
+boxplot(circacompare.sd.dd[,"sd mesor estimate" ],circacompare.sd.dd[,"dd mesor estimate" ],outline=F,col=c("blue","darkblue"),names=c("SD","DD"),cex.axis=2)
+sum(circacompare.sd.dd[,"Mesor difference estimate" ] < 0) /length(complete.sd.dd.rhythmic.genes)
+sum(circacompare.sd.dd[,"Mesor difference estimate" ] > 0) /length(complete.sd.dd.rhythmic.genes)
+sum(circacompare.sd.dd[,"P-value for mesor difference" ] < 0.05)/length(complete.sd.dd.rhythmic.genes)
+
+hist(-circacompare.sd.dd[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="darkblue",border="blue",main="",lwd=2)
+sum(circacompare.sd.dd[,"Phase difference estimate"] > 0)
+sum(circacompare.sd.dd[,"Phase difference estimate"] > 0)/length(complete.sd.dd.rhythmic.genes)
+sum(circacompare.sd.dd[,"P-value for difference in phase" ] < 0.05)
+sum(circacompare.sd.dd[,"P-value for difference in phase" ] < 0.05)/length(complete.sd.dd.rhythmic.genes)
+```
 
 
 
