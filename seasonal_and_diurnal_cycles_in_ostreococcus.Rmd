@@ -865,7 +865,7 @@ Integrating the results from the two free running conditions analysed in this st
 In contrast, 3464 genes (45.17%) only maintained its rhythmicity after SD entrainment either under constant light or dark. Specifically, 2972 genes exhibit rhythmicity only under constant dark and 492 genes under constant light. This
 shows the key role played by dark periods in mainting rhythmicity after SD entrainment. We also identified 1606 genes that lose rhythmicity under both constant light and constant dark. These genes need both a dark and light period to present a rhythmic expression pattern.
 
-```{r barplot_summary_rhythmicity_ld}
+```{r barplot_summary_rhythmicity_sd}
 data.sd.ll.dd <- matrix(rev(c(length(non.rhythmic.sd.genes),
                           length(non.rhythmic.sd.ll.dd.genes),
                           length(sd.rhythmic.only.ll),
@@ -883,11 +883,63 @@ barplot(data.sd.ll.dd, lwd=3, names.arg = "",cex.names = 2,cex.axis = 1.5,
 ```
 
 
+```{r sd_ld_ll_dd}
+length(intersect(rhythmic.sd.ll.dd,rhythmic.ld.ll.dd))
+length(intersect(rhythmic.sd.ll.dd,rhythmic.ld.ll.dd))/number.genes
+bona.fide.circadian <- intersect(rhythmic.sd.ll.dd,rhythmic.ld.ll.dd)
+
+grid.newpage()
+draw.pairwise.venn(area1 = length(rhythmic.sd.ll.dd),
+                   area2 = length(rhythmic.ld.ll.dd),
+                   cross.area = length(intersect(rhythmic.sd.ll.dd,rhythmic.ld.ll.dd)),
+                   lwd = 6,alpha = 0.7,fill = c("red","blue"),cex = 3,category = c("SD circadian","LD circadian"),cat.cex = 3,cat.pos = c(-10,10))
+
+write.table(x = bona.fide.circadian, file="gene_sets/bona_fide_circadianLD_SD_LL_and_DD_rhythmic_genes.tsv",row.names = F,quote=F)
+write.table(x = subset(ostta2atha, ostta %in% bona.fide.circadian), file="gene_sets/bona_fide_ostta_atha.tsv",row.names = F,quote=F)
+
+bona.fide.circadian.atha <- subset(ostta2atha, ostta %in% bona.fide.circadian)$atha
+
+library(clusterProfiler)
+library(org.Otauri.eg.db)
+
+enrich.go.bona.fide.circadian <- enrichGO(gene = bona.fide.circadian,
+                                          OrgDb = org.Otauri.eg.db,
+                                          ont = "BP",
+                                          pAdjustMethod = "BH",
+                                          pvalueCutoff  = 0.05,
+                                          readable = TRUE,
+                                          keyType = "GID")
+as.data.frame(enrich.go.bona.fide.circadian)
+barplot(enrich.go.bona.fide.circadian,drop=TRUE,showCategory = 30)
+dotplot(enrich.go.bona.fide.circadian)
+cnetplot(enrich.go.bona.fide.circadian)
+
+
+library(org.At.tair.db)
+enrich.go.bona.fide.circadian.ath <- enrichGO(gene = bona.fide.circadian.atha,
+                                          OrgDb = org.At.tair.db,
+                                          ont = "BP",
+                                          pAdjustMethod = "BH",
+                                          pvalueCutoff  = 0.05,
+                                          keyType = "TAIR")
+as.data.frame(enrich.go.bona.fide.circadian.ath)
+write.table(x = as.data.frame(enrich.go.bona.fide.circadian.ath), file="enrichments/bona_fide_go_enrichment_atha.tsv",row.names = F,quote=F,sep="\t")
+
+barplot(enrich.go.bona.fide.circadian.ath,drop=TRUE,showCategory = 30)
+dotplot(enrich.go.bona.fide.circadian.ath)
+cnetplot(enrich.go.bona.fide.circadian.ath)
+```
+We define bona fide circadian genes as those exhibiting rhythmicity under LD and 
+SD conditions as well as under free running conditions consisting of constant light 
+(LL) and constant darkness (DD). We observed that the genes maintaining rhythmicity under free running conditions depend strongly on the previous entrainment regime, either LD or SD conditions. Only 350 genes comprising 4.6% of the entire Ostreococcus
+genome was found to be bona fide circadian. A functional enrichment analysis over
+this set of genes found that they were mainly involved in photosynthesis, chorophlyll
+metabolic process, chloroplast organisation and ribosome biogenesis. 
+
+
+
+
 In order to explore the effect of the transition to continuous light on rhythmic gene expression patterns we compared three rhythmic characteristics of the expression profiles under LD or SD to the corresponding ones under LL. Specifically we compared amplitude or half of the difference between the peak and trough of the expression profile; mesor or mean expression level around which the expression profile oscillates and phase or time at which the expression profile peaks. This was carried out using the R package circacompare that performs a fitting to the data as cosinusoidal curve with a particular parametrization that is used to test for statistical significant differences between the two circadian patterns under comparison. 
-
-
-
-
 
 ```{r ld_ll_amplitude_mesor_phase}
 library(circacompare)
