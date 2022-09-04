@@ -285,6 +285,8 @@ plot.ld.dd <- function(gene.id, gene.name, gene.expression)
 
 
 plot.ld.ll(gene.id = "ostta04g00450",gene.name = "MCM5", gene.expression = gene.expression)
+plot.ld.dd(gene.id = "ostta04g00450",gene.name = "MCM5", gene.expression = gene.expression)
+
 
 i <- 1
 par(mfrow=c(2,1))
@@ -3009,8 +3011,6 @@ plot.ld.sd(gene.id = "ostta03g04220",gene.name = "HAT", gene.expression)
 
 plot.ld.ll(gene.id = "ostta03g04220",gene.name = "HAT", gene.expression)
 plot.ld.dd(gene.id = "ostta03g04220",gene.name = "HAT", gene.expression)
-
-
 plot.sd.ll(gene.id = "ostta03g04220",gene.name = "HAT", gene.expression)
 plot.sd.dd(gene.id = "ostta03g04220",gene.name = "HAT", gene.expression)
 
@@ -4568,8 +4568,269 @@ for(j in 1:2)#3)
 }
 
 
+i <- 23
+
+gene.i <- bona.fide.circadian[i]
+
+plot.ld.ll(gene.id = gene.i,gene.name = gene.i, gene.expression)
+plot.ld.dd(gene.id = gene.i,gene.name = gene.i, gene.expression)
+plot.sd.ll.param(gene.id=gene.i, gene.name=gene.i, gene.expression,param=F)
+plot.sd.ll.param(gene.id=gene.i, gene.name=gene.i, gene.expression,param=T)
+plot.sd.dd(gene.id = gene.i,gene.name = gene.i, gene.expression)
+i <- i + 1
+print(i)
+
+#19 21 23 25 26
+
+wave.form <- function(mesor, amplitude,period,phase,time=seq(from=0,to=72,by=0.01))
+{
+ y <- mesor + amplitude*cos(((2*pi)/period)*(time - phase))
+ return(y)
+}
+
+plot.expression.profile <- function(gene.id, gene.name, gene.expression,
+                             entrainment,free.running,param=F)
+{
+ if (entrainment == "SD")
+ {
+  zts <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  entrainment.col <- "red"
+  free.running.col <- "lightsalmon"
+ } else if (entrainment == "LD")
+ {
+  zts <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  entrainment.col <- "blue"
+  free.running.col <- "lightblue"
+ } else
+ {
+  print("Unkwnon entrainment. Possible entrainments SD and LD")
+ }
+ 
+ if (free.running == "LL")
+ {
+  free.running.indeces <- c(4,5)
+ } else if (free.running == "DD")
+ {
+  free.running.indeces <- c(6,7)
+ } else
+ {
+  print("Unknown free running. Possible options LL and DD")
+ }
+ 
+ current.gene.expression.entrainment <- gene.expression[gene.id,c(paste(zts,1,sep="_"),
+                                                                  paste(zts,2,sep="_"),
+                                                                  paste(zts,3,sep="_"))]
+ current.gene.expression.free.running <- gene.expression[gene.id,c(paste(zts,free.running.indeces[1],sep="_"),
+                                                                   paste(zts,free.running.indeces[2],sep="_"))]
+ current.gene.expression <- c(current.gene.expression.entrainment,current.gene.expression.free.running)
+ min.expression <- min(current.gene.expression)
+ max.expression <- max(current.gene.expression)
+ range.expression <- max.expression - min.expression
+ 
+ expression.step <- floor(range.expression / 5)
+ time.points.entrainment <- seq(from=0,by=4,length.out = 18)
+ time.points.free.running <- seq(from=0,by=4,length.out = 12)
+ 
+ 
+ if(param)
+ {
+  circacompare.data <- data.frame(time=c(time.points.entrainment,time.points.free.running),
+                               measure=c(current.gene.expression.entrainment,
+                                         current.gene.expression.free.running),
+                               group=c(rep("Entrainment",18),rep("Free_running",12)))
+  
+  result.i <- circacompare(x = circacompare.data, 
+                          col_time = "time", 
+                          col_group = "group", 
+                          col_outcome = "measure",
+                          alpha_threshold = 1)
+  result.i.values <- result.i$summary$value
+  names(result.i.values) <- result.i$summary$parameter
+  time.entrainment <- seq(from=0,to=72,by=0.01)
+  time.free.running <- seq(from=72,to=120,by=0.01)
+  line.entrainment <- wave.form(mesor = result.i.values["Entrainment mesor estimate"],
+            amplitude = result.i.values["Entrainment amplitude estimate"],
+            period = result.i.values["Shared period estimate"],phase = result.i.values["Entrainment peak time hours"],
+            time = time.entrainment)
+  line.free.running <- wave.form(mesor = result.i.values["Free_running mesor estimate"],
+                       amplitude = result.i.values["Free_running amplitude estimate"],
+                       period = result.i.values["Shared period estimate"],
+                       phase = result.i.values["Free_running peak time hours"],
+                       time = time.free.running)
+  plot(x = c(time.points.entrainment,time.points.free.running+max(time.points.sd)+4),#type="o",
+       y = current.gene.expression,lwd=1,col=entrainment.col,axes=F,xlab="",ylab="FPKM",
+       ylim=c(min.expression-expression.step,max.expression),
+       cex.lab=1.3,main=paste(gene.id, gene.name,sep=" - "),cex.main=2,pch=20,cex=0.8)
+  lines(x = c(time.entrainment,time.free.running), 
+        y = c(line.entrainment,line.free.running), 
+        type="l",
+        col=entrainment.col,lwd=3)
+ } else
+ {
+  plot(x= c(time.points.entrainment, 72 +time.points.free.running),
+       y = current.gene.expression,type="o",lwd=3,col=entrainment.col,axes=F,xlab="",ylab="FPKM",
+       ylim=c(min.expression-expression.step,max.expression),
+       cex.lab=1.3,main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
+ }
+ 
+ axis(side=2,lwd=3)
+ axis(side = 1,pos = min.expression - 1.1*expression.step, at = seq(from=0,to=116,by=4),
+      labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
+ if(entrainment == "SD")
+ {
+  polygon(x = c(0,8,8,0),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="red")
+  polygon(x = c(8,24,24,8),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(24,32,32,24),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  polygon(x = c(32,48,48,32),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(48,56,56,48),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  polygon(x = c(56,72,72,56),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="red")
+  if(free.running == "LL")
+  {
+   polygon(x = c(72,80,80,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red")
+   polygon(x = c(80,96,96,80),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red",col="salmon")
+   
+   polygon(x = c(96,104,104,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="red")
+   polygon(x = c(104,120,120,104),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="red",col="salmon")
+  } else if (free.running == "DD")
+  {
+   polygon(x = c(72,80,80,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red",col="salmon")
+   polygon(x = c(80,96,96,80),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red",col="red")
+   
+   polygon(x = c(96,104,104,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="red",col="salmon")
+   polygon(x = c(104,120,120,104),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="red",col="red")
+  }
+ } else if (entrainment == "LD")
+ {
+  polygon(x = c(0,16,16,0),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="blue")
+  polygon(x = c(16,24,24,16),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(24,40,40,24),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue")
+  polygon(x = c(40,48,48,40),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(48,64,64,48),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue")
+  polygon(x = c(64,72,72,64),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  if(free.running == "LL")
+  {
+   polygon(x = c(72,88,88,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue")
+   polygon(x = c(88,96,96,88),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+   
+   polygon(x = c(96,112,112,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="blue")
+   polygon(x = c(112,120,120,112),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+  } else if (free.running == "DD")
+  {
+   polygon(x = c(72,88,88,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+   polygon(x = c(88,96,96,88),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue",col="blue")
+   
+   polygon(x = c(96,112,112,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="blue", col="lightblue")
+   polygon(x = c(112,120,120,112),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="blue",col="blue")
+  }
+ }
+}
+
+ 
+gene.i <- bona.fide.circadian[i]
+
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="LD",free.running="LL",param=T)
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="LD",free.running="LL",param=F)
+
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="LD",free.running="DD",param=T)
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="LD",free.running="DD",param=F)
 
 
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="SD",free.running="LL",param=T)
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="SD",free.running="LL",param=F)
 
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="SD",free.running="DD",param=T)
+plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="SD",free.running="DD",param=F)
 
+i <- i + 1
+print(i)
 
+#19 21 23 25 26

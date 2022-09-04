@@ -937,7 +937,7 @@ this set of genes found that they were mainly involved in photosynthesis, chorop
 metabolic process, chloroplast organisation and ribosome biogenesis. 
 
 
-
+### **Analysis of the effect of the transition to free running conditions**
 
 In order to explore the effect of the transition to continuous light on rhythmic gene expression patterns we compared three rhythmic characteristics of the expression profiles under LD or SD to the corresponding ones under LL. Specifically we compared amplitude or half of the difference between the peak and trough of the expression profile; mesor or mean expression level around which the expression profile oscillates and phase or time at which the expression profile peaks. This was carried out using the R package circacompare that performs a fitting to the data as cosinusoidal curve with a particular parametrization that is used to test for statistical significant differences between the two circadian patterns under comparison. 
 
@@ -979,7 +979,8 @@ sum(circacompare.ld.ll[,"Mesor difference estimate" ] < 0) /length(complete.ld.l
 sum(circacompare.ld.ll[,"Mesor difference estimate" ] > 0) /length(complete.ld.ll.rhythmic.genes)
 sum(circacompare.ld.ll[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
 
-hist(circacompare.ld.ll[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="lightblue",border="blue",main="",lwd=2)
+hist(circacompare.ld.ll[,"Phase difference estimate"],xlab="Phase Difference (h)",ylab="Number of Genes", col="lightblue",border="blue",main="",lwd=2,cex.axis=1.5,
+     cex.lab=1.8)
 sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)
 sum(circacompare.ld.ll[,"Phase difference estimate"] > 0)/length(complete.ld.ll.rhythmic.genes)
 sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)
@@ -1025,7 +1026,8 @@ sum(circacompare.ld.dd[,"Mesor difference estimate" ] < 0) /length(complete.ld.d
 sum(circacompare.ld.dd[,"Mesor difference estimate" ] > 0) /length(complete.ld.dd.rhythmic.genes)
 sum(circacompare.ld.dd[,"P-value for mesor difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
 
-hist(-circacompare.ld.dd[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="darkblue",border="blue",main="",lwd=2)
+hist(-circacompare.ld.dd[,"Phase difference estimate"],xlab="Phase Difference (h)",ylab="Number of Genes", col="darkblue",border="blue",main="",lwd=2,cex.axis=1.5,
+     cex.lab=1.8)
 sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)
 sum(circacompare.ld.dd[,"Phase difference estimate"] > 0)/length(complete.ld.dd.rhythmic.genes)
 sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)
@@ -1034,8 +1036,36 @@ sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)/length(compl
 
 Most circadian genes under LD conditions, 79.43%, presented a sharp decrease in amplitude when transferred to DD, being significant in 31.62% of the genes exhibiting rythmicity under DD with p-value < 0.05. In contrast to the case under constant light we observed a decrease in phase under constant darkness. Specifically, 87.32% of the rhythmic genes under DD presented an anticipation in phase that was significant in 34.16% of them. No clear effect was observed over the mesor of gene expression profiles that remained in DD similar to the values in LD. 
 
+```{r boxplots_ld_ll_dd_amplitude_mesor}
+par(lwd=3)
+boxplot(circacompare.ld.ll[,"ld amplitude estimate" ],
+        circacompare.ld.ll[,"ll amplitude estimate" ],
+        circacompare.ld.dd[,"dd amplitude estimate" ],
+        outline=F,col=c("blue","lightblue","darkblue"),names=c("LD","LL","DD"),cex.axis=2)
+wilcox.test(x = circacompare.ld.ll[,"ld amplitude estimate" ],y = circacompare.ld.ll[,"ll amplitude estimate" ], alternative = "greater")$p.value
+wilcox.test(x = circacompare.ld.ll[,"ld amplitude estimate" ],y = circacompare.ld.dd[,"dd amplitude estimate" ], alternative = "greater")$p.value
+wilcox.test(x = circacompare.ld.ll[,"ll amplitude estimate" ],y = circacompare.ld.dd[,"dd amplitude estimate" ], alternative = "less")$p.value
 
-Next we perform the analysis for circadian genes under SD conditions. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
+
+boxplot(circacompare.ld.ll[,"ld mesor estimate" ],
+        circacompare.ld.ll[,"ll mesor estimate" ],
+        circacompare.ld.dd[,"dd mesor estimate" ],
+        outline=F,col=c("blue","lightblue","darkblue"),names=c("LD","LL","DD"),cex.axis=2)
+wilcox.test(x = circacompare.ld.ll[,"ld mesor estimate" ],y = circacompare.ld.ll[,"ll mesor estimate" ])$p.value
+wilcox.test(x = circacompare.ld.ll[,"ld mesor estimate" ],y = circacompare.ld.dd[,"dd mesor estimate" ])$p.value
+wilcox.test(x = circacompare.ld.ll[,"ll mesor estimate" ],y = circacompare.ld.dd[,"dd mesor estimate" ])$p.value
+
+```
+
+
+The global reduction in amplitude under LL and DD when compared to LD is significant
+with p-values 4.225738e-140 and 1.087318e-60 respectively. More precisely, the reduction 
+in amplitude is significantly lower under LL than under DD with a p-value of 6.706823e-28.
+This suggests a larger lost of synchrony under LL when compared to DD. 
+In contrast no largely significant change was observed in the mesor of the rhythmic
+gene expression patterns under LD, LL and DD. 
+
+Next we perform the analysis of the effect over the rhythmic genes under SD conditions when transferred to constant ligth. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
 
 ```{r sd_ll_amplitude_mesor_phase}
 sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -1076,7 +1106,8 @@ sum(circacompare.sd.ll[,"P-value for mesor difference" ] < 0.05)/length(complete
 
 sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
 
-hist(-circacompare.sd.ll[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="lightblue",border="blue",main="",lwd=2)
+hist(-circacompare.sd.ll[,"Phase difference estimate"],xlab="Phase Difference (h)",ylab="Number of Genes", col="lightsalmon",border="red",main="",lwd=2,cex.axis=1.5,
+     cex.lab=1.8)
 sum(-circacompare.sd.ll[,"Phase difference estimate"] > 0)
 sum(-circacompare.sd.ll[,"Phase difference estimate"] > 0)/length(complete.sd.ll.rhythmic.genes)
 sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
@@ -1121,14 +1152,41 @@ sum(circacompare.sd.dd[,"Mesor difference estimate" ] < 0) /length(complete.sd.d
 sum(circacompare.sd.dd[,"Mesor difference estimate" ] > 0) /length(complete.sd.dd.rhythmic.genes)
 sum(circacompare.sd.dd[,"P-value for mesor difference" ] < 0.05)/length(complete.sd.dd.rhythmic.genes)
 
-hist(-circacompare.sd.dd[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="darkblue",border="blue",main="",lwd=2)
+hist(-circacompare.sd.dd[,"Phase difference estimate"],xlab="Phase Difference estimate (h)",ylab="Number of Genes", col="firebrick4",border="red",main="",lwd=2, cex.axis=1.5, cex.lab=1.8)
 sum(circacompare.sd.dd[,"Phase difference estimate"] > 0)
 sum(circacompare.sd.dd[,"Phase difference estimate"] > 0)/length(complete.sd.dd.rhythmic.genes)
 sum(circacompare.sd.dd[,"P-value for difference in phase" ] < 0.05)
 sum(circacompare.sd.dd[,"P-value for difference in phase" ] < 0.05)/length(complete.sd.dd.rhythmic.genes)
 ```
 
+```{r boxplots_sd_ll_dd_amplitude_mesor}
+par(lwd=3)
+boxplot(circacompare.sd.ll[,"sd amplitude estimate" ],
+        circacompare.sd.ll[,"ll amplitude estimate" ],
+        circacompare.sd.dd[,"dd amplitude estimate" ],
+        outline=F,col=c("red","lightsalmon","firebrick4"),names=c("SD","LL","DD"),cex.axis=2)
+wilcox.test(x = circacompare.sd.ll[,"sd amplitude estimate" ],y = circacompare.sd.ll[,"ll amplitude estimate" ], alternative = "greater")$p.value
+wilcox.test(x = circacompare.sd.ll[,"sd amplitude estimate" ],y = circacompare.sd.dd[,"dd amplitude estimate" ], alternative = "less")$p.value
+wilcox.test(x = circacompare.sd.ll[,"ll amplitude estimate" ],y = circacompare.sd.dd[,"dd amplitude estimate" ], alternative = "less")$p.value
 
+boxplot(circacompare.sd.ll[,"sd mesor estimate" ],
+        circacompare.sd.ll[,"ll mesor estimate" ],
+        circacompare.sd.dd[,"dd mesor estimate" ],
+        outline=F,col=c("red","lightsalmon","firebrick4"),names=c("SD","LL","DD"),cex.axis=2)
+wilcox.test(x = circacompare.ld.ll[,"ld mesor estimate" ],y = circacompare.ld.ll[,"ll mesor estimate" ])$p.value
+wilcox.test(x = circacompare.ld.ll[,"ld mesor estimate" ],y = circacompare.ld.dd[,"dd mesor estimate" ])$p.value
+wilcox.test(x = circacompare.ld.ll[,"ll mesor estimate" ],y = circacompare.ld.dd[,"dd mesor estimate" ])$p.value
+```
+
+The drastic global reduction in amplitude under LL when compared to SD is significant
+with a p-value 5.951216e-65. In contrast to what was observed after LD entrainment
+a slight but significant increase in amplitude under DD was detected when compared to
+SD with a p-value of 2.502664e-08. This suggests a slight increase in synchrony under DD
+in cultures entrained in SD conditions. 
+
+Although no significant change was observed between the mesor of the rhythmic gene 
+expression patterns under SD and LL a slight yet significan decrease was observed 
+under DD when compared to SD with a p-value 2.28e-04.
 
 ## **Identification of light/dark regulated genes after LD entrainment**
 
