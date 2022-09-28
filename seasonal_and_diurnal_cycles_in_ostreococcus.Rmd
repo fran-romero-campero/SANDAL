@@ -431,7 +431,6 @@ We restrict our analysis to these two conditions since here expression levels ar
 estimated using the same technology namely RNA-seq whereas for ND microarrays were used. 
 
 ```{r ld_sd_rhythmic_genes}
-library(VennDiagram)
 grid.newpage()
 draw.pairwise.venn(area1 = length(complete.ld.rhythmic.genes),area2 = length(complete.sd.rhythmic.genes),cross.area =  length(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes)),lwd = 3,category = c("LD","SD"),euler.d = T,col = c("blue","red"),fill = c(" blue","red"),alpha = 0.3,cex = 2,cat.cex = 2)
 
@@ -481,13 +480,11 @@ three days under either LD or SD conditions. We use RAIN to identify circadian g
 
 ```{r ld_ll_rain}
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-#ld.ll.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,2:5,sep="_")})
 ld.ll.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,4:5,sep="_")})
 
 ld.ll.gene.expression <- gene.expression[,ld.ll.zt.i]
 dim(ld.ll.gene.expression)
 
-#results.ld.ll <- rain(t(ld.ll.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=4)
 results.ld.ll <- rain(t(ld.ll.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=2)
 head(results.ld.ll)
 sum(results.ld.ll$pVal < 0.05)/number.genes 
@@ -496,7 +493,6 @@ length(rhythmic.genes.ld.ll)
 rhythmic.genes.ld.ll <- intersect(complete.ld.rhythmic.genes,rhythmic.genes.ld.ll)
 length(rhythmic.genes.ld.ll)/number.genes 
 
-#results.ld.ll.12 <- rain(t(ld.ll.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=4)
 results.ld.ll.12 <- rain(t(ld.ll.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=2)
 sum(results.ld.ll.12$pVal < 0.05)/number.genes
 rhythmic.genes.ld.ll.12 <- rownames(subset(results.ld.ll.12, pVal < 0.05))
@@ -524,30 +520,6 @@ length(complete.ld.ll.rhythmic.genes)/length(complete.ld.rhythmic.genes)
 
 length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes))
 
-
-# data.ld.ll <- matrix(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
-# 
-# sum(c(length(complete.ld.ll.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes)),length(non.rhythmic.ld.genes)))
-# 
-# barplot(data.ld.ll, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
-#         col=c("blue","lightblue","white"), 
-#         border="black", 
-#         font.axis=2, 
-#         xlab="",ylim=c(0,8000))
-
-
-#ll.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,4:5,sep="_")})
-#max.expression.non.rhythmic.ld.ll <- apply(X = gene.expression[non.rhythmic.ld.ll.genes,ll.zt.i],MARGIN = 1,FUN = max)
-
-#length(max.expression.non.rhythmic.ld.ll)
-#sum(max.expression.non.rhythmic.ld.ll < 5)
-#sum(max.expression.non.rhythmic.ld.ll < 10)
-#sum(max.expression.non.rhythmic.ld.ll > 50)
-
-#var.expression.non.rhythmic.ld.ll <- apply(X = gene.expression[non.rhythmic.ld.ll.genes,ll.zt.i],MARGIN = 1,FUN = var)
-
-#sum(var.expression.non.rhythmic.ld.ll < 5)
-
 write.table(x = subset(gene.annotation, geneID %in% complete.ld.ll.rhythmic.genes),file="gene_sets/LD_LL_rhythmic_genes.tsv",row.names = F)
 ```
 
@@ -558,9 +530,6 @@ comprising 36.57% of the entire genome that maintain rhythmicity under constant
 light after entrainment in LD conditions. The 3397 remaining genes cycling under 
 LD conditions presented either a flat or noisy expression profile under LL conditions.      
 
-
-
-
 ```{r ld_dd_rain}
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
 ld.dd.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,6:7,sep="_")})
@@ -568,7 +537,6 @@ ld.dd.zt.i <- sapply(X = ld.zt,FUN = function(x){ paste(x,6:7,sep="_")})
 ld.dd.gene.expression <- gene.expression[,ld.dd.zt.i]
 dim(ld.dd.gene.expression)
 
-#results.ld.dd <- rain(t(ld.dd.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=4)
 results.ld.dd <- rain(t(ld.dd.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=2)
 head(results.ld.dd)
 sum(results.ld.dd$pVal < 0.05)/number.genes 
@@ -577,7 +545,6 @@ length(rhythmic.genes.ld.dd)
 rhythmic.genes.ld.dd <- intersect(complete.ld.rhythmic.genes,rhythmic.genes.ld.dd)
 length(rhythmic.genes.ld.dd)/number.genes 
 
-#results.ld.dd.12 <- rain(t(ld.dd.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=4)
 results.ld.dd.12 <- rain(t(ld.dd.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=2)
 sum(results.ld.dd.12$pVal < 0.05)/number.genes
 rhythmic.genes.ld.dd.12 <- rownames(subset(results.ld.dd.12, pVal < 0.05))
@@ -603,31 +570,6 @@ genes.two.peaks.ld.one.peak.dd <- intersect(rhythmic.genes.ld.dd,rhythmic.genes.
 length(genes.two.peaks.ld.one.peak.dd)
 length(rhythmic.genes.ld.dd.12)
 length(rhythmic.genes.ld.12)
-
-
-
-
-#data.ld.dd <- matrix(c(length(complete.ld.dd.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.dd.rhythmic.genes)),length(non.rhythmic.ld.genes)),nrow=3)
-
-#sum(c(length(complete.ld.dd.rhythmic.genes),length(setdiff(complete.ld.rhythmic.genes,complete.ld.dd.rhythmic.genes)),length(non.rhythmic.ld.genes)))
-
-#barplot(data.ld.dd, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
-#        col=c("blue","lightblue","white"), 
-#        border="black", 
-#        font.axis=2, 
-#        xlab="",ylim=c(0,8000))
-
-
-#rhythmic.ld.ll <- setdiff(complete.ld.ll.rhythmic.genes,complete.ld.dd.rhythmic.genes)
-#length(rhythmic.ld.ll)
-
-#rhythmic.ld.dd <- setdiff(complete.ld.dd.rhythmic.genes,complete.ld.ll.rhythmic.genes)
-#length(rhythmic.ld.dd)
-
-#rhythmic.ld <- setdiff(non.rhythmic.ld.dd.genes, complete.ld.ll.rhythmic.genes)
-#length(rhythmic.ld)
-
-#length(non.rhythmic.ld.genes)
 
 write.table(x = subset(gene.annotation, geneID %in% complete.ld.dd.rhythmic.genes),file="gene_sets/LD_DD_rhythmic_genes.tsv",row.names = F)
 ```
@@ -703,7 +645,6 @@ sd.ll.zt.i <- sapply(X = sd.zt,FUN = function(x){ paste(x,4:5,sep="_")})
 
 sd.ll.gene.expression <- gene.expression[,sd.ll.zt.i]
 
-#results.sd.ll <- rain(t(sd.ll.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=4)
 results.sd.ll <- rain(t(sd.ll.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=2)
 head(results.sd.ll)
 sum(results.sd.ll$pVal < 0.05)/number.genes ## 16.21%%
@@ -734,8 +675,6 @@ length(complete.sd.ll.rhythmic.genes)/number.genes
 length(setdiff(complete.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes))
 non.rhythmic.sd.ll.genes <- setdiff(complete.sd.rhythmic.genes, complete.sd.ll.rhythmic.genes)
 
-
-
 data.sd.ll <- matrix(c(length(complete.sd.ll.rhythmic.genes),length(setdiff(complete.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes)),length(non.rhythmic.sd.genes)),nrow=3)
 sum(c(length(complete.sd.ll.rhythmic.genes),length(setdiff(complete.sd.rhythmic.genes,complete.sd.ll.rhythmic.genes)),length(non.rhythmic.sd.genes)))
 
@@ -758,6 +697,10 @@ draw.pairwise.venn(area1 = length(intersect(complete.ld.sd.rhythmic.genes,comple
 length(intersect(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes),setdiff(complete.sd.ll.rhythmic.genes,complete.ld.ll.rhythmic.genes)))
 
 length(intersect(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes),setdiff(complete.ld.ll.rhythmic.genes,complete.sd.ll.rhythmic.genes)))
+
+rhythmic.ld.ll <- setdiff(complete.ld.ll.rhythmic.genes,complete.ld.dd.rhythmic.genes)
+rhythmic.ld.dd <- setdiff(complete.ld.dd.rhythmic.genes,complete.ld.ll.rhythmic.genes)
+rhythmic.ld <- setdiff(non.rhythmic.ld.dd.genes, complete.ld.ll.rhythmic.genes)
 
 data.ld.ll.dd <- matrix(c(length(rhythmic.ld.ll.dd),
                           length(rhythmic.ld.ll),
@@ -853,7 +796,7 @@ write.table(x = sd.rhythmic.only.ll, file="gene_sets/SD_and_LL_rhythmic_genes.ts
 
 sd.rhythmic.only.dd <- setdiff(complete.sd.dd.rhythmic.genes,rhythmic.sd.ll.dd)
 length(sd.rhythmic.only.dd)
-write.table(x = rhythmic.only.dd, file="gene_sets/SD_and_DD_rhythmic_genes.tsv",row.names = F)
+write.table(x = sd.rhythmic.only.dd, file="gene_sets/SD_and_DD_rhythmic_genes.tsv",row.names = F)
 
 length(intersect(non.rhythmic.sd.ll.genes, non.rhythmic.sd.dd.genes))
 non.rhythmic.sd.ll.dd.genes <- intersect(non.rhythmic.sd.ll.genes, non.rhythmic.sd.dd.genes)
@@ -928,6 +871,80 @@ write.table(x = as.data.frame(enrich.go.bona.fide.circadian.ath), file="enrichme
 barplot(enrich.go.bona.fide.circadian.ath,drop=TRUE,showCategory = 30)
 dotplot(enrich.go.bona.fide.circadian.ath)
 cnetplot(enrich.go.bona.fide.circadian.ath)
+
+library(treemap) 								
+
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006641","triglyceride metabolic process",0.142391254421019,3.57052452152959,0.713469983805087,0.09704631,"triglyceride metabolic process"),
+c("GO:0006638","neutral lipid metabolic process",0.160764319507602,3.37563364443081,0.749911394657915,0.50771325,"triglyceride metabolic process"),
+c("GO:0006720","isoprenoid metabolic process",0.950806118230674,2.61817093973841,0.713263014956982,0.59008559,"triglyceride metabolic process"),
+c("GO:0016116","carotenoid metabolic process",0.183730650865831,3.37563364443081,0.713769057118341,0.50291961,"triglyceride metabolic process"),
+c("GO:0009645","response to low light intensity stimulus",0.0826787928896238,4.8336790801826,0.949523614460726,0,"response to low light intensity stimulus"),
+c("GO:0009409","response to cold",1.83271324238666,2.72432915000391,0.960817356006738,0.38691857,"response to low light intensity stimulus"),
+c("GO:0009642","response to light intensity",0.647650544302053,3.49029521917781,0.949177753995628,0.55124462,"response to low light intensity stimulus"),
+c("GO:0071483","cellular response to blue light",0.133204721877727,2.38124940963516,0.913026696115954,0.57379076,"response to low light intensity stimulus"),
+c("GO:0015977","carbon fixation",0.128611455606081,4.64779835536408,0.881986384237483,0.07284837,"carbon fixation"),
+c("GO:0015979","photosynthesis",1.14831656791144,18.0013102025457,0.83700811300634,0,"photosynthesis"),
+c("GO:0000479","endonucleolytic cleavage of tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)",0.0505259289881034,3.87031662578501,0.549546340602066,0.6535959,"photosynthesis"),
+c("GO:0000966","RNA 5'-end processing",0.0826787928896238,4.54840549979908,0.663471611362683,0.54477019,"photosynthesis"),
+c("GO:0006091","generation of precursor metabolites and energy",2.2277341417482,10.7286323182516,0.826427726246961,0.12931462,"photosynthesis"),
+c("GO:0006098","pentose-phosphate shunt",0.114831656791144,2.41831980952106,0.814381499646674,0.62562782,"photosynthesis"),
+c("GO:0006414","translational elongation",0.35827476918837,2.87536255739177,0.633353290882061,0.46815162,"photosynthesis"),
+c("GO:0009451","RNA modification",1.46065867438335,3.84484030428822,0.601699579900605,0.60259153,"photosynthesis"),
+c("GO:0015994","chlorophyll metabolic process",0.289375775113683,16.2418544311858,0.613065158701167,0.10372006,"photosynthesis"),
+c("GO:0018193","peptidyl-amino acid modification",2.31959946718111,3.3390632643394,0.730131507203412,0.40138788,"photosynthesis"),
+c("GO:0019684","photosynthesis, light reaction",0.59712461531395,13.7032639543434,0.766920261022561,0.11155666,"photosynthesis"),
+c("GO:0033013","tetrapyrrole metabolic process",0.35827476918837,12.7183380666549,0.703221676349397,0.30381866,"photosynthesis"),
+c("GO:0034470","ncRNA processing",2.25988700564972,10.1278992708414,0.525506383914522,0.37009825,"photosynthesis"),
+c("GO:0034471","ncRNA 5'-end processing",0.0688989940746865,4.86690654096802,0.629597152221939,0.63785479,"photosynthesis"),
+c("GO:0043414","macromolecule methylation",1.12075697028157,6.46936440552221,0.750441721295131,0.11939764,"photosynthesis"),
+c("GO:0043628","ncRNA 3'-end processing",0.174544118322539,2.45666421669952,0.605227362753562,0.69632359,"photosynthesis"),
+c("GO:0090305","nucleic acid phosphodiester bond hydrolysis",1.75003444949704,3.77527302056159,0.630447279838542,0.52607778,"photosynthesis"),
+c("GO:0090501","RNA phosphodiester bond hydrolysis",1.0334849111203,3.89901255959887,0.599691211803669,0.5776615,"photosynthesis"),
+c("GO:0030388","fructose 1,6-bisphosphate metabolic process",0.0551191952597492,3.74845612294167,0.86314750299216,0.08935187,"fructose 1,6-bisphosphate metabolic process"),
+c("GO:0031503","protein-containing complex localization",0.11942492306279,2.93406295066292,0.98817877000592,0,"protein-containing complex localization"),
+c("GO:0032259","methylation",2.07156308851224,6.94394561076016,0.870940918469454,0.09711384,"methylation"),
+c("GO:0042254","ribosome biogenesis",1.88323917137476,8.49062010492674,0.74215210591684,0.03674526,"chloroplast organization"),
+c("GO:0000002","mitochondrial genome maintenance",0.0643057278030407,5.11999817078513,0.841719414061246,0.29069939,"chloroplast organization"),
+c("GO:0000054","ribosomal subunit export from nucleus",0.0872720591612696,3.1260632954493,0.772052859787727,0.66594962,"chloroplast organization"),
+c("GO:0007005","mitochondrion organization",0.877313857884342,2.58887251064281,0.814519144861289,0.50004274,"chloroplast organization"),
+c("GO:0009657","plastid organization",1.41931927793854,3.90993807842316,0.806644806314783,0.52742907,"chloroplast organization"),
+c("GO:0009658","chloroplast organization",1.07941757383676,4.31532524106787,0.804299244213925,0.39003121,"chloroplast organization"),
+c("GO:0022613","ribonucleoprotein complex biogenesis",2.3379725322677,7.92220707542194,0.777616590049402,0.65598585,"chloroplast organization"),
+c("GO:0032042","mitochondrial DNA metabolic process",0.0551191952597492,3.74845612294167,0.646600107912986,0.6321422,"chloroplast organization"),
+c("GO:0033750","ribosome localization",0.0872720591612696,3.1260632954493,0.938391277513177,0.69514392,"chloroplast organization"),
+c("GO:0043572","plastid fission",0.105645124247853,4.12675241186348,0.835747296769902,0.40704341,"chloroplast organization"),
+c("GO:0048285","organelle fission",0.90028018924257,2.44147209259583,0.814110896807264,0.50144135,"chloroplast organization"),
+c("GO:0070475","rRNA base methylation",0.105645124247853,4.36626119647174,0.521786890267183,0.67770324,"chloroplast organization"),
+c("GO:0042362","fat-soluble vitamin biosynthetic process",0.0826787928896238,2.87642779381178,0.759548869896789,0.09248456,"fat-soluble vitamin biosynthetic process"),
+c("GO:0006094","gluconeogenesis",0.114831656791144,2.821497101319,0.748744225344437,0.48429713,"fat-soluble vitamin biosynthetic process"),
+c("GO:0006766","vitamin metabolic process",0.47769969225116,2.53895178580198,0.83745581002528,0.41914142,"fat-soluble vitamin biosynthetic process"),
+c("GO:0043038","amino acid activation",0.289375775113683,2.5556651571313,0.759175454597299,0.36234061,"fat-soluble vitamin biosynthetic process"),
+c("GO:0042440","pigment metabolic process",0.652243810573699,14.0338980128487,0.884117614682997,0.08529953,"pigment metabolic process"),
+c("GO:0046148","pigment biosynthetic process",0.514445822424326,12.8876596956274,0.804484344227565,0.08322038,"pigment biosynthetic process"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "Bona Fide Circadian Genes Functional Enrichment",
+  inflate.labels = TRUE,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+
+
+
 ```
 We define bona fide circadian genes as those exhibiting rhythmicity under LD and 
 SD conditions as well as under free running conditions consisting of constant light 
@@ -990,7 +1007,6 @@ sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)/length(compl
 Most circadian genes under LD conditions, 97.68%, presented a sharp decrease in amplitude when transferred to LL, being significant in more than half of them with p-value < 0.05. We also observed an increase in phase in 76.28% of the genes being significant in 14.98% of the genes exhibiting rhythmicity under constant light. Nevertheless, no clear effect was observed over the mesor that remained in LL similar to the values in LD. 
 
 ```{r ld_dd_amplitude_mesor_phase}
-library(circacompare)
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
 
 circacompare.ld.dd <- matrix(nrow=length(complete.ld.dd.rhythmic.genes),ncol=15)
@@ -1116,7 +1132,6 @@ sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)/length(compl
 ```
 
 ```{r sd_dd_amplitude_mesor_phase}
-library(circacompare)
 sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
 
 circacompare.sd.dd <- matrix(nrow=length(complete.sd.dd.rhythmic.genes),ncol=15)
@@ -1194,7 +1209,7 @@ We now focus on the genes exhibiting rhythmicity exclusively under alternating l
 
 ```{r ld_dd_activated_repressed_by_darkness}
 length(complete.ld.rhythmic.genes)
-potential.light.dark.regulated <- setdiff(complete.ld.rhythmic.genes,unique(c(rhythmic.ld.ll.dd,rhythmic.only.dd,rhythmic.only.ll)))
+potential.light.dark.regulated <- setdiff(complete.ld.rhythmic.genes,unique(c(rhythmic.ld.ll.dd,ld.rhythmic.only.dd,ld.rhythmic.only.ll)))
 length(potential.light.dark.regulated)
 
 non.rhythmic.ld.dd.mean.expression.cycle <- apply(X = gene.expression[potential.light.dark.regulated,ld.zt.i],MARGIN = 1,FUN = mean)
@@ -1218,7 +1233,7 @@ length(ld.dark.activated)
 
 ld.no.clear.effect.light <- setdiff(potential.light.dark.regulated, 
                                    c(ld.dark.activated,ld.dark.repressed))
-length(ld.no.clear.effect.dark)
+length(ld.no.clear.effect.light)
 ```
 
 ```{r ld_ll_activated_repressed_by_light}
@@ -1285,7 +1300,7 @@ We first identified 1733 genes that only present rhythmicity under long day cond
 
 ```{r sd_dd_activated_repressed_by_darkness}
 length(complete.sd.rhythmic.genes)
-potential.light.dark.regulated <- setdiff(complete.sd.rhythmic.genes,unique(c(rhythmic.sd.ll.dd,rhythmic.only.dd,rhythmic.only.ll)))
+potential.light.dark.regulated <- setdiff(complete.sd.rhythmic.genes,unique(c(rhythmic.sd.ll.dd,sd.rhythmic.only.dd,sd.rhythmic.only.ll)))
 length(potential.light.dark.regulated)
 
 non.rhythmic.sd.dd.mean.expression.cycle <- apply(X = gene.expression[potential.light.dark.regulated,sd.zt.i],MARGIN = 1,FUN = mean)
@@ -1379,7 +1394,674 @@ write.table(x = sd.no.clear.effect.light.dark.regulation, file="gene_sets/SD_no_
 
 We first identified 1733 genes that only present rhythmicity under long day conditions without presenting any rhythmicity under constant light or dark. Here 331 genes activated by light and repressed by dark and 56 activated by dark and repressed by light. The 1346 remaining genes did not present a clear regulatory effect by constant light or dark. 
 
+### Representation of gene expression profiles for relevant examples
 
+The function below generates gene expression profile under LD or SD followed by
+free running conditions consisting of constant light (LL) o constant darkness (DD).
+The estimated gene expression profile can be represented as well as the parametrized
+best fitted cosine wave.
+
+830/360
+
+```{r functions_to_plot_gene_expression_profile}
+
+wave.form <- function(mesor, amplitude,period,phase,time=seq(from=0,to=72,by=0.01))
+{
+ y <- mesor + amplitude*cos(((2*pi)/period)*(time - phase))
+ return(y)
+}
+
+
+plot.expression.profile <- function(gene.id, gene.name, gene.expression,
+                             entrainment,free.running,param=F)
+{
+ if (entrainment == "SD")
+ {
+  zts <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  entrainment.col <- "red"
+  free.running.col <- "lightsalmon"
+ } else if (entrainment == "LD")
+ {
+  zts <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  entrainment.col <- "blue"
+  free.running.col <- "lightblue"
+ } else
+ {
+  print("Unkwnon entrainment. Possible entrainments SD and LD")
+ }
+ 
+ if (free.running == "LL")
+ {
+  free.running.indeces <- c(4,5)
+ } else if (free.running == "DD")
+ {
+  free.running.indeces <- c(6,7)
+ } else
+ {
+  print("Unknown free running. Possible options LL and DD")
+ }
+ 
+ current.gene.expression.entrainment <- gene.expression[gene.id,c(paste(zts,1,sep="_"),
+                                                                  paste(zts,2,sep="_"),
+                                                                  paste(zts,3,sep="_"))]
+ current.gene.expression.free.running <- gene.expression[gene.id,c(paste(zts,free.running.indeces[1],sep="_"),
+                                                                   paste(zts,free.running.indeces[2],sep="_"))]
+ current.gene.expression <- c(current.gene.expression.entrainment,current.gene.expression.free.running)
+ min.expression <- min(current.gene.expression)
+ max.expression <- max(current.gene.expression)
+ range.expression <- max.expression - min.expression
+ 
+ expression.step <- floor(range.expression / 5)
+ time.points.entrainment <- seq(from=0,by=4,length.out = 18)
+ time.points.free.running <- seq(from=0,by=4,length.out = 12)
+ 
+ 
+ if(param)
+ {
+  circacompare.data <- data.frame(time=c(time.points.entrainment,time.points.free.running),
+                               measure=c(current.gene.expression.entrainment,
+                                         current.gene.expression.free.running),
+                               group=c(rep("Entrainment",18),rep("Free_running",12)))
+  
+  result.i <- circacompare(x = circacompare.data, 
+                          col_time = "time", 
+                          col_group = "group", 
+                          col_outcome = "measure",
+                          alpha_threshold = 1)
+  result.i.values <- result.i$summary$value
+  names(result.i.values) <- result.i$summary$parameter
+  time.entrainment <- seq(from=0,to=72,by=0.01)
+  time.free.running <- seq(from=72,to=120,by=0.01)
+  line.entrainment <- wave.form(mesor = result.i.values["Entrainment mesor estimate"],
+            amplitude = result.i.values["Entrainment amplitude estimate"],
+            period = result.i.values["Shared period estimate"],phase = result.i.values["Entrainment peak time hours"],
+            time = time.entrainment)
+  line.free.running <- wave.form(mesor = result.i.values["Free_running mesor estimate"],
+                       amplitude = result.i.values["Free_running amplitude estimate"],
+                       period = result.i.values["Shared period estimate"],
+                       phase = result.i.values["Free_running peak time hours"],
+                       time = time.free.running)
+  plot(x = c(time.points.entrainment,time.points.free.running+max(time.points.sd)+4),#type="o",
+       y = current.gene.expression,lwd=1,col=entrainment.col,axes=F,xlab="",ylab="FPKM",
+       ylim=c(min.expression-expression.step,max.expression),
+       cex.lab=1.3,main=paste(gene.id, gene.name,sep=" - "),cex.main=2,pch=20,cex=0.8)
+  lines(x = c(time.entrainment,time.free.running), 
+        y = c(line.entrainment,line.free.running), 
+        type="l",
+        col=entrainment.col,lwd=3)
+ } else
+ {
+  plot(x= c(time.points.entrainment, 72 +time.points.free.running),
+       y = current.gene.expression,type="o",lwd=3,col=entrainment.col,axes=F,xlab="",ylab="FPKM",
+       ylim=c(min.expression-expression.step,max.expression),
+       cex.lab=1.3,main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
+ }
+ 
+ axis(side=2,lwd=3)
+ axis(side = 1,pos = min.expression - 1.1*expression.step, at = seq(from=0,to=116,by=4),
+      labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
+ if(entrainment == "SD")
+ {
+  polygon(x = c(0,8,8,0),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="red")
+  polygon(x = c(8,24,24,8),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(24,32,32,24),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  polygon(x = c(32,48,48,32),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(48,56,56,48),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  polygon(x = c(56,72,72,56),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="red")
+  if(free.running == "LL")
+  {
+   polygon(x = c(72,80,80,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red")
+   polygon(x = c(80,96,96,80),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red",col="salmon")
+   
+   polygon(x = c(96,104,104,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="red")
+   polygon(x = c(104,120,120,104),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="red",col="salmon")
+  } else if (free.running == "DD")
+  {
+   polygon(x = c(72,80,80,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red",col="salmon")
+   polygon(x = c(80,96,96,80),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="red",col="red")
+   
+   polygon(x = c(96,104,104,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="red",col="salmon")
+   polygon(x = c(104,120,120,104),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="red",col="red")
+  }
+ } else if (entrainment == "LD")
+ {
+  polygon(x = c(0,16,16,0),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="blue")
+  polygon(x = c(16,24,24,16),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(24,40,40,24),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue")
+  polygon(x = c(40,48,48,40),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(48,64,64,48),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue")
+  polygon(x = c(64,72,72,64),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  if(free.running == "LL")
+  {
+   polygon(x = c(72,88,88,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue")
+   polygon(x = c(88,96,96,88),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+   
+   polygon(x = c(96,112,112,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="blue")
+   polygon(x = c(112,120,120,112),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+  } else if (free.running == "DD")
+  {
+   polygon(x = c(72,88,88,72),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue",col="lightblue")
+   polygon(x = c(88,96,96,88),y=c(min.expression-expression.step/2,
+                                  min.expression-expression.step/2,
+                                  min.expression-expression.step,
+                                  min.expression-expression.step),lwd=2,border="blue",col="blue")
+   
+   polygon(x = c(96,112,112,96),y=c(min.expression-expression.step/2,
+                                    min.expression-expression.step/2,
+                                    min.expression-expression.step,
+                                    min.expression-expression.step),lwd=2,border="blue", col="lightblue")
+   polygon(x = c(112,120,120,112),y=c(min.expression-expression.step/2,
+                                      min.expression-expression.step/2,
+                                      min.expression-expression.step,
+                                      min.expression-expression.step),lwd=2,border="blue",col="blue")
+  }
+ }
+}
+```
+
+Expression profile of bona fide circadian genes. 
+
+```{r expression_profile_bona_fide_circadian}
+plot.expression.profile(gene.id ="ostta04g02510", gene.name = "RCA", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta04g02510", gene.name = "RCA", 
+                        gene.expression,entrainment="DD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta04g02510", gene.name = "RCA", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta04g02510", gene.name = "RCA", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta03g05500", gene.name = "SBPASE", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta03g05500", gene.name = "SBPASE", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta03g05500", gene.name = "SBPASE", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta03g05500", gene.name = "SBPASE", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta03g00350", gene.name = "FBP", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta03g00350", gene.name = "FBP", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta03g00350", gene.name = "FBP", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta03g00350", gene.name = "FBP", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+
+```
+
+Expression profile of genes only cycling under LD and LL such as DNA replication
+
+```{r}
+plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta14g01050", gene.name = "MCM4", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta14g01050", gene.name = "MCM4", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta13g01140", gene.name = "RPA", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta13g01140", gene.name = "RPA", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta12g00110", gene.name = "POLA2", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta12g00110", gene.name = "POLA2", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+
+plot.expression.profile(gene.id ="ostta11g01400", gene.name = "POLA2", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta11g01400", gene.name = "POLA2", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta18g01440", gene.name = "RFA", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta18g01440", gene.name = "RFA", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta13g02040", gene.name = "PRIM1", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta13g02040", gene.name = "PRIM1", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+
+
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006396","RNA processing",4.48302788112627,4.93163497834176,0.224204603729497,0,"RNA processing"),
+c("GO:0006310","DNA recombination",0.86812732534105,0.593932700669152,0.364337688300316,0.52500113,"RNA processing"),
+c("GO:0090304","nucleic acid metabolic process",10.100592531349,1.31213030666645,0.25325837406206,0.69533934,"RNA processing"),
+c("GO:0042254","ribosome biogenesis",1.88323917137476,0.76463446971412,0.792713910605671,0.043817,"ribosome biogenesis"),
+c("GO:0022613","ribonucleoprotein complex biogenesis",2.3379725322677,0.80942531743117,0.790741160545981,0.65598585,"ribosome biogenesis"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "Revigo TreeMap",
+  inflate.labels = TRUE,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+
+
+
+plot.expression.profile(gene.id ="ostta02g01210", gene.name = "RPL7AE", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta02g01210", gene.name = "RPL7AE", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+
+plot.expression.profile(gene.id ="ostta04g00770", gene.name = "Utp14", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta04g00770", gene.name = "Utp14", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+
+plot.expression.profile(gene.id ="ostta13g00670", gene.name = "RPL7AE", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta13g00670", gene.name = "RPL7AE", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+
+plot.expression.profile(gene.id ="ostta04g03790", gene.name = "MRP", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+plot.ld.sd <- function(gene.id, gene.name, gene.expression)
+{
+
+  ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  
+  sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+
+  max.expr <- max(c(current.gene.expression.ld, current.gene.expression.sd))
+  min.expr <- min(c(current.gene.expression.ld, current.gene.expression.sd))
+  
+  range.expr <- (max.expr - min.expr)
+  
+  plot(x = -10,y= -10,axes=F,xlab="",ylab="",
+       ylim=c(min.expr-0.2*range.expr, max.expr+0.2*range.expr),xlim=c(0,72),
+       main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
+  lines(x = seq(from=0,by=4,to=68),current.gene.expression.ld,type="o",lwd=5,col="blue")
+  lines(x = seq(from=0,by=4,to=68),current.gene.expression.sd,type="o",lwd=5,col="red")
+  axis(side=2,lwd=3,las=2,cex.axis=1.5)
+
+  for(i in 0:2)
+  {
+    current.line <- (max.expr - min.expr)/20
+    
+    polygon(x = c(24*i, 24*i+16, 24*i+16, 24*i),
+            y=c(min.expr-current.line, min.expr-current.line, 
+                min.expr-2.5*(current.line), min.expr-2.5*(current.line)),
+            lwd=3,border="blue")
+    polygon(x = c(24*i+16,24*(i+1),24*(i+1),24*i+16),
+            y=c(min.expr-current.line, min.expr-current.line, 
+                min.expr-2.5*(current.line), min.expr-2.5*(current.line)),
+            lwd=3,border="blue",col="blue")
+    
+    polygon(x = c(24*i, 24*i+8, 24*i+8, 24*i),
+            y=c(min.expr-3*current.line, min.expr-3*current.line, 
+                min.expr-4.5*(current.line), min.expr-4.5*(current.line)),
+            lwd=3,border="red")
+    polygon(x = c(24*i+8,24*(i+1),24*(i+1),24*i+8),
+            y=c(min.expr-3*current.line, min.expr-3*current.line, 
+                min.expr-4.5*(current.line), min.expr-4.5*(current.line)),
+            lwd=3,border="red",col="red")
+  }
+  
+  return(0)  
+}
+
+
+plot.ld.sd(gene.id = "ostta07g01350",gene.name = "ATPD", gene.expression)
+plot.expression.profile(gene.id ="ostta07g01350", gene.name = "ATPD", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F) # peak zt4
+plot.expression.profile(gene.id ="ostta07g01350", gene.name = "ATPD", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F) # peak zt0??
+
+
+plot.ld.sd(gene.id = "ostta18g01250",gene.name = "FNR", gene.expression)
+plot.expression.profile(gene.id ="ostta18g01250", gene.name = "FNR", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F) # peak zt4
+plot.expression.profile(gene.id ="ostta18g01250", gene.name = "FNR", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F) # peak zt20
+
+gene.id <- "ostta06g02940"
+gene.id <- "ostta18g01250"
+
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+current.gene.expression.sd.ll <- gene.expression[gene.id,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+current.gene.expression.sd.dd <- gene.expression[gene.id,c(paste(sd.zt,6,sep="_"),paste(sd.zt,7,sep="_"))]
+
+time.points <- seq(from=0,by=4,length.out = 12)
+
+sd.ll.dd.df <- data.frame(time=c(time.points,time.points),
+                          measure=c(current.gene.expression.sd.ll, 
+                                    current.gene.expression.sd.dd),
+                          group=c(rep("sd_ll",12),rep("sd_dd",12)))
+
+sd.out.i <- circacompare(x = sd.ll.dd.df, col_time = "time", 
+                         col_group = "group", 
+                         col_outcome = "measure",alpha_threshold = 1)
+circa.values.sd <- sd.out.i$summary$value
+names(circa.values.sd) <- sd.out.i$summary$parameter
+
+mesor.sd.ll <- circa.values.sd["sd_ll mesor estimate"]
+mesor.sd.dd <- circa.values.sd["sd_dd mesor estimate"]
+
+amplitude.sd.ll <- circa.values.sd["sd_ll amplitude estimate"]
+amplitude.sd.dd <- circa.values.sd["sd_dd amplitude estimate"]
+
+phase.sd.ll <- circa.values.sd["sd_ll peak time hours"]
+phase.sd.dd <- circa.values.sd["sd_dd peak time hours"]
+
+two.waves.combination <- function(x,beta1,beta2,phi,offset)
+{
+ phi1 <- phi
+ phi2 <- (phi + offset) %% 24
+ wave1 <- wave.form(mesor = 1, amplitude = beta1, period = 24, phase = phi1, time = x)
+ wave2 <- wave.form(mesor = 1, amplitude = beta2, period = 24, phase = phi2, time = x)
+ two.waves <- matrix(data = c(wave1,wave2),ncol=2)
+ res <- apply(X = two.waves,MARGIN = 1,FUN = max)
+ 
+ return(res)
+}
+
+time.points <- seq(from=0,by=4,length.out = 18)
+gene.expression.df.2 <- data.frame(x=time.points,                                y=current.gene.expression.sd/mean(current.gene.expression.sd))
+
+
+m.2 <- nls( y ~ two.waves.combination(x,beta1,beta2,phi,offset), data = gene.expression.df.2,
+            start = list(beta1=amplitude.sd.dd/mesor.sd.dd,
+                         beta2=amplitude.sd.ll/mesor.sd.ll,
+                         phi=phase.sd.dd,
+                         offset=8),#phase.sd.ll-phase.sd.dd),
+            lower = c(0.02,0.02,20,8), upper = c(2,2,24,12),algorithm = "port", 
+            control=stats::nls.control(maxiter = 100, minFactor = 1/10000,warnOnly = T),
+            trace = T)
+
+
+summariy.m.2 <- summary(m.2)
+estimates.2 <- summariy.m.2$coefficients[,"Estimate"]
+beta1.estimate.2 <- estimates.2[["beta1"]]
+beta2.estimate.2 <- estimates.2[["beta2"]]
+phi1.estimate.2 <- estimates.2[["phi"]]
+phi2.estimate.2 <- ((phi1.estimate.2 + estimates.2[["offset"]]) %% 24)
+
+dos.ondas.2 <- two.waves.combination(x=seq(from=0,to=68,by=0.01), 
+                                     beta1=beta1.estimate.2,
+                                     beta2=beta2.estimate.2,
+                                     phi=phi1.estimate.2,
+                                     offset=phi2.estimate.2 - phi1.estimate.2)
+
+wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = phi1.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+
+time.points <- seq(from=0,by=4,length.out = 18)
+plot(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)#,
+lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*dos.ondas.2,type="l",col="red",lwd=2,pch=19,cex=0.5)
+lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave1,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave2,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+
+wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = 
+                    phi1.estimate.2,period = 24, time = seq(from=0,to=116,by=0.01))
+wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=116,by=0.01))
+
+
+plot.expression.profile(gene.id ="ostta18g01250", gene.name = "FNR", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F) # peak zt20
+lines(seq(from=0,to=116,by=0.01),mean(current.gene.expression.sd)*wave1,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+
+plot.expression.profile(gene.id ="ostta18g01250", gene.name = "FNR", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F) # peak zt20
+lines(seq(from=0,to=116,by=0.01),mean(current.gene.expression.sd)*wave2,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+
+
+
+gene.id <- "ostta06g02940"
+gene.id <- "ostta04g04000"
+
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+current.gene.expression.sd.ll <- gene.expression[gene.id,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+current.gene.expression.sd.dd <- gene.expression[gene.id,c(paste(sd.zt,6,sep="_"),paste(sd.zt,7,sep="_"))]
+
+time.points <- seq(from=0,by=4,length.out = 12)
+
+sd.ll.dd.df <- data.frame(time=c(time.points,time.points),
+                          measure=c(current.gene.expression.sd.ll, 
+                                    current.gene.expression.sd.dd),
+                          group=c(rep("sd_ll",12),rep("sd_dd",12)))
+
+sd.out.i <- circacompare(x = sd.ll.dd.df, col_time = "time", 
+                         col_group = "group", 
+                         col_outcome = "measure",alpha_threshold = 1)
+circa.values.sd <- sd.out.i$summary$value
+names(circa.values.sd) <- sd.out.i$summary$parameter
+
+mesor.sd.ll <- circa.values.sd["sd_ll mesor estimate"]
+mesor.sd.dd <- circa.values.sd["sd_dd mesor estimate"]
+
+amplitude.sd.ll <- circa.values.sd["sd_ll amplitude estimate"]
+amplitude.sd.dd <- circa.values.sd["sd_dd amplitude estimate"]
+
+phase.sd.ll <- circa.values.sd["sd_ll peak time hours"]
+phase.sd.dd <- circa.values.sd["sd_dd peak time hours"]
+
+time.points <- seq(from=0,by=4,length.out = 18)
+gene.expression.df.2 <- data.frame(x=time.points,                                y=current.gene.expression.sd/mean(current.gene.expression.sd))
+
+
+m.2 <- nls( y ~ two.waves.combination(x,beta1,beta2,phi,offset), data = gene.expression.df.2,
+            start = list(beta1=amplitude.sd.dd/mesor.sd.dd,
+                         beta2=amplitude.sd.ll/mesor.sd.ll,
+                         phi=phase.sd.dd,
+                         offset=12),#phase.sd.ll-phase.sd.dd),
+            lower = c(0.02,0.02,0,8), upper = c(2,2,24,16),algorithm = "port", 
+            control=stats::nls.control(maxiter = 100, minFactor = 1/10000,warnOnly = T),
+            trace = T)
+
+
+summariy.m.2 <- summary(m.2)
+estimates.2 <- summariy.m.2$coefficients[,"Estimate"]
+beta1.estimate.2 <- estimates.2[["beta1"]]
+beta2.estimate.2 <- estimates.2[["beta2"]]
+phi1.estimate.2 <- estimates.2[["phi"]]
+phi2.estimate.2 <- ((phi1.estimate.2 + estimates.2[["offset"]]) %% 24)
+
+dos.ondas.2 <- two.waves.combination(x=seq(from=0,to=68,by=0.01), 
+                                     beta1=beta1.estimate.2,
+                                     beta2=beta2.estimate.2,
+                                     phi=phi1.estimate.2,
+                                     offset=phi2.estimate.2 - phi1.estimate.2)
+
+wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = phi1.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+
+time.points <- seq(from=0,by=4,length.out = 18)
+plot(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)#,
+lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*dos.ondas.2,type="l",col="red",lwd=2,pch=19,cex=0.5)
+lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave1,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave2,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+
+wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = 
+                    phi1.estimate.2,period = 24, time = seq(from=0,to=116,by=0.01))
+wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=116,by=0.01))
+
+
+plot.expression.profile(gene.id =gene.id, gene.name = "GBSS", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F) # peak zt20
+lines(seq(from=0,to=116,by=0.01),mean(current.gene.expression.sd)*wave2,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+
+plot.expression.profile(gene.id = gene.id, gene.name = "GBSS", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F) # peak zt20
+lines(seq(from=0,to=116,by=0.01),mean(current.gene.expression.sd)*wave1,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+
+
+
+
+plot.ld.sd(gene.id = "ostta04g04390",gene.name = "SCS", gene.expression)
+plot.expression.profile(gene.id = "ostta04g04390", gene.name =  "SCS", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F) # peak zt0
+plot.expression.profile(gene.id ="ostta04g04390", gene.name = "SCS", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F) # peak zt8
+
+gene.id <- "ostta05g02180"
+plot.ld.sd(gene.id = gene.id,gene.name = gene.id, gene.expression)
+plot.expression.profile(gene.id =gene.id, gene.name = gene.id, 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F) # peak zt4
+plot.expression.profile(gene.id =gene.id, gene.name = gene.id, 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F) # peak zt20
+
+
+```
 
 ```{r}
 data.sd.dd <- matrix(c(length(complete.sd.dd.rhythmic.genes),length(setdiff(complete.sd.rhythmic.genes,complete.sd.dd.rhythmic.genes)),length(non.rhythmic.sd.genes)),nrow=3)
@@ -2302,4 +2984,571 @@ write.table(x = subset(gene.annotation, geneID %in% circa.ld.rhythmic.only.dd), 
 write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.sd.ll.dd),file="circa_gene_sets/circa_SD_LL_DD_rhythmic_genes.tsv",row.names = F)
 
 
+```
+
+## **Diurnal transcriptonal program under different seasonal photoperiodic conditions**
+
+600 x 300
+
+```{r enrich_ld_zt0}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006396","RNA processing",4.48302788112627,17.1249317057885,0.428373486104513,0,"RNA processing"),
+c("GO:0006508","proteolysis",5.0985255615268,1.9673107679253,0.633200028048102,0.31319474,"RNA processing"),
+c("GO:0006520","cellular amino acid metabolic process",1.97510449680768,3.81326830414037,0.363406718161334,0.20858623,"RNA processing"),
+c("GO:0006790","sulfur compound metabolic process",1.84189977492995,2.13347788921259,0.774925996959781,0.15065952,"RNA processing"),
+c("GO:0008652","cellular amino acid biosynthetic process",1.01511184603371,2.27724896756464,0.339816510081347,0.69871578,"RNA processing"),
+c("GO:0009451","RNA modification",1.46065867438335,2.25359690723771,0.488612607793432,0.65889446,"RNA processing"),
+c("GO:0010467","gene expression",8.88797023563456,3.45439941314192,0.67373194224623,0.30590228,"RNA processing"),
+c("GO:0044283","small molecule biosynthetic process",3.12342106471912,1.82548377441373,0.463706647239578,0.63455097,"RNA processing"),
+c("GO:0042254","ribosome biogenesis",1.88323917137476,6.62335984634109,0.814898512596337,0.043817,"ribosome biogenesis"),
+c("GO:0022613","ribonucleoprotein complex biogenesis",2.3379725322677,6.3374033051424,0.8273771726997,0.65598585,"ribosome biogenesis"),
+c("GO:0044085","cellular component biogenesis",6.6234899637132,3.99733257147092,0.836897964302951,0.49219009,"ribosome biogenesis"),
+c("GO:0071840","cellular component organization or biogenesis",14.5698406136604,2.13432581047247,0.906982419288751,0.06163579,"cellular component organization or biogenesis"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T, 
+  lowerbound.cex.labels = 0, 
+  position.legend = "none"
+)
+```
+
+```{r enrich_ld_zt4}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0043603","cellular amide metabolic process",3.95480225988701,9.71696419651521,0.65140627261417,0,"translation"),
+c("GO:0006289","nucleotide-excision repair",0.23884984612558,1.56971045050414,0.707773730843867,0.33132822,"translation"),
+c("GO:0006399","tRNA metabolic process",1.01511184603371,1.40447561586478,0.644470162107968,0.39263,"translation"),
+c("GO:0006412","translation",2.89835101740848,10.5247641377388,0.432282438529006,0.45346426,"translation"),
+c("GO:0006629","lipid metabolic process",5.08015249644022,2.85226920637064,0.763797137497712,0.18115333,"translation"),
+c("GO:0006720","isoprenoid metabolic process",0.950806118230674,1.98798356042409,0.670267786779509,0.68867054,"translation"),
+c("GO:0008610","lipid biosynthetic process",2.84782508842038,5.23903595072944,0.487919714957087,0.485685,"translation"),
+c("GO:0009059","macromolecule biosynthetic process",6.71076202287447,4.24193317233497,0.522873458625074,0.64220897,"translation"),
+c("GO:0010467","gene expression",8.88797023563456,3.18223129607639,0.723831871445336,0.17679035,"translation"),
+c("GO:0019752","carboxylic acid metabolic process",4.4462817509531,3.93557297288012,0.419681422572545,0.16861282,"translation"),
+c("GO:0043038","amino acid activation",0.289375775113683,3.86279131452368,0.49596942339085,0.63504933,"translation"),
+c("GO:0044271","cellular nitrogen compound biosynthetic process",6.7842542832208,4.73198986575324,0.469441625119376,0.62284032,"translation"),
+c("GO:0044281","small molecule metabolic process",7.84989205824262,2.71452288863607,0.794666327260586,0.1403126,"translation"),
+c("GO:1901566","organonitrogen compound biosynthetic process",6.94042533645675,6.25854573198372,0.496615106890673,0.55536825,"translation"),
+c("GO:0048878","chemical homeostasis",1.99347756189426,1.56971045050414,0.815647311780462,0,"chemical homeostasis"),
+c("GO:0065008","regulation of biological quality",4.52436727757108,1.40856341215486,0.941847491335691,0.23263026,"chemical homeostasis"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+
+```{r enrich_ld_zt8}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0015979","photosynthesis",1.14831656791144,18.8644725632342,0.802287597084214,0,"photosynthesis"),
+c("GO:0005975","carbohydrate metabolic process",5.18579762068807,3.40766109848194,0.766278035330041,0.11580361,"photosynthesis"),
+c("GO:0005996","monosaccharide metabolic process",0.822194662624592,1.5076840410268,0.469427360401856,0.6258559,"photosynthesis"),
+c("GO:0006090","pyruvate metabolic process",0.413393964448119,2.68534274400364,0.522815189307264,0.10743606,"photosynthesis"),
+c("GO:0006091","generation of precursor metabolites and energy",2.2277341417482,3.39801445569994,0.788938413558362,0.12931462,"photosynthesis"),
+c("GO:0006720","isoprenoid metabolic process",0.950806118230674,2.49472019933581,0.768103694186006,0.68072022,"photosynthesis"),
+c("GO:0006754","ATP biosynthetic process",0.188323917137476,2.25933300531544,0.216302897596841,0.50237251,"photosynthesis"),
+c("GO:0008299","isoprenoid biosynthetic process",0.790041798723072,2.49472019933581,0.626002829389189,0.43941443,"photosynthesis"),
+c("GO:0008610","lipid biosynthetic process",2.84782508842038,1.62535351147263,0.592791792460897,0.68867054,"photosynthesis"),
+c("GO:0016051","carbohydrate biosynthetic process",1.55252399981627,2.21147109775584,0.569400464776234,0.48080595,"photosynthesis"),
+c("GO:0016052","carbohydrate catabolic process",1.38257314776538,1.70930187660718,0.647245505784515,0.66436559,"photosynthesis"),
+c("GO:0018130","heterocycle biosynthetic process",3.97317532497359,5.3729437985364,0.456266574235474,0.55323376,"photosynthesis"),
+c("GO:0019318","hexose metabolic process",0.624684212943824,1.69408889346145,0.480420781515658,0.60724941,"photosynthesis"),
+c("GO:0019438","aromatic compound biosynthetic process",4.3360433604336,5.51480816130721,0.461876624110982,0.54314467,"photosynthesis"),
+c("GO:0019439","aromatic compound catabolic process",1.12535023655321,1.57322123692795,0.532769289721702,0.33405276,"photosynthesis"),
+c("GO:0019693","ribose phosphate metabolic process",1.15290983418309,1.51537314022513,0.379658411163815,0.6726284,"photosynthesis"),
+c("GO:0032787","monocarboxylic acid metabolic process",2.22314087547655,1.60930856990018,0.464237481481533,0.64007685,"photosynthesis"),
+c("GO:0033013","tetrapyrrole metabolic process",0.35827476918837,15.5466685969818,0.581065450499338,0.10591364,"photosynthesis"),
+c("GO:0033014","tetrapyrrole biosynthetic process",0.234256579853934,15.8541260312363,0.439134971139499,0.29832594,"photosynthesis"),
+c("GO:0034655","nucleobase-containing compound catabolic process",0.74870240227826,1.63918865762331,0.486282401859721,0.54334393,"photosynthesis"),
+c("GO:0042866","pyruvate biosynthetic process",0.00459326627164577,2.04134668692281,0.588397903188232,0.48092846,"photosynthesis"),
+c("GO:0044264","cellular polysaccharide metabolic process",1.38716641403702,1.42684760469253,0.697168716554998,0.66462658,"photosynthesis"),
+c("GO:0044270","cellular nitrogen compound catabolic process",0.98755224840384,1.39660473478046,0.568515151359906,0.55986772,"photosynthesis"),
+c("GO:0046434","organophosphate catabolic process",0.326121905286849,1.63918865762331,0.396238322380229,0.57107172,"photosynthesis"),
+c("GO:0046496","nicotinamide nucleotide metabolic process",0.0734922603463323,1.91831319833986,0.304162148672404,0.62388011,"photosynthesis"),
+c("GO:0046700","heterocycle catabolic process",0.964585917045611,1.34385158107082,0.522469711708121,0.55842452,"photosynthesis"),
+c("GO:0046939","nucleotide phosphorylation",0.376647834274953,2.04134668692281,0.5820712613485,0.10644076,"photosynthesis"),
+c("GO:0072524","pyridine-containing compound metabolic process",0.142391254421019,1.91831319833986,0.615173129758558,0.28613831,"photosynthesis"),
+c("GO:1901361","organic cyclic compound catabolic process",1.16668963299802,1.34385158107082,0.534872434745982,0.50356197,"photosynthesis"),
+c("GO:1901362","organic cyclic compound biosynthetic process",4.94694777456249,5.57019500741414,0.46131957157833,0.38084042,"photosynthesis"),
+c("GO:0042440","pigment metabolic process",0.652243810573699,7.52598622385977,0.84986850003687,0.08529953,"pigment metabolic process"),
+c("GO:0046034","ATP metabolic process",0.83597446143953,1.95318100172647,0.846348524009824,0.08758783,"ATP metabolic process"),
+c("GO:0046148","pigment biosynthetic process",0.514445822424326,7.83442203050297,0.833595575800534,0.08322038,"pigment biosynthetic process"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  position.legend = "none"
+)
+```
+
+
+```{r enrich_ld_zt12}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006259","DNA metabolic process",2.8202654907905,26.9368642375602,0.7423283093746,0,"DNA replication"),
+c("GO:0005975","carbohydrate metabolic process",5.18579762068807,1.54813997575152,0.893570377199549,0.17175106,"DNA replication"),
+c("GO:0006091","generation of precursor metabolites and energy",2.2277341417482,1.61709709789425,0.871918655216199,0.14507497,"DNA replication"),
+c("GO:0006260","DNA replication",0.675210141931928,15.5443075720844,0.719559132577662,0.48119412,"DNA replication"),
+c("GO:0006261","DNA-templated DNA replication",0.519039088695972,7.48229655638109,0.71705137290593,0.67604133,"DNA replication"),
+c("GO:0006298","mismatch repair",0.0918653254329154,3.41894370622182,0.718055347773807,0.57840817,"DNA replication"),
+c("GO:0006644","phospholipid metabolic process",1.12994350282486,1.42710097173944,0.794637326318305,0.69246817,"DNA replication"),
+c("GO:0006793","phosphorus metabolic process",9.65045243672776,1.38875988663669,0.845351116724389,0.1810832,"DNA replication"),
+c("GO:0015980","energy derivation by oxidation of organic compounds",0.83597446143953,1.80527968320105,0.885231322851967,0.12805117,"DNA replication"),
+c("GO:0019637","organophosphate metabolic process",2.93050388131,1.31631982151131,0.823655220440377,0.47240873,"DNA replication"),
+c("GO:0046488","phosphatidylinositol metabolic process",0.445546828349639,1.61556931214434,0.802269970763037,0.12481902,"DNA replication"),
+c("GO:0072527","pyrimidine-containing compound metabolic process",0.298562307656975,1.66843259169973,0.809691123008959,0.37164434,"DNA replication"),
+c("GO:0072528","pyrimidine-containing compound biosynthetic process",0.215883514767351,1.3487590766694,0.814980392743513,0.35922983,"DNA replication"),
+c("GO:0090304","nucleic acid metabolic process",10.100592531349,4.36633065402709,0.714902300402614,0.64035351,"DNA replication"),
+c("GO:0006974","cellular response to DNA damage stimulus",1.93835836663451,6.99841588647203,0.858704785658173,0.04128178,"cellular response to DNA damage stimulus"),
+c("GO:0006950","response to stress",17.6197694180332,6.9455648612008,0.93009075668781,0.31464231,"cellular response to DNA damage stimulus"),
+c("GO:0033554","cellular response to stress",5.72780304074227,6.84459867215738,0.859346753844225,0.47834091,"cellular response to DNA damage stimulus"),
+c("GO:0051716","cellular response to stimulus",14.808690459786,6.73185858483169,0.864089129205872,0.49011316,"cellular response to DNA damage stimulus"),
+c("GO:0007017","microtubule-based process",1.05645124247853,1.51380264212478,0.945901970991133,0.03819566,"microtubule-based process"),
+c("GO:0007154","cell communication",10.2475770520417,1.64609368619291,0.926362044785607,0.07375585,"cell communication"),
+c("GO:0046907","intracellular transport",3.32093151439989,2.29836360412381,0.628754904017727,0.04446914,"intracellular transport"),
+c("GO:0015031","protein transport",3.74810527766295,1.54576129488758,0.656353749103547,0.55063766,"intracellular transport"),
+c("GO:0015833","peptide transport",0.234256579853934,1.50416602992329,0.771115433086865,0.59459352,"intracellular transport"),
+c("GO:0016192","vesicle-mediated transport",2.42065132515732,1.77626392119578,0.73300785188098,0.51685372,"intracellular transport"),
+c("GO:0033036","macromolecule localization",5.54407238987644,1.5086345087394,0.712788671023096,0.60273194,"intracellular transport"),
+c("GO:0042886","amide transport",0.330715171558495,1.50416602992329,0.763666596784309,0.61738691,"intracellular transport"),
+c("GO:0048193","Golgi vesicle transport",0.849754260254467,1.61556931214434,0.762606178457432,0.45065134,"intracellular transport"),
+c("GO:0051641","cellular localization",4.34982315924854,2.00436503378355,0.674560505825774,0.53688282,"intracellular transport"),
+c("GO:0071702","organic substance transport",6.66482936015801,1.51692335972615,0.697253514205742,0.65288126,"intracellular transport"),
+c("GO:0071705","nitrogen compound transport",5.32359560883744,1.67183989072497,0.705871861046401,0.59243441,"intracellular transport"),
+c("GO:0050896","response to stimulus",28.6068623398098,5.0734072789077,1,0,"response to stimulus"),
+c("GO:0051276","chromosome organization",2.50792338431859,4.03035115812885,0.831094890994308,0.04274783,"chromosome organization"),
+c("GO:0006265","DNA topological change",0.0643057278030407,1.42265096994275,0.682263845846626,0.62571222,"chromosome organization"),
+c("GO:0006325","chromatin organization",1.59845666253273,1.70518694086552,0.820551896647036,0.59228987,"chromosome organization"),
+c("GO:0016043","cellular component organization",12.824399430435,3.97245749250563,0.818550508013705,0.57341566,"chromosome organization"),
+c("GO:0051258","protein polymerization",0.137797988149373,1.77550101683656,0.883143259814148,0.34857516,"chromosome organization"),
+c("GO:0071840","cellular component organization or biogenesis",14.5698406136604,2.11173616118231,0.922038302597263,0.05816673,"cellular component organization or biogenesis"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+
+```{r enrich_ld_zt16}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006457","protein folding",0.959992650773965,1.53923973448085,0.952517158235107,0.0385167,"protein folding"),
+                     c("GO:0006928","movement of cell or subcellular component",0.404207431904828,2.84947684300138,0.956616281693871,0.03477992,"movement of cell or subcellular component"),
+                     c("GO:0007017","microtubule-based process",1.05645124247853,2.82355464869269,0.952015261271345,0.03898027,"microtubule-based process"),
+                     c("GO:0007018","microtubule-based movement",0.298562307656975,2.84947684300138,0.957889140027084,0.03363699,"microtubule-based movement"),
+                     c("GO:0007154","cell communication",10.2475770520417,1.42971946598561,0.936019107994367,0.05456486,"cell communication"),
+                     c("GO:0007264","small GTPase mediated signal transduction",0.110238390519498,3.79464156947587,0.917225424474846,0.03035622,"small GTPase mediated signal transduction"),
+                     c("GO:0035556","intracellular signal transduction",2.69165403518442,2.91284823525143,0.884211589213545,0.42849996,"small GTPase mediated signal transduction"),
+                     c("GO:0050789","regulation of biological process",27.4815121032566,1.72590563146078,0.950581801151921,0.60628362,"small GTPase mediated signal transduction"),
+                     c("GO:0050794","regulation of cellular process",24.6979927426393,1.758086140628,0.946898332662737,0.22821803,"small GTPase mediated signal transduction"),
+                     c("GO:0051716","cellular response to stimulus",14.808690459786,2.14970727136551,0.908799524796766,0.20492608,"small GTPase mediated signal transduction"),
+                     c("GO:0016071","mRNA metabolic process",2.64112810619632,3.25091434424003,0.766272306602603,0.04405455,"cellular respiration"),
+                     c("GO:0006511","ubiquitin-dependent protein catabolic process",2.39309172752745,1.51819873410944,0.711143146030585,0.69754848,"cellular respiration"),
+                     c("GO:0009057","macromolecule catabolic process",4.42790868586652,1.49630585926452,0.79376627352075,0.25035747,"cellular respiration"),
+                     c("GO:0009150","purine ribonucleotide metabolic process",0.992145514675486,2.15858984847832,0.651492462454021,0.45508048,"cellular respiration"),
+                     c("GO:0045333","cellular respiration",0.74870240227826,2.22583822523927,0.87871180877826,0.12541042,"cellular respiration"),
+                     c("GO:0072521","purine-containing compound metabolic process",1.1437233016398,2.47082036411226,0.791572526731543,0.43022086,"cellular respiration"),
+                     c("GO:0023052","signaling",8.83744430664646,2.04889601737786,1,0,"signaling"),
+                     c("GO:0046907","intracellular transport",3.32093151439989,4.72421142896339,0.630456882676498,0,"intracellular transport"),
+                     c("GO:0006810","transport",12.2594276790226,4.69448071853157,0.669786612536744,0.67626021,"intracellular transport"),
+                     c("GO:0015031","protein transport",3.74810527766295,4.04319323942246,0.663047601045225,0.55063766,"intracellular transport"),
+                     c("GO:0015833","peptide transport",0.234256579853934,3.95293761209305,0.778268188169876,0.59459352,"intracellular transport"),
+                     c("GO:0016192","vesicle-mediated transport",2.42065132515732,4.06630750361706,0.733723123277529,0.51685372,"intracellular transport"),
+                     c("GO:0042886","amide transport",0.330715171558495,3.95293761209305,0.77080532691434,0.61738691,"intracellular transport"),
+                     c("GO:0051641","cellular localization",4.34982315924854,3.64709511375948,0.680318031368965,0.53688282,"intracellular transport"),
+                     c("GO:0050896","response to stimulus",28.6068623398098,1.48758334050479,1,0,"response to stimulus"),
+                     c("GO:0051179","localization",13.2240135960682,4.57326193237679,1,0,"localization"),
+                     c("GO:0065007","biological regulation",30.7840705525699,1.54519743567445,1,0,"biological regulation"),
+                     c("GO:0071103","DNA conformation change",0.367461301731661,1.67257192770165,0.870576006551199,0.03441206,"DNA conformation change"),
+                     c("GO:0031497","chromatin assembly",0.491479491066097,1.46397734996374,0.855800335712173,0.6580007,"DNA conformation change"),
+                     c("GO:0051276","chromosome organization",2.50792338431859,1.46397734996374,0.870315215075545,0.49857827,"DNA conformation change"),
+                     c("GO:0065004","protein-DNA complex assembly",0.385834366818244,1.46397734996374,0.849329608241684,0.32075575,"DNA conformation change"),
+                     c("GO:0071824","protein-DNA complex subunit organization",0.440953562077994,1.46397734996374,0.874604543661996,0.62621605,"DNA conformation change"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+ stuff,
+ index = c("representative","description"),
+ vSize = "value",
+ type = "categorical",
+ vColor = "representative",
+ title = "",
+ inflate.labels = T,
+ lowerbound.cex.labels = 0,position.legend = "none"
+)
+```
+
+
+```{r enrich_ld_zt20}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006855","xenobiotic transmembrane transport",0.247666745649948,1.62461960800903,0.937221880459978,0.02711736,"xenobiotic transmembrane transport"),
+c("GO:0055085","transmembrane transport",6.39841991640255,1.62453417655092,0.91914068973172,0.42093102,"xenobiotic transmembrane transport"),
+c("GO:0042221","response to chemical",13.6741536906895,1.99987643531246,1,0,"response to chemical"),
+c("GO:0043648","dicarboxylic acid metabolic process",0.436360295806348,3.61686639819851,0.528280932184713,0,"cellular amino acid metabolic process"),
+c("GO:0001522","pseudouridine synthesis",0.114831656791144,1.55615369218276,0.691230426025727,0.46462383,"cellular amino acid metabolic process"),
+c("GO:0006399","tRNA metabolic process",1.01511184603371,1.78585264773218,0.664650700209167,0.58784685,"cellular amino acid metabolic process"),
+c("GO:0006464","cellular protein modification process",12.7646869689036,3.34450767364463,0.534246493027197,0.69315188,"cellular amino acid metabolic process"),
+c("GO:0006520","cellular amino acid metabolic process",1.97510449680768,3.00265552759782,0.414278464488418,0.63568389,"cellular amino acid metabolic process"),
+c("GO:0006643","membrane lipid metabolic process",0.546598686325846,1.62461960800903,0.783233284392523,0.13219271,"cellular amino acid metabolic process"),
+c("GO:0006664","glycolipid metabolic process",0.312342106471912,1.62461960800903,0.793561196002137,0.58885108,"cellular amino acid metabolic process"),
+c("GO:0006766","vitamin metabolic process",0.47769969225116,1.69009510045378,0.585020211379274,0.43511401,"cellular amino acid metabolic process"),
+c("GO:0008652","cellular amino acid biosynthetic process",1.01511184603371,2.99133565476256,0.400775289129489,0.69871578,"cellular amino acid metabolic process"),
+c("GO:0010467","gene expression",8.88797023563456,1.415543828888,0.690525901957192,0.38797464,"cellular amino acid metabolic process"),
+c("GO:0016070","RNA metabolic process",7.37219236599146,1.39200299924354,0.60684956916883,0.66116504,"cellular amino acid metabolic process"),
+c("GO:0016567","protein ubiquitination",3.7940379403794,2.05807530929076,0.584607510089266,0.12285144,"cellular amino acid metabolic process"),
+c("GO:0034660","ncRNA metabolic process",2.6595011712829,1.64310601984475,0.640341309803003,0.24500234,"cellular amino acid metabolic process"),
+c("GO:0042364","water-soluble vitamin biosynthetic process",0.326121905286849,1.83735334796713,0.508182498200623,0.42023174,"cellular amino acid metabolic process"),
+c("GO:0043412","macromolecule modification",14.4274493592394,4.01920634999974,0.667453166588434,0.32455596,"cellular amino acid metabolic process"),
+c("GO:0044281","small molecule metabolic process",7.84989205824262,3.29171633000086,0.796174587915917,0.13931148,"cellular amino acid metabolic process"),
+c("GO:0044283","small molecule biosynthetic process",3.12342106471912,1.31729915667485,0.488680542863842,0.53231951,"cellular amino acid metabolic process"),
+c("GO:0070647","protein modification by small protein conjugation or removal",4.41872215332323,2.05807530929076,0.593649251399336,0.56195011,"cellular amino acid metabolic process"),
+c("GO:1901566","organonitrogen compound biosynthetic process",6.94042533645675,2.84014056684012,0.593159148516816,0.54407961,"cellular amino acid metabolic process"),
+c("GO:0051246","regulation of protein metabolic process",3.40361030728951,1.64601022854615,0.972284911382036,0,"regulation of protein metabolic process"),
+c("GO:0032268","regulation of cellular protein metabolic process",3.3117449818566,1.44666524458549,0.972284911382036,0.47446708,"regulation of protein metabolic process"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+
+
+```{r enrich_sd_zt0}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006108","malate metabolic process",0.0826787928896238,1.97362679610922,0.84585508992833,0.09576728,"malate metabolic process"),
+c("GO:0006090","pyruvate metabolic process",0.413393964448119,1.54186529773103,0.824313390325322,0.47267912,"malate metabolic process"),
+c("GO:0007154","cell communication",10.2475770520417,1.73212645269945,0.954683998834803,0.05261964,"cell communication"),
+c("GO:0009057","macromolecule catabolic process",4.42790868586652,2.21595431999276,0.729651427935827,0,"macromolecule catabolic process"),
+c("GO:0005975","carbohydrate metabolic process",5.18579762068807,2.25985228453346,0.845181814130393,0.16550838,"macromolecule catabolic process"),
+c("GO:0006351","transcription, DNA-templated",1.37338661522208,1.56604229367063,0.704655245172994,0.2282491,"macromolecule catabolic process"),
+c("GO:0006464","cellular protein modification process",12.7646869689036,3.60978203836106,0.716894410551593,0.32656551,"macromolecule catabolic process"),
+c("GO:0006720","isoprenoid metabolic process",0.950806118230674,1.54076439743295,0.841472227494394,0.68072022,"macromolecule catabolic process"),
+c("GO:0006793","phosphorus metabolic process",9.65045243672776,3.09362465467223,0.827285250048136,0.2277127,"macromolecule catabolic process"),
+c("GO:0006796","phosphate-containing compound metabolic process",9.45294198704699,3.16198863996562,0.742883731730576,0.17325462,"macromolecule catabolic process"),
+c("GO:0008299","isoprenoid biosynthetic process",0.790041798723072,1.54076439743295,0.796728408479019,0.38566984,"macromolecule catabolic process"),
+c("GO:0009056","catabolic process",8.53888199898948,2.01999679861961,0.866934150955761,0.14527145,"macromolecule catabolic process"),
+c("GO:0016052","carbohydrate catabolic process",1.38257314776538,1.36669252897721,0.760842267718778,0.69314849,"macromolecule catabolic process"),
+c("GO:0043412","macromolecule modification",14.4274493592394,2.63325344778573,0.793862814707575,0.4231329,"macromolecule catabolic process"),
+c("GO:0044262","cellular carbohydrate metabolic process",2.20476781038997,1.42521049747012,0.827084379549266,0.14112982,"macromolecule catabolic process"),
+c("GO:0046496","nicotinamide nucleotide metabolic process",0.0734922603463323,1.35514804683323,0.719571957894172,0.58963357,"macromolecule catabolic process"),
+c("GO:0072524","pyridine-containing compound metabolic process",0.142391254421019,1.35514804683323,0.804244737121706,0.32160092,"macromolecule catabolic process"),
+c("GO:1901292","nucleoside phosphate catabolic process",0.0964585917045611,1.45090927508673,0.672866010999042,0.4749091,"macromolecule catabolic process"),
+c("GO:1901362","organic cyclic compound biosynthetic process",4.94694777456249,1.31883860791078,0.760075105994274,0.47272457,"macromolecule catabolic process"),
+c("GO:0016192","vesicle-mediated transport",2.42065132515732,1.84258781610693,0.943297020923041,0,"vesicle-mediated transport"),
+c("GO:0046907","intracellular transport",3.32093151439989,1.41906098594159,0.881183761580773,0.51685372,"vesicle-mediated transport"),
+c("GO:0023052","signaling",8.83744430664646,1.76863263436164,1,0,"signaling"),
+c("GO:0035556","intracellular signal transduction",2.69165403518442,2.16543032754043,0.73156762981834,0,"intracellular signal transduction"),
+c("GO:0006355","regulation of transcription, DNA-templated",10.9595333241468,1.82221947742583,0.601301354115984,0.58042166,"intracellular signal transduction"),
+c("GO:0007264","small GTPase mediated signal transduction",0.110238390519498,1.45090927508673,0.816213329800592,0.42849996,"intracellular signal transduction"),
+c("GO:0009889","regulation of biosynthetic process",13.3664048504892,1.81298279162988,0.622929876049186,0.69114892,"intracellular signal transduction"),
+c("GO:0050789","regulation of biological process",27.4815121032566,1.4377760682834,0.711937117358381,0.60628362,"intracellular signal transduction"),
+c("GO:0050794","regulation of cellular process",24.6979927426393,1.70147827742276,0.684225216717799,0.37366985,"intracellular signal transduction"),
+c("GO:2000112","regulation of cellular macromolecule biosynthetic process",1.91998530154793,1.81298279162988,0.708050584912772,0.27829759,"intracellular signal transduction"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+
+```{r enrich_sd_zt4}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0015979","photosynthesis",1.14831656791144,17.1253726984278,0.898737899903298,0,"photosynthesis"),
+c("GO:0006351","transcription, DNA-templated",1.37338661522208,3.04929300241221,0.658270931957615,0.59886431,"photosynthesis"),
+c("GO:0009069","serine family amino acid metabolic process",0.307748840200266,1.90168252617235,0.877027481026159,0.18830037,"photosynthesis"),
+c("GO:0016051","carbohydrate biosynthetic process",1.55252399981627,1.46669679246738,0.776727571297698,0.4569607,"photosynthesis"),
+c("GO:0018130","heterocycle biosynthetic process",3.97317532497359,6.05055707103464,0.705978636627886,0.55323376,"photosynthesis"),
+c("GO:0019438","aromatic compound biosynthetic process",4.3360433604336,6.76889633806366,0.70444822715771,0.38543265,"photosynthesis"),
+c("GO:0033013","tetrapyrrole metabolic process",0.35827476918837,9.06485724239749,0.78630308658155,0.10591364,"photosynthesis"),
+c("GO:0033014","tetrapyrrole biosynthetic process",0.234256579853934,9.25914768506208,0.637980470740923,0.29832594,"photosynthesis"),
+c("GO:0044271","cellular nitrogen compound biosynthetic process",6.7842542832208,1.46070521370053,0.712721753032883,0.60401657,"photosynthesis"),
+c("GO:1901362","organic cyclic compound biosynthetic process",4.94694777456249,5.73860606629233,0.716662571387787,0.54314467,"photosynthesis"),
+c("GO:0023052","signaling",8.83744430664646,1.35108471368511,1,0,"signaling"),
+c("GO:0042440","pigment metabolic process",0.652243810573699,3.84168613501831,0.929043456824589,0.08529953,"pigment metabolic process"),
+c("GO:0046148","pigment biosynthetic process",0.514445822424326,4.01175269106237,0.896880771515828,0.08322038,"pigment biosynthetic process"),
+c("GO:0065007","biological regulation",30.7840705525699,3.71880251366518,1,0,"biological regulation"),
+c("GO:0090150","establishment of protein localization to membrane",0.5420054200542,1.39163406946455,0.901985563820698,0.03201965,"establishment of protein localization to membrane"),
+c("GO:2000112","regulation of cellular macromolecule biosynthetic process",1.91998530154793,3.91351456628745,0.63731573561517,0,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0000160","phosphorelay signal transduction system",1.1345367690965,1.88702926638367,0.715777527441372,0.24978291,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0001505","regulation of neurotransmitter levels",0.00459326627164577,2.74420434422084,0.866266645464919,0.44043906,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0006355","regulation of transcription, DNA-templated",10.9595333241468,3.7662668401519,0.511279771446109,0.58042166,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0007165","signal transduction",8.66749345459556,1.35108471368511,0.617483059509741,0.63881846,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0009889","regulation of biosynthetic process",13.3664048504892,3.91351456628745,0.532456682733336,0.69114892,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0019222","regulation of metabolic process",17.1696293234119,1.94575838516294,0.625203639067702,0.59275236,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0042133","neurotransmitter metabolic process",3.2291088810099,2.74420434422084,0.646565670872394,0.22082413,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0050789","regulation of biological process",27.4815121032566,2.31220331698181,0.624974849461965,0.60628362,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0050794","regulation of cellular process",24.6979927426393,2.5714997721574,0.594172539174017,0.36290954,"regulation of cellular macromolecule biosynthetic process"),
+c("GO:0065008","regulation of biological quality",4.52436727757108,2.26526077374828,0.738644664023064,0.24981657,"regulation of cellular macromolecule biosynthetic process"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+```{r enrich_sd_zt8}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006259","DNA metabolic process",2.8202654907905,24.9903424414029,0.58427833764499,0,"DNA replication"),
+c("GO:0006260","DNA replication",0.675210141931928,18.8713341296704,0.519566926631491,0.48119412,"DNA replication"),
+c("GO:0006261","DNA-templated DNA replication",0.519039088695972,8.63047165233103,0.511895854662204,0.67604133,"DNA replication"),
+c("GO:0006298","mismatch repair",0.0918653254329154,4.07576292152064,0.49889533452674,0.57840817,"DNA replication"),
+c("GO:0072527","pyrimidine-containing compound metabolic process",0.298562307656975,3.08203862448975,0.690959808798505,0.37164434,"DNA replication"),
+c("GO:0072528","pyrimidine-containing compound biosynthetic process",0.215883514767351,2.51110732546099,0.698878670764666,0.35922983,"DNA replication"),
+c("GO:0090304","nucleic acid metabolic process",10.100592531349,7.9802197494109,0.554628091993399,0.64035351,"DNA replication"),
+c("GO:0006974","cellular response to DNA damage stimulus",1.93835836663451,4.74214831966603,0.747357406783142,0.04128178,"cellular response to DNA damage stimulus"),
+c("GO:0006950","response to stress",17.6197694180332,4.92109265691455,0.843929392708436,0.31464231,"cellular response to DNA damage stimulus"),
+c("GO:0033554","cellular response to stress",5.72780304074227,4.65751529923017,0.757910523203971,0.47834091,"cellular response to DNA damage stimulus"),
+c("GO:0051716","cellular response to stimulus",14.808690459786,3.59044733167685,0.779308920084499,0.49011316,"cellular response to DNA damage stimulus"),
+c("GO:0050896","response to stimulus",28.6068623398098,3.17286414370527,1,0,"response to stimulus"),
+c("GO:0051276","chromosome organization",2.50792338431859,3.81310726550487,0.716469633246371,0.04274783,"chromosome organization"),
+c("GO:0006265","DNA topological change",0.0643057278030407,1.51554936926109,0.444697961121669,0.62571222,"chromosome organization"),
+c("GO:0006325","chromatin organization",1.59845666253273,1.74794584068851,0.689976325578135,0.59228987,"chromosome organization"),
+c("GO:0016043","cellular component organization",12.824399430435,4.22363125714606,0.707892731345335,0.57341566,"chromosome organization"),
+c("GO:0071840","cellular component organization or biogenesis",14.5698406136604,3.16153360220121,0.907726664543409,0.05643679,"cellular component organization or biogenesis"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+```{r enrich_sd_zt12}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006396","RNA processing",4.48302788112627,10.288404184724,0.417716383271648,0,"RNA processing"),
+c("GO:0001522","pseudouridine synthesis",0.114831656791144,3.95383114276589,0.595383396948026,0.48919339,"RNA processing"),
+c("GO:0006412","translation",2.89835101740848,8.37615196663972,0.402925495957012,0.66366957,"RNA processing"),
+c("GO:0009059","macromolecule biosynthetic process",6.71076202287447,2.06749932608794,0.610085333798395,0.64220897,"RNA processing"),
+c("GO:0009451","RNA modification",1.46065867438335,4.76417877287938,0.490039853956177,0.65889446,"RNA processing"),
+c("GO:0010467","gene expression",8.88797023563456,14.4191460192058,0.717719574734726,0.30590228,"RNA processing"),
+c("GO:0043603","cellular amide metabolic process",3.95480225988701,8.21241437407988,0.546008364288661,0.48468416,"RNA processing"),
+c("GO:0044271","cellular nitrogen compound biosynthetic process",6.7842542832208,3.01789971505679,0.451493748029738,0.62284032,"RNA processing"),
+c("GO:1901566","organonitrogen compound biosynthetic process",6.94042533645675,6.08543445792503,0.618980674578054,0.25399652,"RNA processing"),
+c("GO:0042254","ribosome biogenesis",1.88323917137476,8.11759415114706,0.649121298731262,0.043817,"ribosome biogenesis"),
+c("GO:0022613","ribonucleoprotein complex biogenesis",2.3379725322677,7.60218565230159,0.655963704360974,0.65598585,"ribosome biogenesis"),
+c("GO:0031497","chromatin assembly",0.491479491066097,3.15781910752901,0.614103757406043,0.56336622,"ribosome biogenesis"),
+c("GO:0044085","cellular component biogenesis",6.6234899637132,4.90917430123374,0.674273453778121,0.51421945,"ribosome biogenesis"),
+c("GO:0051276","chromosome organization",2.50792338431859,3.15781910752901,0.664865523800858,0.42977097,"ribosome biogenesis"),
+c("GO:0065004","protein-DNA complex assembly",0.385834366818244,3.15781910752901,0.624424904817167,0.53196879,"ribosome biogenesis"),
+c("GO:0071103","DNA conformation change",0.367461301731661,1.74199211342328,0.670514733944058,0.6580007,"ribosome biogenesis"),
+c("GO:0071824","protein-DNA complex subunit organization",0.440953562077994,3.15781910752901,0.695323593508349,0.62621605,"ribosome biogenesis"),
+c("GO:0071840","cellular component organization or biogenesis",14.5698406136604,2.58189021518568,0.905831389882449,0.06163579,"cellular component organization or biogenesis"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+```{r enrich_sd_zt16}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006412","translation",2.89835101740848,20.3980272814689,0.291123120507634,0,"translation"),
+c("GO:0006399","tRNA metabolic process",1.01511184603371,8.32890147655312,0.512753993230504,0.377623,"translation"),
+c("GO:0006520","cellular amino acid metabolic process",1.97510449680768,8.04333745577599,0.306855053509234,0.28792133,"translation"),
+c("GO:0009059","macromolecule biosynthetic process",6.71076202287447,6.79022603865799,0.451227250025165,0.64220897,"translation"),
+c("GO:0009081","branched-chain amino acid metabolic process",0.243443112397226,1.31699033028322,0.361817932413179,0.64856387,"translation"),
+c("GO:0010467","gene expression",8.88797023563456,10.6785827601816,0.668422968880165,0.28352178,"translation"),
+c("GO:0034660","ncRNA metabolic process",2.6595011712829,6.04954185368475,0.499951507289053,0.58784685,"translation"),
+c("GO:0043038","amino acid activation",0.289375775113683,7.75216053478269,0.353968700566092,0.60895832,"translation"),
+c("GO:0043603","cellular amide metabolic process",3.95480225988701,18.1955113555105,0.547506132468379,0.45346426,"translation"),
+c("GO:0044271","cellular nitrogen compound biosynthetic process",6.7842542832208,10.0359591076027,0.372388950073796,0.62284032,"translation"),
+c("GO:0044281","small molecule metabolic process",7.84989205824262,4.21907280674846,0.763535343392176,0.13314702,"translation"),
+c("GO:0044283","small molecule biosynthetic process",3.12342106471912,1.47062595096472,0.296322515313007,0.63455097,"translation"),
+c("GO:1901566","organonitrogen compound biosynthetic process",6.94042533645675,15.4865793690689,0.404550657593575,0.55536825,"translation"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+```
+
+
+```{r enrich_sd_zt20}
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006605","protein targeting",1.05645124247853,1.99660931171977,0.88654415089371,0,"protein targeting"),
+c("GO:0015980","energy derivation by oxidation of organic compounds",0.83597446143953,1.7321254764259,0.793835020513687,0.09053938,"energy derivation by oxidation of organic compounds"),
+c("GO:0016051","carbohydrate biosynthetic process",1.55252399981627,3.44444025246994,0.48015056714593,0,"carbohydrate biosynthetic process"),
+c("GO:0005975","carbohydrate metabolic process",5.18579762068807,4.09110994122632,0.741365390694095,0.1777013,"carbohydrate biosynthetic process"),
+c("GO:0006091","generation of precursor metabolites and energy",2.2277341417482,1.5166455018491,0.769574399705705,0.14950741,"carbohydrate biosynthetic process"),
+c("GO:0006629","lipid metabolic process",5.08015249644022,1.34243835320459,0.742055052750599,0.18877008,"carbohydrate biosynthetic process"),
+c("GO:0006793","phosphorus metabolic process",9.65045243672776,1.54426893355346,0.721413733932974,0.2123471,"carbohydrate biosynthetic process"),
+c("GO:0016310","phosphorylation",6.72913508796105,2.17784616092524,0.649005216085438,0.17683236,"carbohydrate biosynthetic process"),
+c("GO:0032787","monocarboxylic acid metabolic process",2.22314087547655,1.87039744366292,0.632524794091717,0.14946429,"carbohydrate biosynthetic process"),
+c("GO:0034637","cellular carbohydrate biosynthetic process",1.04267144366359,3.71289194083539,0.436921991387475,0.64288953,"carbohydrate biosynthetic process"),
+c("GO:0044255","cellular lipid metabolic process",3.50925543153737,2.53945524716437,0.604505580055573,0.14918318,"carbohydrate biosynthetic process"),
+c("GO:1901137","carbohydrate derivative biosynthetic process",2.16342841394516,2.11954844573634,0.633384991783101,0.43109035,"carbohydrate biosynthetic process"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
 ```

@@ -2996,6 +2996,10 @@ plot.ld.sd <- function(gene.id, gene.name, gene.expression)
   return(0)  
 }
 
+plot.ld.sd(gene.id = "ostta01g05650",gene.name = "ATG8", gene.expression)
+
+
+
 genes.amplitude.phase <- intersect(genes.decrease.amplitude.effect.ld.sd,genes.phase.effect.ld.sd)
 
 i <- 1
@@ -4321,6 +4325,20 @@ two.waves.combination.3 <- function(x,beta1,beta2,phi,offset)
  return(res)
 }
 
+two.waves.combination.3 <- function(x,beta1,beta2,phi,offset) #con la nueva wave
+{
+ phi1 <- phi
+ phi2 <- (phi + offset) %% 24
+ wave1 <- wave.form(mesor = 1, amplitude = beta1, period = 24, phase = phi1, time = x)
+ wave2 <- wave.form(mesor = 1, amplitude = beta2, period = 24, phase = phi2, time = x)
+ two.waves <- matrix(data = c(wave1,wave2),ncol=2)
+ res <- apply(X = two.waves,MARGIN = 1,FUN = max)
+ 
+ return(res)
+}
+
+
+
 current.gene <- "ostta04g02740"
 plot.ld.sd(gene.id=current.gene, gene.name=current.gene, gene.expression)
 plot.ld.ll(gene.id=current.gene, gene.name=current.gene, gene.expression)
@@ -4348,7 +4366,14 @@ current.gene <- "ostta01g02210"
 current.gene <- "ostta01g02390"
 current.gene <- "ostta01g03060"
 current.gene <- "ostta01g05010"
-plot.ld.sd(gene.id=current.gene, gene.name="OsttaGBSS", gene.expression)
+plot.ld.sd(gene.id=current.gene, gene.name="GBSS", gene.expression)
+plot.expression.profile(gene.id ="ostta06g02940", gene.name = "GBSS", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta06g02940", gene.name = "GBSS", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
 plot.ld.ll(gene.id=current.gene, gene.name="OsttaGBSS", gene.expression)
 plot.ld.dd(gene.id=current.gene, gene.name="OsttaGBSS", gene.expression)
 plot.sd.ll(gene.id=current.gene, gene.name="OsttaGBSS", gene.expression)
@@ -4409,20 +4434,37 @@ phi1.estimate.2 <- estimates.2[["phi"]]
 phi2.estimate.2 <- ((phi1.estimate.2 + estimates.2[["offset"]]) %% 24)
 
 
+dos.ondas.2 <- two.waves.combination.3(x=seq(from=0,to=68,by=0.01), 
+                                       beta1=beta1.estimate.2,
+                                       beta2=beta2.estimate.2,
+                                       phi=phi1.estimate.2,
+                                       offset=phi2.estimate.2 - phi1.estimate.2)
+
+
 dos.ondas.2 <- two.waves.combination.2(x=seq(from=0,to=68,by=0.01),
                                        beta1=beta1.estimate.2,
                                        beta2=beta2.estimate.2,
                                        phi1=phi1.estimate.2,
                                        phi2=phi2.estimate.2)
 
+
+
 wave1 <- wave.2(beta=beta1.estimate.2,phi=phi1.estimate.2,x=seq(from=0,to=68,by=0.01))
 wave2 <- wave.2(beta=beta2.estimate.2,phi=phi2.estimate.2,x=seq(from=0,to=68,by=0.01))
+
+wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = phi1.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+
+
 
 time.points <- seq(from=0,by=4,length.out = 18)
 plot(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)#,
 lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*dos.ondas.2,type="l",col="red",lwd=2,pch=19,cex=0.5)
 lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave1,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
 lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave2,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+
+
+
 
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
 current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
@@ -4814,8 +4856,32 @@ plot.expression.profile <- function(gene.id, gene.name, gene.expression,
  }
 }
 
+
+gene.i <- "ostta03g00350" # fructose 1,6-bisphosphate phosphatase
+gene.i <- "ostta10g01980" # BETA CAROTENOID HYDROXYLASE 1 (BCH1) bueno para phase swift
+gene.i <- "ostta04g01820" # ELIP2
+gene.i <- "ostta17g00100" # GUN4
+gene.i <- "ostta16g02310" # LHCB4.3
+gene.i <- "ostta03g01980" # LIGHT-HARVESTING-LIKE 3:2 (LIL3:2)
+
+gene.i <- "ostta04g02740" # PHOSPHORIBULOKINASE (PRK)
+gene.i <- "ostta03g05500" # SBPASE
+
+gene.i <- "ostta15g02670" # PSAD
+gene.i <- "ostta04g02510" # RUBISCO ACTIVASE (RCA)
+
+
+
  
-gene.i <- bona.fide.circadian[i]
+gene.i <- "ostta07g01610" # FTSZ2-1 chloroplast division #bona.fide.circadian[i]
+gene.i <- "ostta08g01100" # CHLG chlorophyll synthesis
+
+
+gene.i <- "ostta02g03330" # CAB
+gene.i <- "ostta03g05620" # PHOTOLYASE 1 (PHR1)
+
+gene.i <- "ostta02g03860" # PSAE
+gene.i <- "ostta04g01790" # PSAF
 
 plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="LD",free.running="LL",param=T)
 plot.expression.profile(gene.id=gene.i, gene.name=gene.i, gene.expression,entrainment="LD",free.running="LL",param=F)
@@ -4834,3 +4900,172 @@ i <- i + 1
 print(i)
 
 #19 21 23 25 26
+
+gene.ld.dd <- read.table(file="gene_sets/LD_and_DD_rhythmic_genes.tsv",header = F,as.is = T)[[1]]
+gene.ld.dd.atha <- subset(ostta2atha, ostta %in% gene.ld.dd)[[2]] 
+write.table(x = subset(ostta2atha, ostta %in% gene.ld.dd), 
+            file="/home/fran/tmp/LD_SD_atha_genes.tsv",row.names = F,quote=F)
+
+
+library(org.At.tair.db)
+enrich.go.ld.dd.atha <- enrichGO(gene = gene.ld.dd.atha,
+                                              OrgDb = org.At.tair.db,
+                                              ont = "BP",
+                                              pAdjustMethod = "BH",
+                                              pvalueCutoff  = 0.05,
+                                              keyType = "TAIR")
+write.table(x = as.data.frame(enrich.go.ld.dd.atha),file="/home/fran/tmp/enrichment_atha_ld_dd.tsv",quote = F,sep = "\t",row.names = F,col.names = F)
+
+
+## SPLS
+sd.ld.genes <- intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes)
+length(sd.ld.genes)
+
+"ostta06g02340" %in%sd.ld.genes
+
+library(mixOmics)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(lattice)
+
+## Loading gene expression data that will be used as predictors (X)
+tf.names <- read.table(file="transcription_factors_list.tsv",header=T,as.is=T)$gene_id
+length(tf.names)
+
+rhythmic.tfs <- intersect(tf.names,sd.ld.genes)
+length(rhythmic.tfs)
+
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+gene.expression.ld.sd <- gene.expression[,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"),
+                                            paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+
+
+colnames(gene.expression.ld.sd)
+
+## Predictors are gene expression
+rhythmic.expression.ld.sd <- gene.expression.ld.sd[rhythmic.tfs,]
+X <- t(rhythmic.expression.ld.sd) 
+dim(X)
+rownames(X)
+colnames(X)
+## Response variables are percentage of cells in the different cell cycle phases
+cell.cycle.data <- read.table(file="physiological_data/cell_cycle_data_spls.csv",header = T,sep = ",",as.is=T)
+dim(cell.cycle.data)
+
+Y <- cell.cycle.data[,3:5]
+dim(Y)
+rownames(X)
+colnames(Y)
+
+myresult <- pls(X, Y, ncomp = 10, mode = "regression")
+typeof(myresult)
+attributes(myresult)
+
+## We plot the explained variance by each component
+tiff(filename = "explained_variance_10_component_replicates.tiff")
+par(mfrow = c(1,2))
+barplot(myresult$prop_expl_var$X, las = 2, main = "X",col=rainbow(5),ylim=c(0,0.7))
+lines(x=c(0,12),y=c(0.1,0.1),col="black",lwd=4)
+barplot(myresult$prop_expl_var$Y, las = 2, main = "Y",col=rainbow(5),ylim=c(0,0.7))
+lines(x=c(0,12),y=c(0.25,0.25),col="black",lwd=4)
+dev.off()
+
+## Three components are selected and we apply PLS regression with ncomp=3
+myresult <- pls(X, Y, ncomp = 3, mode = "regression", scale = TRUE) 
+
+## Visualization of the individuals using the first two new components XY combined
+# tiff(filename = "individuals_visualization_on_the_new_components_joint_XY_with_replicates.tiff")
+# plotIndiv(object = myresult, comp = 1:2, rep.space = "XY-variate",
+#           ind.names = rownames(X),
+#           group = c(1,2,3,4,5,6,
+#                     1,2,3,4,5,6,
+#                     1,2,3,4,5,6,
+#                     7,8,9,10,11,12,
+#                     7,8,9,10,11,12,
+#                     7,8,9,10,11,12),
+#           # col = rep(rainbow(4),each=3), style = "ggplot2", ellipse = FALSE, ellipse.level = 0.95, centroid = FALSE,lwd=3,cex=6,xlim=c(-30,30)) 
+#           # col = rainbow(4), 
+#           col = rainbow(12),#c("black", "red","blue", "green"), 
+#           style = "ggplot2", ellipse = FALSE, ellipse.level = 0.95, centroid = FALSE,lwd=3,cex=6,xlim=c(-60,60)) 
+# dev.off()
+
+## Individuals clustered according to their genotypes
+
+tiff(filename = "individuals_visualization_on_the_new_components_separated_X_Y_with_replicates.tiff")
+plotIndiv(object = myresult, comp = 1:2,point.lwd = 0.5,cex = 4,
+          ind.names = rownames(X),
+          group = c(1,2,3,4,5,6,
+                    1,2,3,4,5,6,
+                    1,2,3,4,5,6,
+                    7,8,9,10,11,12,
+                    7,8,9,10,11,12,
+                    7,8,9,10,11,12),
+          # col = rep(rainbow(4),each=3), style = "ggplot2", ellipse = FALSE, 
+          col = rainbow(12), style = "ggplot2", ellipse = F, 
+          ellipse.level = 0.95, centroid = FALSE,
+          star = FALSE, legend = FALSE, abline = TRUE, alpha = 0)
+dev.off()
+
+## Individuals clustered according to their genotypes
+tiff(filename = "correlation_circle_pls_with_replicates.tiff", 
+     width = 5, height = 5, units = 'in', res = 200)
+plotVar(object = myresult, comp = 1:2, cex = c(3, 4), col = c("forestgreen", "red3"))
+dev.off()
+
+
+
+## Cross validation of the model using LOO (Leave One Out)
+myperfLoo = perf(myresult, validation = "loo", progressBar = TRUE)
+
+myperfLoo$measures$MSEP
+myperfLoo$PRESS
+myperfLoo$R2
+myperfLoo$Q2
+myperfLoo$Q2.total
+myperfLoo$RSS
+
+sum(myperfLoo$measures$MSEP$summary[,3])/length(sd.ld.genes)
+## FC = 1.75 ---> 0.016
+
+tiff(filename = "MSEP_pls_with_replicates.tiff",
+     width = 6, height = 6, units = "in", res = 150)
+plot(x = myperfLoo,
+     criterion = "MSEP",
+     xlab = "number of components",
+     ylab = NULL,
+     LimQ2 = 0.0975,
+     LimQ2.col = "none",type="line", lwd=3)
+dev.off()
+
+## Applying Sparse PLS
+mySPresult <- spls(X, Y, ncomp = 3, mode = 'regression', 
+                   keepX = c(40, 40, 40), 
+                   keepY = c(3, 3, 3),
+                   scale = TRUE)
+
+## Visualization of the individuals using the first two new components XY combined
+tiff(filename = "spls_individuals_visualization_on_the_new_components_joint_XY_with_replicates.tiff")
+plotIndiv(object = mySPresult, comp = 1:2, rep.space = "XY-variate",
+          ind.names = rownames(X),
+          group = rep(1:18,each=2),
+          # col = rep(rainbow(3),each=4), style = "ggplot2", ellipse = FALSE, ellipse.level = 0.95, centroid = FALSE,lwd=3,cex=6,xlim=c(-30,30)) 
+          col = rainbow(18), style = "ggplot2", ellipse = FALSE, ellipse.level = 0.95, centroid = FALSE,lwd=3,cex=6,xlim=c(-30,30)) 
+dev.off()
+
+
+tiff(filename = "spls_correlation_circle_with_replicates.tiff", 
+     width = 5, height = 5, units = 'in', res = 200)
+plotVar(mySPresult, comp = 1:2, cex = c(3, 5), col = c("forestgreen", "red3"))
+dev.off()
+
+## Bipartite representation
+color.edge <- colorRampPalette(c("red4", "white", "darkgreen"))
+spl.th <- 0.5
+tiff(filename = "bipartite_graph_with_replicates.tiff")#, height = 6, width = 6,
+#units = "in", res = 150)
+res <- network(mySPresult, comp = 1:2, cutoff = spl.th, shape.node = c("rectangle", "circle"),cex.node.name = 0.9,
+               color.node = c("white", "coral1"), color.edge = color.edge(10),save = "jpeg",name.save = "network_cca1")
+dev.off()
