@@ -990,6 +990,7 @@ sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0)
 sum(circacompare.ld.ll[,"Amplitude difference estimate" ] < 0) / length(complete.ld.ll.rhythmic.genes)
 sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)
 sum(circacompare.ld.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
+wilcox.test(x = circacompare.ld.ll[,"ld amplitude estimate" ], y = circacompare.ld.ll[,"ll amplitude estimate" ],alternative = "greater")$p.value
 
 boxplot(circacompare.ld.ll[,"ld mesor estimate" ],circacompare.ld.ll[,"ll mesor estimate" ],outline=F,col=c("blue","lightblue"),names=c("LD","LL"),cex.axis=2)
 sum(circacompare.ld.ll[,"Mesor difference estimate" ] < 0) /length(complete.ld.ll.rhythmic.genes)
@@ -1036,6 +1037,7 @@ sum(circacompare.ld.dd[,"Amplitude difference estimate" ] > 0)
 sum(circacompare.ld.dd[,"Amplitude difference estimate" ] > 0) / length(complete.ld.dd.rhythmic.genes)
 sum(circacompare.ld.dd[,"P-value for amplitude difference" ] < 0.05)
 sum(circacompare.ld.dd[,"P-value for amplitude difference" ] < 0.05)/length(complete.ld.dd.rhythmic.genes)
+wilcox.test(x = circacompare.ld.dd[,"ld amplitude estimate" ], y = circacompare.ld.dd[,"dd amplitude estimate" ], alternative = "greater")$p.value
 
 boxplot(circacompare.ld.dd[,"ld mesor estimate" ],circacompare.ld.dd[,"dd mesor estimate" ],outline=F,col=c("blue","darkblue"),names=c("LD","DD"),cex.axis=2)
 sum(circacompare.ld.dd[,"Mesor difference estimate" ] < 0) /length(complete.ld.dd.rhythmic.genes)
@@ -1114,6 +1116,7 @@ sum(circacompare.sd.ll[,"Amplitude difference estimate" ] > 0)
 sum(circacompare.sd.ll[,"Amplitude difference estimate" ] > 0) / length(complete.sd.ll.rhythmic.genes)
 sum(circacompare.sd.ll[,"P-value for amplitude difference" ] < 0.05)
 sum(circacompare.sd.ll[,"P-value for amplitude difference" ] < 0.05)/length(complete.sd.ll.rhythmic.genes)
+wilcox.test(x = circacompare.sd.ll[,"sd amplitude estimate" ],y = circacompare.sd.ll[,"ll amplitude estimate" ], alternative = "greater" )$p.value
 
 boxplot(circacompare.sd.ll[,"sd mesor estimate" ],circacompare.sd.ll[,"ll mesor estimate" ],outline=F,col=c("red","lightsalmon"),names=c("SD","LL"),cex.axis=2)
 sum(circacompare.sd.ll[,"Mesor difference estimate" ] < 0) /length(complete.sd.ll.rhythmic.genes)
@@ -1687,12 +1690,73 @@ plot.expression.profile(gene.id ="ostta03g00350", gene.name = "FBP",
 Expression profile of genes only cycling under LD and LL such as DNA replication
 
 ```{r}
+plot.expression.profile(gene.id ="ostta01g02580", gene.name = "MCM6", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta01g02580", gene.name = "MCM6", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta01g02580", gene.name = "MCM6", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta01g02580", gene.name = "MCM6", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
 plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
                         gene.expression,entrainment="LD",
                         free.running="LL",param=F)
 plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
                         gene.expression,entrainment="LD",
                         free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta06g02890", gene.name = "PCNA", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta04g04640", gene.name = "CDC45", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta04g04640", gene.name = "CDC45", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta04g04640", gene.name = "CDC45", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta04g04640", gene.name = "CDC45", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+
+plot.expression.profile(gene.id ="ostta05g02940", gene.name = "TOP6B", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta05g02940", gene.name = "TOP6B", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta05g02940", gene.name = "TOP6B", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta05g02940", gene.name = "TOP6B", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta08g03680", gene.name = "POLAB", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta08g03680", gene.name = "POLAB", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta08g03680", gene.name = "POLAB", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta08g03680", gene.name = "POLAB", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+
 
 plot.expression.profile(gene.id ="ostta14g01050", gene.name = "MCM4", 
                         gene.expression,entrainment="LD",
@@ -1787,6 +1851,56 @@ plot.expression.profile(gene.id ="ostta04g00770", gene.name = "Utp14",
 plot.expression.profile(gene.id ="ostta04g00770", gene.name = "Utp14", 
                         gene.expression,entrainment="SD",
                         free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta04g00770", gene.name = "Utp14", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta04g00770", gene.name = "Utp14", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+
+
+plot.expression.profile(gene.id ="ostta05g01450", gene.name = "Mpp10p", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta05g01450", gene.name = "Mpp10p", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta05g01450", gene.name = "Mpp10p", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta05g01450", gene.name = "Mpp10p", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+
+
+plot.expression.profile(gene.id ="ostta06g01560", gene.name = "Utp11", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta06g01560", gene.name = "Utp11", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta06g01560", gene.name = "Utp11", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta06g01560", gene.name = "Utp11", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+plot.expression.profile(gene.id ="ostta15g01610", gene.name = "RRS1", 
+                        gene.expression,entrainment="LD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta15g01610", gene.name = "RRS1", 
+                        gene.expression,entrainment="LD",
+                        free.running="DD",param=F)
+plot.expression.profile(gene.id ="ostta15g01610", gene.name = "RRS1", 
+                        gene.expression,entrainment="SD",
+                        free.running="LL",param=F)
+plot.expression.profile(gene.id ="ostta15g01610", gene.name = "RRS1", 
+                        gene.expression,entrainment="SD",
+                        free.running="DD",param=F)
+
+
 
 plot.expression.profile(gene.id ="ostta13g00670", gene.name = "RPL7AE", 
                         gene.expression,entrainment="SD",
@@ -2988,6 +3102,115 @@ write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.sd.ll.dd),fil
 
 ## **Diurnal transcriptonal program under different seasonal photoperiodic conditions**
 
+```{r ld_sd_profile_functions}
+plot.ld <- function(gene.id, gene.name, gene.expression)
+{
+
+  current.gene.expression.ld.ll <- gene.expression[gene.id,1:18]
+  
+  min.expression <- min(current.gene.expression.ld.ll)
+  max.expression <- max(current.gene.expression.ld.ll)
+  range.expression <- max.expression - min.expression
+  
+  expression.step <- floor(range.expression / 5)
+  
+  plot(current.gene.expression.ld.ll,type="o",lwd=5,col="blue",axes=F,xlab="",ylab="FPKM",
+       ylim=c(min.expression-expression.step,max.expression),
+       cex.lab=1.3,main=paste(gene.id,gene.name,sep=" - "),cex.main=2)
+  axis(side=2,lwd=3)
+  axis(side = 1,pos = min.expression - 1.1*expression.step, at = seq(from=1,to=30),
+       labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
+  
+  polygon(x = c(1,5,5,1),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="blue")
+  
+  polygon(x = c(5,7,7,5),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(7,11,11,7),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="blue")
+  
+  polygon(x = c(11,13,13,11),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(13,17,17,13),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue")
+  
+  polygon(x = c(17,19,19,17),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(19,23,23,19),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="blue")
+  return(0)  
+}
+
+plot.sd <- function(gene.id, gene.name, gene.expression)
+{
+  
+  sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  
+  min.expression <- min(current.gene.expression.sd)
+  max.expression <- max(current.gene.expression.sd)
+  range.expression <- max.expression - min.expression
+  
+  expression.step <- floor(range.expression / 5)
+
+  plot(current.gene.expression.sd,type="o",lwd=5,col="red",axes=F,xlab="",ylab="FPKM",
+       ylim=c(min.expression-expression.step,max.expression),
+       cex.lab=1.3,main=paste(gene.id,gene.name,sep=" - "),cex.main=2)
+  axis(side=2,lwd=3)
+  axis(side = 1,pos = min.expression - 1.1*expression.step, at = seq(from=1,to=30),
+       labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
+  
+  polygon(x = c(1,3,3,1),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="red")
+  
+  polygon(x = c(3,7,7,3),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(7,9,9,7),y=c(min.expression-expression.step/2,
+                             min.expression-expression.step/2,
+                             min.expression-expression.step,
+                             min.expression-expression.step),lwd=2,border="red")
+  
+  polygon(x = c(9,13,13,9),y=c(min.expression-expression.step/2,
+                               min.expression-expression.step/2,
+                               min.expression-expression.step,
+                               min.expression-expression.step),lwd=2,border="red",col="red")
+  
+  polygon(x = c(13,15,15,13),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red")
+  
+  polygon(x = c(15,19,19,15),y=c(min.expression-expression.step/2,
+                                 min.expression-expression.step/2,
+                                 min.expression-expression.step,
+                                 min.expression-expression.step),lwd=2,border="red",col="red")
+}
+
+
+```
+
 600 x 300
 
 ```{r enrich_ld_zt0}
@@ -3025,6 +3248,16 @@ treemap(
   position.legend = "none"
 )
 ```
+
+```{r examples_ld_zt0}
+plot.ld(gene.id="ostta04g00770", gene.name="Utp14", gene.expression)
+plot.ld(gene.id="ostta05g01080", gene.name="BMS1", gene.expression)
+plot.ld(gene.id="ostta05g01450", gene.name="Mpp10p", gene.expression)
+plot.ld(gene.id="ostta06g01560", gene.name="Utp11", gene.expression)
+plot.ld(gene.id="ostta08g03090", gene.name="Utp12", gene.expression)
+plot.ld(gene.id="ostta15g01610", gene.name="RRS1", gene.expression)
+```
+
 
 ```{r enrich_ld_zt4}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3066,6 +3299,17 @@ treemap(
 )
 ```
 
+```{r examples_ld_zt4}
+plot.ld(gene.id="ostta03g02100", gene.name="eIF2", gene.expression)
+plot.ld(gene.id="ostta03g02100", gene.name="eIF2", gene.expression)
+plot.ld(gene.id="ostta03g03015", gene.name="YeiP", gene.expression)
+plot.ld(gene.id="ostta04g00090", gene.name="EF1B", gene.expression)
+plot.ld(gene.id="ostta07g00280", gene.name="aaRSII", gene.expression)
+plot.ld(gene.id="ostta07g04530", gene.name="EFG", gene.expression)
+plot.ld(gene.id="ostta13g01580", gene.name="S15/NS1", gene.expression)
+plot.ld(gene.id="ostta15g00620", gene.name="proS", gene.expression)
+plot.ld(gene.id="ostta06g00460", gene.name="I/L/VRSs", gene.expression)
+```
 
 ```{r enrich_ld_zt8}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3121,6 +3365,21 @@ treemap(
   inflate.labels = T,
   position.legend = "none"
 )
+```
+
+```{r examples_ld_zt8}
+plot.ld(gene.id="ostta01g03170", gene.name="PsbP", gene.expression)
+plot.ld(gene.id="ostta02g00580", gene.name="PsaL", gene.expression)
+plot.ld(gene.id="ostta02g02560", gene.name="PsbX", gene.expression)
+plot.ld(gene.id="ostta02g03860", gene.name="PsaE", gene.expression)
+plot.ld(gene.id="ostta04g01790", gene.name="PsaF", gene.expression)
+plot.ld(gene.id="ostta05g04560", gene.name="PsbR", gene.expression)
+plot.ld(gene.id="ostta06g00250", gene.name="PsaN", gene.expression)
+plot.ld(gene.id="ostta12g00420", gene.name="PsbM", gene.expression)
+plot.ld(gene.id="ostta14g00150", gene.name="PsbO", gene.expression)
+plot.ld(gene.id="ostta15g00990", gene.name="PsaH", gene.expression)
+plot.ld(gene.id="ostta15g02670", gene.name="PsaD", gene.expression)
+plot.ld(gene.id="ostta15g02670", gene.name="PsbQ", gene.expression)
 ```
 
 
@@ -3185,6 +3444,20 @@ treemap(
 )
 ```
 
+```{r examples_ld_zt12}
+plot.ld(gene.id="ostta01g02580", gene.name="MCM6", gene.expression)
+plot.ld(gene.id="ostta04g04640", gene.name="CDC45", gene.expression)
+plot.ld(gene.id="ostta05g01680", gene.name="MCM9", gene.expression)
+plot.ld(gene.id="ostta05g02940", gene.name="TOP6B", gene.expression)
+plot.ld(gene.id="ostta06g02890", gene.name="PCNA", gene.expression)
+plot.ld(gene.id="ostta08g03680", gene.name="POLAB", gene.expression)
+plot.ld(gene.id="ostta10g00640", gene.name="LIG1", gene.expression)
+plot.ld(gene.id="ostta11g00910", gene.name="MCM2", gene.expression)
+plot.ld(gene.id="ostta11g00940", gene.name="PRIM2", gene.expression)
+plot.ld(gene.id="ostta11g01840", gene.name="POLEA", gene.expression)
+plot.ld(gene.id="ostta13g02040", gene.name="PRIM1", gene.expression)
+```
+
 
 ```{r enrich_ld_zt16}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3241,6 +3514,16 @@ treemap(
 )
 ```
 
+```{r examples_ld_zt16}
+plot.ld(gene.id="ostta01g04440", gene.name="CLC", gene.expression)
+plot.ld(gene.id="ostta03g05300", gene.name="COPD", gene.expression)
+plot.ld(gene.id="ostta05g00860", gene.name="SAR", gene.expression)
+plot.ld(gene.id="ostta08g01930", gene.name="VWA", gene.expression)
+plot.ld(gene.id="ostta11g02920", gene.name="STX", gene.expression)
+plot.ld(gene.id="ostta14g02210", gene.name="Nup133", gene.expression)
+```
+
+https://pubmed.ncbi.nlm.nih.gov/30821042/ Nup133 involvement in postmitotic nuclear assembly
 
 ```{r enrich_ld_zt20}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3290,6 +3573,15 @@ treemap(
 )
 ```
 
+
+```{r examples_ld_zt20}
+plot.ld(gene.id="ostta02g03980", gene.name="DapF", gene.expression)
+plot.ld(gene.id="ostta03g03860", gene.name="Acn", gene.expression)
+plot.ld(gene.id="ostta06g03270", gene.name="DAHP", gene.expression)
+plot.ld(gene.id="ostta16g01780", gene.name="pyrH", gene.expression)
+plot.ld(gene.id="ostta11g00540", gene.name="ALS", gene.expression)
+plot.ld(gene.id="ostta18g01010", gene.name="ADC", gene.expression)
+```
 
 
 ```{r enrich_sd_zt0}
@@ -3345,6 +3637,14 @@ treemap(
 )
 ```
 
+```{r examples_sd_zt0}
+plot.sd(gene.id="ostta09g02190", gene.name="HK", gene.expression)
+plot.sd(gene.id="ostta12g01130", gene.name="STX", gene.expression)
+plot.sd(gene.id="ostta09g00750", gene.name="UFD", gene.expression)
+plot.sd(gene.id="ostta03g03180", gene.name="BAM", gene.expression)
+plot.ld(gene.id="ostta10g03240", gene.name="FtsH", gene.expression)
+plot.sd(gene.id="ostta11g01450", gene.name="UBP", gene.expression)
+```
 
 ```{r enrich_sd_zt4}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3396,6 +3696,22 @@ treemap(
 )
 ```
 
+```{r examples_sd_zt4}
+plot.sd(gene.id="ostta01g03170", gene.name="PsbP", gene.expression)
+plot.sd(gene.id="ostta02g00580", gene.name="PsaL", gene.expression)
+plot.sd(gene.id="ostta02g02560", gene.name="PsbX", gene.expression)
+plot.sd(gene.id="ostta02g03860", gene.name="PsaE", gene.expression)
+plot.sd(gene.id="ostta04g01790", gene.name="PsaF", gene.expression)
+plot.sd(gene.id="ostta05g04560", gene.name="PsbR", gene.expression)
+plot.sd(gene.id="ostta06g00250", gene.name="PsaN", gene.expression)
+plot.sd(gene.id="ostta12g00420", gene.name="PsbM", gene.expression)
+plot.sd(gene.id="ostta14g00150", gene.name="PsbO", gene.expression)
+plot.sd(gene.id="ostta15g00990", gene.name="PsaH", gene.expression)
+plot.sd(gene.id="ostta15g02670", gene.name="PsaD", gene.expression)
+plot.sd(gene.id="ostta15g02670", gene.name="PsbQ", gene.expression)
+```
+
+
 ```{r enrich_sd_zt8}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
 revigo.data <- rbind(c("GO:0006259","DNA metabolic process",2.8202654907905,24.9903424414029,0.58427833764499,0,"DNA replication"),
@@ -3436,6 +3752,22 @@ treemap(
   position.legend = "none"
 )
 ```
+500 x 300
+```{r examples_sd_zt8}
+plot.sd(gene.id="ostta01g02580", gene.name="MCM6", gene.expression)
+plot.sd(gene.id="ostta04g04640", gene.name="CDC45", gene.expression)
+plot.sd(gene.id="ostta05g02940", gene.name="MCM9", gene.expression)
+plot.sd(gene.id="ostta05g01680", gene.name="TOP6B", gene.expression)
+plot.sd(gene.id="ostta06g02890", gene.name="PCNA", gene.expression)
+plot.sd(gene.id="ostta08g03680", gene.name="POLAB", gene.expression)
+plot.sd(gene.id="ostta10g00640", gene.name="LIG1", gene.expression)
+plot.sd(gene.id="ostta11g00910", gene.name="MCM2", gene.expression)
+plot.sd(gene.id="ostta11g00940", gene.name="PRIM2", gene.expression)
+plot.sd(gene.id="ostta11g01840", gene.name="POLEA", gene.expression)
+plot.sd(gene.id="ostta13g02040", gene.name="PRIM1", gene.expression)
+```
+
+
 
 ```{r enrich_sd_zt12}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3516,6 +3848,18 @@ treemap(
 )
 ```
 
+```{r examples_sd_zt16}
+plot.sd(gene.id="ostta03g02100", gene.name="eIF2", gene.expression)
+plot.sd(gene.id="ostta03g02100", gene.name="eIF2", gene.expression)
+plot.sd(gene.id="ostta03g03015", gene.name="YeiP", gene.expression)
+plot.sd(gene.id="ostta04g00090", gene.name="EF1B", gene.expression)
+plot.sd(gene.id="ostta07g00280", gene.name="aaRSII", gene.expression)
+plot.sd(gene.id="ostta07g04530", gene.name="EFG", gene.expression)
+plot.sd(gene.id="ostta13g01580", gene.name="S15/NS1", gene.expression)
+plot.sd(gene.id="ostta15g00620", gene.name="proS", gene.expression)
+plot.sd(gene.id="ostta06g00460", gene.name="I/L/VRSs", gene.expression)
+```
+
 
 ```{r enrich_sd_zt20}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3552,3 +3896,14 @@ treemap(
   position.legend = "none"
 )
 ```
+
+```{r examples_sd_zt20}
+plot.sd(gene.id="ostta03g00870", gene.name="SBE", gene.expression)
+plot.ld(gene.id="ostta07g03070", gene.name="APS", gene.expression)
+plot.sd(gene.id="ostta01g03040", gene.name="FBA", gene.expression)
+plot.sd(gene.id="ostta01g03050", gene.name="PUL", gene.expression)
+plot.sd(gene.id="ostta01g05290", gene.name="GALM", gene.expression)
+plot.sd(gene.id="ostta08g01570", gene.name="UGE", gene.expression)
+```
+
+## **Proteomic data analysis**
