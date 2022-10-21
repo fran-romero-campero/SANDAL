@@ -1321,10 +1321,10 @@ plot.ld.ll(gene.id = "ostta02g01510",gene.name = "HDAC", gene.expression)
 
 colnames(gene.expression)
 
-plot.ld <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, mean.expression.sd)
+plot.ld <- function(gene.id, gene.name, gene.expression)
 {
 
-  current.gene.expression.ld.ll <- gene.expression[gene.id,1:18]#30]
+  current.gene.expression.ld.ll <- gene.expression[gene.id,1:18]
   
   min.expression <- min(current.gene.expression.ld.ll)
   max.expression <- max(current.gene.expression.ld.ll)
@@ -1332,7 +1332,6 @@ plot.ld <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, m
   
   expression.step <- floor(range.expression / 5)
   
-#  png(filename = paste(paste(c("ld_three_days",gene.name,gene.id),collapse="_"),".png",sep=""),width = 1000)
   plot(current.gene.expression.ld.ll,type="o",lwd=5,col="blue",axes=F,xlab="",ylab="FPKM",
        ylim=c(min.expression-expression.step,max.expression),
        cex.lab=1.3,main=gene.id,cex.main=2)
@@ -1374,91 +1373,7 @@ plot.ld <- function(gene.id, gene.name, gene.expression)#, mean.expression.ld, m
                                  min.expression-expression.step/2,
                                  min.expression-expression.step,
                                  min.expression-expression.step),lwd=2,border="blue")
-  
-  # polygon(x = c(23,25,25,23),y=c(min.expression-expression.step/2,
-  #                                min.expression-expression.step/2,
-  #                                min.expression-expression.step,
-  #                                min.expression-expression.step),lwd=2,border="blue",col="lightblue")
-  # 
-  # polygon(x = c(25,29,29,25),y=c(min.expression-expression.step/2,
-  #                                min.expression-expression.step/2,
-  #                                min.expression-expression.step,
-  #                                min.expression-expression.step),lwd=2,border="blue")
-  # polygon(x = c(29,30,30,29),y=c(min.expression-expression.step/2,
-  #                                min.expression-expression.step/2,
-  #                                min.expression-expression.step,
-  #                                min.expression-expression.step),lwd=2,border="blue",col="lightblue")
-  
- # dev.off()
   return(0)  
-  
-  
-  
-  sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-  current.gene.expression.sd.ll <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"),paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
-  
-  min.expression <- min(current.gene.expression.sd.ll)
-  max.expression <- max(current.gene.expression.sd.ll)
-  range.expression <- max.expression - min.expression
-  
-  expression.step <- floor(range.expression / 5)
-  
-  plot(current.gene.expression.sd.ll,type="o",lwd=3,col="red",axes=F,xlab="",ylab="FPKM",
-       ylim=c(min.expression-expression.step,max.expression),
-       cex.lab=1.3,main=paste(gene.id, gene.name,sep=" - "),cex.main=2)
-  axis(side=2,lwd=3)
-  axis(side = 1,pos = min.expression - 1.1*expression.step, at = seq(from=1,to=30),
-       labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
-  
-  polygon(x = c(1,3,3,1),y=c(min.expression-expression.step/2,
-                             min.expression-expression.step/2,
-                             min.expression-expression.step,
-                             min.expression-expression.step),lwd=2,border="red")
-  
-  polygon(x = c(3,7,7,3),y=c(min.expression-expression.step/2,
-                             min.expression-expression.step/2,
-                             min.expression-expression.step,
-                             min.expression-expression.step),lwd=2,border="red",col="red")
-  
-  polygon(x = c(7,9,9,7),y=c(min.expression-expression.step/2,
-                             min.expression-expression.step/2,
-                             min.expression-expression.step,
-                             min.expression-expression.step),lwd=2,border="red")
-  
-  polygon(x = c(9,13,13,9),y=c(min.expression-expression.step/2,
-                               min.expression-expression.step/2,
-                               min.expression-expression.step,
-                               min.expression-expression.step),lwd=2,border="red",col="red")
-  
-  polygon(x = c(13,15,15,13),y=c(min.expression-expression.step/2,
-                                 min.expression-expression.step/2,
-                                 min.expression-expression.step,
-                                 min.expression-expression.step),lwd=2,border="red")
-  
-  polygon(x = c(15,19,19,15),y=c(min.expression-expression.step/2,
-                                 min.expression-expression.step/2,
-                                 min.expression-expression.step,
-                                 min.expression-expression.step),lwd=2,border="red",col="red")
-  
-  polygon(x = c(19,21,21,19),y=c(min.expression-expression.step/2,
-                                 min.expression-expression.step/2,
-                                 min.expression-expression.step,
-                                 min.expression-expression.step),lwd=2,border="red")
-  
-  polygon(x = c(21,25,25,21),y=c(min.expression-expression.step/2,
-                                 min.expression-expression.step/2,
-                                 min.expression-expression.step,
-                                 min.expression-expression.step),lwd=2,border="red",col="lightsalmon")
-  
-  polygon(x = c(25,27,27,25),y=c(min.expression-expression.step/2,
-                                 min.expression-expression.step/2,
-                                 min.expression-expression.step,
-                                 min.expression-expression.step),lwd=2,border="red")
-  polygon(x = c(27,30,30,27),y=c(min.expression-expression.step/2,
-                                 min.expression-expression.step/2,
-                                 min.expression-expression.step,
-                                 min.expression-expression.step),lwd=2,border="red",col="lightsalmon")
-  
 }
 
 plot.ld(gene.id = "ostta16g02620",gene.name = "ostta16g02620", gene.expression)
@@ -3315,6 +3230,8 @@ plot.ld <- function(gene.id, gene.name, gene.expression)
   lines(x = seq(from=0,by=4,to=68),current.gene.expression.ld,type="o",lwd=5,col="blue")
   #lines(x = seq(from=0,by=4,to=68),current.gene.expression.sd,type="o",lwd=5,col="red")
   axis(side=2,lwd=3,las=2,cex.axis=1.5)
+  axis(side = 1,pos = min.expr - 1.1*range.expr, at = seq(from=1,to=30),
+       labels = rep(paste("ZT",seq(from=0,to=20,by=4)),5),las=2,lwd=3)
   
   for(i in 0:2)
   {
@@ -5069,3 +4986,540 @@ tiff(filename = "bipartite_graph_with_replicates.tiff")#, height = 6, width = 6,
 res <- network(mySPresult, comp = 1:2, cutoff = spl.th, shape.node = c("rectangle", "circle"),cex.node.name = 0.9,
                color.node = c("white", "coral1"), color.edge = color.edge(10),save = "jpeg",name.save = "network_cca1")
 dev.off()
+
+
+## Proteomics ##
+
+zt0 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt00.tsv",header = T,as.is=T,sep="\t")
+zt0 <- zt0[,c(1,6:11)]
+head(zt0)
+nrow(zt0)
+zt0.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt00_3.tsv",header = T,as.is=T,sep="\t")
+head(zt0.3)
+nrow(zt0.3)
+
+zt4 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt04.tsv",header = T,as.is=T,sep="\t")
+zt4 <- zt4[,c(1,6:11)]
+head(zt4)
+zt4.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt04_3.tsv",header = T,as.is=T,sep="\t")
+head(zt4.3)
+
+zt8 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt08.tsv",header = T,as.is=T,sep="\t")
+zt8 <- zt8[,c(1,6:11)]
+head(zt8)
+zt8.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt08_3.tsv",header = T,as.is=T,sep="\t")
+head(zt8.3)
+
+zt12 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt12.tsv",header = T,as.is=T,sep="\t")
+zt12 <- zt12[,c(1,6:11)]
+head(zt12)
+zt12.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt12_3.tsv",header = T,as.is=T,sep="\t")
+head(zt12.3)
+
+zt16 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt16.tsv",header = T,as.is=T,sep="\t")
+zt16 <- zt16[,c(1,6:11)]
+head(zt16)
+zt16.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt16_3.tsv",header = T,as.is=T,sep="\t")
+head(zt16.3)
+
+zt20 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt20.tsv",header = T,as.is=T,sep="\t")
+zt20 <- zt20[,c(1,6:11)]
+head(zt20)
+zt20.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/ld_1_2_3/fran_analysis_3/zt20_3.tsv",header = T,as.is=T,sep="\t")
+head(zt20.3)
+
+
+total.proteins <- unique(c(zt0$Peak.Name,zt0.3$Peak.Name,
+                           zt4$Peak.Name,zt4.3$Peak.Name, 
+                           zt8$Peak.Name,zt8.3$Peak.Name,
+                           zt12$Peak.Name,zt12.3$Peak.Name,
+                           zt16$Peak.Name,zt16.3$Peak.Name,
+                           zt20$Peak.Name,zt20.3$Peak.Name))
+length(total.proteins)
+
+prot.zt0.1 <- zt0$SWATH_O.tauri_25.11.20_1.1
+names(prot.zt0.1) <- zt0$Peak.Name
+prot.zt0.2 <- zt0$SWATH_O.tauri_25.11.20_1.2
+names(prot.zt0.2) <- zt0$Peak.Name
+prot.zt0.3 <- zt0$SWATH_O.tauri_25.11.20_1.3
+names(prot.zt0.3) <- zt0$Peak.Name
+prot.zt0.4 <- zt0$Swath.O..tauri_01122020_1.1.prima
+names(prot.zt0.4) <- zt0$Peak.Name
+prot.zt0.5 <- zt0$Swath.O..tauri_01122020_1.2.prima
+names(prot.zt0.5) <- zt0$Peak.Name
+prot.zt0.6 <- zt0$Swath.O..tauri_01122020_1.3.prima
+names(prot.zt0.6) <- zt0$Peak.Name
+prot.zt0.7 <- zt0.3$SWATH_O.Tauri_Replica3_12.04.21_ZT20_1
+names(prot.zt0.7) <- zt0.3$Peak.Name
+prot.zt0.8 <- zt0.3$SWATH_O.Tauri_Replica3_12.04.21_ZT20_2
+names(prot.zt0.8) <- zt0.3$Peak.Name
+prot.zt0.9 <- zt0.3$SWATH_O.Tauri_Replica3_12.04.21_ZT20_3
+names(prot.zt0.9) <- zt0.3$Peak.Name
+
+
+prot.zt4.1 <- zt4$SWATH_O.tauri_25.11.20_2.1
+names(prot.zt4.1) <- zt4$Peak.Name
+prot.zt4.2 <- zt4$SWATH_O.tauri_25.11.20_2.2
+names(prot.zt4.2) <- zt4$Peak.Name
+prot.zt4.3 <- zt4$SWATH_O.tauri_25.11.20_2.3
+names(prot.zt4.3) <- zt4$Peak.Name
+prot.zt4.4 <- zt4$Swath.O..tauri_01122020_2.1prima
+names(prot.zt4.4) <- zt4$Peak.Name
+prot.zt4.5 <- zt4$Swath.O..tauri_01122020_2.2prima
+names(prot.zt4.5) <- zt4$Peak.Name
+prot.zt4.6 <- zt4$Swath.O..tauri_01122020_2.3prima
+names(prot.zt4.6) <- zt4$Peak.Name
+prot.zt4.7 <- zt4.3$SWATH_O.Tauri_Replica3_12.04.21_ZT4_1
+names(prot.zt4.7) <- zt4.3$Peak.Name
+prot.zt4.8 <- zt4.3$SWATH_O.Tauri_Replica3_12.04.21_ZT4_2
+names(prot.zt4.8) <- zt4.3$Peak.Name
+prot.zt4.9 <- zt4.3$SWATH_O.Tauri_Replica3_12.04.21_ZT4_3
+names(prot.zt4.9) <- zt4.3$Peak.Name
+
+
+prot.zt8.1 <- zt8$SWATH_O.tauri_25.11.20_3.1
+names(prot.zt8.1) <- zt8$Peak.Name
+prot.zt8.2 <- zt8$SWATH_O.tauri_25.11.20_3.2
+names(prot.zt8.2) <- zt8$Peak.Name
+prot.zt8.3 <- zt8$SWATH_O.tauri_25.11.20_3.3
+names(prot.zt8.3) <- zt8$Peak.Name
+prot.zt8.4 <- zt8$Swath.O.tauri.cont02122020_3.1prima
+names(prot.zt8.4) <- zt8$Peak.Name
+prot.zt8.5 <- zt8$Swath.O.tauri.cont02122020_3.2prima
+names(prot.zt8.5) <- zt8$Peak.Name
+prot.zt8.6 <- zt8$Swath.O.tauri.cont02122020_3.3prima
+names(prot.zt8.6) <- zt8$Peak.Name
+prot.zt8.7 <- zt8.3$SWATH_O.Tauri_Replica3_12.04.21_ZT8_1
+names(prot.zt8.7) <- zt8.3$Peak.Name
+prot.zt8.8 <- zt8.3$SWATH_O.Tauri_Replica3_12.04.21_ZT8_2
+names(prot.zt8.8) <- zt8.3$Peak.Name
+prot.zt8.9 <- zt8.3$SWATH_O.Tauri_Replica3_12.04.21_ZT8_3
+names(prot.zt8.9) <- zt8.3$Peak.Name
+
+
+prot.zt12.1 <- zt12$SWATH_O.tauri_25.11.20_4.1
+names(prot.zt12.1) <- zt12$Peak.Name
+prot.zt12.2 <- zt12$SWATH_O.tauri_25.11.20_4.2
+names(prot.zt12.2) <- zt12$Peak.Name
+prot.zt12.3 <- zt12$SWATH_O.tauri_25.11.20_4.3
+names(prot.zt12.3) <- zt12$Peak.Name
+prot.zt12.4 <- zt12$Swath.O.tauri.cont02122020_4.1prima
+names(prot.zt12.4) <- zt12$Peak.Name
+prot.zt12.5 <- zt12$Swath.O.tauri.cont02122020_4.2prima
+names(prot.zt12.5) <- zt12$Peak.Name
+prot.zt12.6 <- zt12$Swath.O.tauri.cont02122020_4.3prima
+names(prot.zt12.6) <- zt12$Peak.Name
+prot.zt12.7 <- zt12.3$SWATH_O.Tauri_Replica3_12.04.21_ZT12_1
+names(prot.zt12.7) <- zt12.3$Peak.Name
+prot.zt12.8 <- zt12.3$SWATH_O.Tauri_Replica3_12.04.21_ZT12_2
+names(prot.zt12.8) <- zt12.3$Peak.Name
+prot.zt12.9 <- zt12.3$SWATH_O.Tauri_Replica3_12.04.21_ZT12_3
+names(prot.zt12.9) <- zt12.3$Peak.Name
+
+
+prot.zt16.1 <- zt16$SWATH_O.tauri_25.11.20_5.1
+names(prot.zt16.1) <- zt16$Peak.Name
+prot.zt16.2 <- zt16$SWATH_O.tauri_25.11.20_5.2
+names(prot.zt16.2) <- zt16$Peak.Name
+prot.zt16.3 <- zt16$SWATH_O.tauri_25.11.20_5.3
+names(prot.zt16.3) <- zt16$Peak.Name
+prot.zt16.4 <- zt20$Swath.O.tauri.cont02122020_6.1prima
+names(prot.zt16.4) <- zt20$Peak.Name
+prot.zt16.5 <- zt20$SWATH_O.tauri_25.11.20_6.2
+names(prot.zt16.5) <- zt20$Peak.Name
+prot.zt16.6 <- zt20$Swath.O.tauri.cont02122020_6.3prima
+names(prot.zt16.6) <- zt20$Peak.Name
+prot.zt16.7 <- zt16.3$SWATH_O.Tauri_Replica3_12.04.21_ZT16_1
+names(prot.zt16.7) <- zt16.3$Peak.Name
+prot.zt16.8 <- zt16.3$SWATH_O.Tauri_Replica3_12.04.21_ZT16_2
+names(prot.zt16.8) <- zt16.3$Peak.Name
+prot.zt16.9 <- zt16.3$SWATH_O.Tauri_Replica3_12.04.21_ZT16_3
+names(prot.zt16.9) <- zt16.3$Peak.Name
+
+
+prot.zt20.1 <- zt20$SWATH_O.tauri_25.11.20_6.1
+names(prot.zt20.1) <- zt20$Peak.Name
+prot.zt20.2 <- zt20$SWATH_O.tauri_25.11.20_6.2
+names(prot.zt20.2) <- zt20$Peak.Name
+prot.zt20.3 <- zt20$SWATH_O.tauri_25.11.20_6.3
+names(prot.zt20.3) <- zt20$Peak.Name
+prot.zt20.4 <- zt16$Swath.O.tauri.cont02122020_5.1prima
+names(prot.zt20.4) <- zt16$Peak.Name
+prot.zt20.5 <- zt16$Swath.O.tauri.cont02122020_5.2prima
+names(prot.zt20.5) <- zt16$Peak.Name
+prot.zt20.6 <- zt16$Swath.O.tauri.cont02122020_5.3prima
+names(prot.zt20.6) <- zt16$Peak.Name
+prot.zt20.7 <- zt20.3$SWATH_O.Tauri_Replica3_12.04.21_ZT20_1
+names(prot.zt20.7) <- zt20.3$Peak.Name
+prot.zt20.8 <- zt20.3$SWATH_O.Tauri_Replica3_12.04.21_ZT20_2
+names(prot.zt20.8) <- zt20.3$Peak.Name
+prot.zt20.9 <- zt20.3$SWATH_O.Tauri_Replica3_12.04.21_ZT20_3
+names(prot.zt20.9) <- zt20.3$Peak.Name
+
+
+
+
+swath.raw.data <- matrix(NA,nrow = length(total.proteins),ncol=54)
+rownames(swath.raw.data) <- total.proteins
+colnames(swath.raw.data) <- c(paste("zt0",1:9,sep="_"),paste("zt4",1:9,sep="_"),
+                              paste("zt8",1:9,sep="_"),paste("zt12",1:9,sep="_"),
+                              paste("zt16",1:9,sep="_"),paste("zt20",1:9,sep="_"))
+
+swath.raw.data[names(prot.zt0.1),"zt0_1"] <- prot.zt0.1
+swath.raw.data[names(prot.zt0.2),"zt0_2"] <- prot.zt0.2
+swath.raw.data[names(prot.zt0.3),"zt0_3"] <- prot.zt0.3
+swath.raw.data[names(prot.zt0.4),"zt0_4"] <- prot.zt0.4
+swath.raw.data[names(prot.zt0.5),"zt0_5"] <- prot.zt0.5
+swath.raw.data[names(prot.zt0.6),"zt0_6"] <- prot.zt0.6
+swath.raw.data[names(prot.zt0.7),"zt0_7"] <- prot.zt0.7
+swath.raw.data[names(prot.zt0.8),"zt0_8"] <- prot.zt0.8
+swath.raw.data[names(prot.zt0.9),"zt0_9"] <- prot.zt0.9
+
+swath.raw.data[names(prot.zt4.1),"zt4_1"] <- prot.zt4.1
+swath.raw.data[names(prot.zt4.2),"zt4_2"] <- prot.zt4.2
+swath.raw.data[names(prot.zt4.3),"zt4_3"] <- prot.zt4.3
+swath.raw.data[names(prot.zt4.4),"zt4_4"] <- prot.zt4.4
+swath.raw.data[names(prot.zt4.5),"zt4_5"] <- prot.zt4.5
+swath.raw.data[names(prot.zt4.6),"zt4_6"] <- prot.zt4.6
+swath.raw.data[names(prot.zt4.7),"zt4_7"] <- prot.zt4.7
+swath.raw.data[names(prot.zt4.8),"zt4_8"] <- prot.zt4.8
+swath.raw.data[names(prot.zt4.9),"zt4_9"] <- prot.zt4.9
+
+swath.raw.data[names(prot.zt8.1),"zt8_1"] <- prot.zt8.1
+swath.raw.data[names(prot.zt8.2),"zt8_2"] <- prot.zt8.2
+swath.raw.data[names(prot.zt8.3),"zt8_3"] <- prot.zt8.3
+swath.raw.data[names(prot.zt8.4),"zt8_4"] <- prot.zt8.4
+swath.raw.data[names(prot.zt8.5),"zt8_5"] <- prot.zt8.5
+swath.raw.data[names(prot.zt8.6),"zt8_6"] <- prot.zt8.6
+swath.raw.data[names(prot.zt8.7),"zt8_7"] <- prot.zt8.7
+swath.raw.data[names(prot.zt8.8),"zt8_8"] <- prot.zt8.8
+swath.raw.data[names(prot.zt8.9),"zt8_9"] <- prot.zt8.9
+
+swath.raw.data[names(prot.zt12.1),"zt12_1"] <- prot.zt12.1
+swath.raw.data[names(prot.zt12.2),"zt12_2"] <- prot.zt12.2
+swath.raw.data[names(prot.zt12.3),"zt12_3"] <- prot.zt12.3
+swath.raw.data[names(prot.zt12.4),"zt12_4"] <- prot.zt12.4
+swath.raw.data[names(prot.zt12.5),"zt12_5"] <- prot.zt12.5
+swath.raw.data[names(prot.zt12.6),"zt12_6"] <- prot.zt12.6
+swath.raw.data[names(prot.zt12.7),"zt12_7"] <- prot.zt12.7
+swath.raw.data[names(prot.zt12.8),"zt12_8"] <- prot.zt12.8
+swath.raw.data[names(prot.zt12.9),"zt12_9"] <- prot.zt12.9
+
+swath.raw.data[names(prot.zt16.1),"zt16_1"] <- prot.zt16.1
+swath.raw.data[names(prot.zt16.2),"zt16_2"] <- prot.zt16.2
+swath.raw.data[names(prot.zt16.3),"zt16_3"] <- prot.zt16.3
+swath.raw.data[names(prot.zt16.4),"zt16_4"] <- prot.zt16.4
+swath.raw.data[names(prot.zt16.5),"zt16_5"] <- prot.zt16.5
+swath.raw.data[names(prot.zt16.6),"zt16_6"] <- prot.zt16.6
+swath.raw.data[names(prot.zt16.7),"zt16_7"] <- prot.zt16.7
+swath.raw.data[names(prot.zt16.8),"zt16_8"] <- prot.zt16.8
+swath.raw.data[names(prot.zt16.9),"zt16_9"] <- prot.zt16.9
+
+swath.raw.data[names(prot.zt20.1),"zt20_1"] <- prot.zt20.1
+swath.raw.data[names(prot.zt20.2),"zt20_2"] <- prot.zt20.2
+swath.raw.data[names(prot.zt20.3),"zt20_3"] <- prot.zt20.3
+swath.raw.data[names(prot.zt20.4),"zt20_4"] <- prot.zt20.4
+swath.raw.data[names(prot.zt20.5),"zt20_5"] <- prot.zt20.5
+swath.raw.data[names(prot.zt20.6),"zt20_6"] <- prot.zt20.6
+swath.raw.data[names(prot.zt20.7),"zt20_7"] <- prot.zt20.7
+swath.raw.data[names(prot.zt20.8),"zt20_8"] <- prot.zt20.8
+swath.raw.data[names(prot.zt20.9),"zt20_9"] <- prot.zt20.9
+
+png(filename = "boxplot_before_normalization.png",width = 1000)
+boxplot(swath.raw.data,outline=F,las=2,col=rep(rainbow(6),each=9),
+        main="Before Normalization",cex.main=2)
+dev.off()
+
+swath.raw.data.frame <- data.frame(rownames(swath.raw.data),swath.raw.data)
+head(swath.raw.data.frame)
+colnames(swath.raw.data.frame)[1] <- "ProtID"
+
+sorted.prots <- sort.int(x = swath.raw.data.frame$ProtID,index.return = T)
+
+swath.raw.data.frame <- swath.raw.data.frame[sorted.prots$ix,]
+head(swath.raw.data.frame)
+swath.raw.data.frame <- swath.raw.data.frame[-(1:4),]
+head(swath.raw.data.frame)
+
+rev(rownames(swath.raw.data.frame))
+
+swath.raw.data.frame <- swath.raw.data.frame[-nrow(swath.raw.data.frame),]
+write.table(x = swath.raw.data.frame,file = "LD_swath_raw_data.tsv",
+            quote = F,row.names = F,
+            sep = "\t")
+
+for(i in 1:nrow(ld.normalized.proteomic.data))
+{
+ if(sum(is.na(ld.normalized.proteomic.data[i,])) != 0)
+ {
+  na.points <- colnames(ld.normalized.proteomic.data)[which(is.na(ld.normalized.proteomic.data[i,]))]
+  
+  zts <- unique(sapply(X = strsplit(na.points,split="_"), FUN = function(x){ return(x[1])}))
+  
+  for(j in 1:length(zts))
+  {
+   current.time.point <- as.numeric(strsplit(zts[j],split="t")[[1]][2])
+   
+   if(current.time.point > 0)
+   {
+    previous.time.point <- paste("zt",current.time.point-4,sep="")
+   } else
+   {
+    previous.time.point <- "zt20"
+   }
+   
+   if(current.time.point < 20)
+   {
+    next.time.point <- paste("zt",current.time.point+4,sep="")
+   } else
+   {
+    next.time.point <- "zt0"
+   }
+   
+   ld.normalized.proteomic.data[i,paste(zts[j],1:9,sep="_")] <-  mean(as.numeric(c(ld.normalized.proteomic.data[i,paste(previous.time.point,1:9,sep="_")],
+   ld.normalized.proteomic.data[i,paste(next.time.point,1:9,sep="_")])))
+  }
+ }
+}
+
+
+## SD proteomic data
+zt0.1 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt00_1.tsv",header = T,as.is=T,sep="\t")
+zt0.1 <- zt0.1[,c(1,6:8)]
+zt0.2 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt00_2.tsv",header = T,as.is=T,sep="\t")
+zt0.2 <- zt0.2[,c(1,6:8)]
+zt0.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt00_3.tsv",header = T,as.is=T,sep="\t")
+zt0.3 <- zt0.3[,c(1,6:8)]
+
+zt4.1 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt04_1.tsv",header = T,as.is=T,sep="\t")
+zt4.1 <- zt4.1[,c(1,6:8)]
+zt4.2 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt04_2.tsv",header = T,as.is=T,sep="\t")
+zt4.2 <- zt4.2[,c(1,6:8)]
+zt4.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt04_3.tsv",header = T,as.is=T,sep="\t")
+zt4.3 <- zt4.3[,c(1,6:8)]
+
+zt8.1 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt08_1.tsv",header = T,as.is=T,sep="\t")
+zt8.1 <- zt8.1[,c(1,6:8)]
+zt8.2 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt08_2.tsv",header = T,as.is=T,sep="\t")
+zt8.2 <- zt8.2[,c(1,6:8)]
+zt8.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt08_3.tsv",header = T,as.is=T,sep="\t")
+zt8.3 <- zt8.3[,c(1,6:8)]
+
+zt12.1 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt12_1.tsv",header = T,as.is=T,sep="\t")
+zt12.1 <- zt12.1[,c(1,6:8)]
+zt12.2 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt12_2.tsv",header = T,as.is=T,sep="\t")
+zt12.2 <- zt12.2[,c(1,6:8)]
+zt12.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt12_3.tsv",header = T,as.is=T,sep="\t")
+zt12.3 <- zt12.3[,c(1,6:8)]
+
+zt16.1 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt16_1.tsv",header = T,as.is=T,sep="\t")
+zt16.1 <- zt16.1[,c(1,6:8)]
+zt16.2 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt16_2.tsv",header = T,as.is=T,sep="\t")
+zt16.2 <- zt16.2[,c(1,6:8)]
+zt16.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt16_3.tsv",header = T,as.is=T,sep="\t")
+zt16.3 <- zt16.3[,c(1,6:8)]
+
+zt20.1 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt20_1.tsv",header = T,as.is=T,sep="\t")
+zt20.1 <- zt20.1[,c(1,6:8)]
+zt20.2 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt20_2.tsv",header = T,as.is=T,sep="\t")
+zt20.2 <- zt20.2[,c(1,6:8)]
+zt20.3 <- read.table(file="/home/fran/Nextcloud2/Microalgas/analysis_minotaur/swath/sd_1_2_3/zt20_3.tsv",header = T,as.is=T,sep="\t")
+zt20.3 <- zt20.3[,c(1,6:8)]
+
+total.proteins <- unique(c(zt0.1$Peak.Name,zt0.2$Peak.Name,zt0.3$Peak.Name,
+                           zt4.1$Peak.Name,zt4.2$Peak.Name,zt4.3$Peak.Name, 
+                           zt8.1$Peak.Name,zt8.2$Peak.Name,zt8.3$Peak.Name,
+                           zt12.1$Peak.Name,zt12.2$Peak.Name,zt12.3$Peak.Name,
+                           zt16.1$Peak.Name,zt16.2$Peak.Name,zt16.3$Peak.Name,
+                           zt20.1$Peak.Name,zt20.2$Peak.Name,zt20.3$Peak.Name))
+length(total.proteins)
+
+prot.zt0.1 <- zt0.1$SWATH_O.tauri_C.corto_03.05.21_ZT0_1
+names(prot.zt0.1) <- zt0.1$Peak.Name
+prot.zt0.2 <- zt0.1$SWATH_O.tauri_C.corto_03.05.21_ZT0_2
+names(prot.zt0.2) <- zt0.1$Peak.Name
+prot.zt0.3 <- zt0.1$SWATH_O.tauri_C.corto_03.05.21_ZT0_3
+names(prot.zt0.3) <- zt0.1$Peak.Name
+prot.zt0.4 <- zt0.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT0_1
+names(prot.zt0.4) <- zt0.2$Peak.Name
+prot.zt0.5 <- zt0.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT0_2
+names(prot.zt0.5) <- zt0.2$Peak.Name
+prot.zt0.6 <- zt0.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT0_3
+names(prot.zt0.6) <- zt0.2$Peak.Name
+prot.zt0.7 <- zt0.3$SWATH_O.Tauri_Replica3_12.04.21_ZT0_1
+names(prot.zt0.7) <- zt0.3$Peak.Name
+prot.zt0.8 <- zt0.3$SWATH_O.Tauri_Replica3_12.04.21_ZT0_2
+names(prot.zt0.8) <- zt0.3$Peak.Name
+prot.zt0.9 <- zt0.3$SWATH_O.Tauri_Replica3_12.04.21_ZT0_3
+names(prot.zt0.9) <- zt0.3$Peak.Name
+
+prot.zt4.1 <- zt4.1$SWATH_O.tauri_C.corto_03.05.21_ZT4_1
+names(prot.zt4.1) <- zt4.1$Peak.Name
+prot.zt4.2 <- zt4.1$SWATH_O.tauri_C.corto_03.05.21_ZT4_2
+names(prot.zt4.2) <- zt4.1$Peak.Name
+prot.zt4.3 <- zt4.1$SWATH_O.tauri_C.corto_03.05.21_ZT4_3
+names(prot.zt4.3) <- zt4.1$Peak.Name
+prot.zt4.4 <- zt4.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT4_1
+names(prot.zt4.4) <- zt4.2$Peak.Name
+prot.zt4.5 <- zt4.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT4_2
+names(prot.zt4.5) <- zt4.2$Peak.Name
+prot.zt4.6 <- zt4.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT4_3
+names(prot.zt4.6) <- zt4.2$Peak.Name
+prot.zt4.7 <- zt4.3$SWATH_O.tauri_Ciclo_Corto_Replica_3_17.05.21_ZT4_1
+names(prot.zt4.7) <- zt4.3$Peak.Name
+prot.zt4.8 <- zt4.3$SWATH_O.tauri_Ciclo_Corto_Replica_3_17.05.21_ZT4_2
+names(prot.zt4.8) <- zt4.3$Peak.Name
+prot.zt4.9 <- zt4.3$SWATH_O.tauri_Ciclo_Corto_Replica_3_17.05.21_ZT4_3
+names(prot.zt4.9) <- zt4.3$Peak.Name
+
+prot.zt8.1 <- zt8.1$SWATH_O.tauri_C.corto_03.05.21_ZT8_1
+names(prot.zt8.1) <- zt8.1$Peak.Name
+prot.zt8.2 <- zt8.1$SWATH_O.tauri_C.corto_03.05.21_ZT8_2
+names(prot.zt8.2) <- zt8.1$Peak.Name
+prot.zt8.3 <- zt8.1$SWATH_O.tauri_C.corto_03.05.21_ZT8_3
+names(prot.zt8.3) <- zt8.1$Peak.Name
+prot.zt8.4 <- zt8.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT8_1
+names(prot.zt8.4) <- zt8.2$Peak.Name
+prot.zt8.5 <- zt8.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT8_2
+names(prot.zt8.5) <- zt8.2$Peak.Name
+prot.zt8.6 <- zt8.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT8_3
+names(prot.zt8.6) <- zt8.2$Peak.Name
+prot.zt8.7 <- zt8.3$SWATH_O.Tauri_Replica3_12.04.21_ZT8_1
+names(prot.zt8.7) <- zt8.3$Peak.Name
+prot.zt8.8 <- zt8.3$SWATH_O.Tauri_Replica3_12.04.21_ZT8_2
+names(prot.zt8.8) <- zt8.3$Peak.Name
+prot.zt8.9 <- zt8.3$SWATH_O.Tauri_Replica3_12.04.21_ZT8_3
+names(prot.zt8.9) <- zt8.3$Peak.Name
+
+prot.zt12.1 <- zt12.1$SWATH_O.tauri_C.corto_03.05.21_ZT12_1
+names(prot.zt12.1) <- zt12.1$Peak.Name
+prot.zt12.2 <- zt12.1$SWATH_O.tauri_C.corto_03.05.21_ZT12_2
+names(prot.zt12.2) <- zt12.1$Peak.Name
+prot.zt12.3 <- zt12.1$SWATH_O.tauri_C.corto_03.05.21_ZT12_3
+names(prot.zt12.3) <- zt12.1$Peak.Name
+prot.zt12.4 <- zt12.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT12_1
+names(prot.zt12.4) <- zt12.2$Peak.Name
+prot.zt12.5 <- zt12.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT12_2
+names(prot.zt12.5) <- zt12.2$Peak.Name
+prot.zt12.6 <- zt12.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT12_3
+names(prot.zt12.6) <- zt12.2$Peak.Name
+prot.zt12.7 <- zt12.3$SWATH_O.Tauri_Replica3_12.04.21_ZT12_1
+names(prot.zt12.7) <- zt12.3$Peak.Name
+prot.zt12.8 <- zt12.3$SWATH_O.Tauri_Replica3_12.04.21_ZT12_2
+names(prot.zt12.8) <- zt12.3$Peak.Name
+prot.zt12.9 <- zt12.3$SWATH_O.Tauri_Replica3_12.04.21_ZT12_3
+names(prot.zt12.9) <- zt12.3$Peak.Name
+
+prot.zt16.1 <- zt16.1$SWATH_O.tauri_C.corto_03.05.21_ZT16_1
+names(prot.zt16.1) <- zt16.1$Peak.Name
+prot.zt16.2 <- zt16.1$SWATH_O.tauri_C.corto_03.05.21_ZT16_2
+names(prot.zt16.2) <- zt16.1$Peak.Name
+prot.zt16.3 <- zt16.1$SWATH_O.tauri_C.corto_03.05.21_ZT16_3
+names(prot.zt16.3) <- zt16.1$Peak.Name
+prot.zt16.4 <- zt16.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT16_1
+names(prot.zt16.4) <- zt16.2$Peak.Name
+prot.zt16.5 <- zt16.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT16_2
+names(prot.zt16.5) <- zt16.2$Peak.Name
+prot.zt16.6 <- zt16.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT16_3
+names(prot.zt16.6) <- zt16.2$Peak.Name
+prot.zt16.7 <- zt16.3$SWATH_O.Tauri_Replica3_12.04.21_ZT16_1
+names(prot.zt16.7) <- zt16.3$Peak.Name
+prot.zt16.8 <- zt16.3$SWATH_O.Tauri_Replica3_12.04.21_ZT16_2
+names(prot.zt16.8) <- zt16.3$Peak.Name
+prot.zt16.9 <- zt16.3$SWATH_O.Tauri_Replica3_12.04.21_ZT16_3
+names(prot.zt16.9) <- zt16.3$Peak.Name
+
+prot.zt20.1 <- zt20.1$SWATH_O.tauri_C.corto_03.05.21_ZT20_1
+names(prot.zt20.1) <- zt20.1$Peak.Name
+prot.zt20.2 <- zt20.1$SWATH_O.tauri_C.corto_03.05.21_ZT20_2
+names(prot.zt20.2) <- zt20.1$Peak.Name
+prot.zt20.3 <- zt20.1$SWATH_O.tauri_C.corto_03.05.21_ZT20_3
+names(prot.zt20.3) <- zt20.1$Peak.Name
+prot.zt20.4 <- zt20.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT20_1
+names(prot.zt20.4) <- zt20.2$Peak.Name
+prot.zt20.5 <- zt20.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT20_2
+names(prot.zt20.5) <- zt20.2$Peak.Name
+prot.zt20.6 <- zt20.2$SWATH_O.tauri_Ciclo_Corto_Replica_2_10.05.21_ZT20_3
+names(prot.zt20.6) <- zt20.2$Peak.Name
+prot.zt20.7 <- zt20.3$SWATH_O.tauri_Ciclo_Corto_Replica_3_17.05.21_ZT20_1
+names(prot.zt20.7) <- zt20.3$Peak.Name
+prot.zt20.8 <- zt20.3$SWATH_O.tauri_Ciclo_Corto_Replica_3_17.05.21_ZT20_2
+names(prot.zt20.8) <- zt20.3$Peak.Name
+prot.zt20.9 <- zt20.3$SWATH_O.tauri_Ciclo_Corto_Replica_3_17.05.21_ZT20_3
+names(prot.zt20.9) <- zt20.3$Peak.Name
+
+swath.raw.data <- matrix(NA,nrow = length(total.proteins),ncol=54)
+rownames(swath.raw.data) <- total.proteins
+colnames(swath.raw.data) <- c(paste("zt0",1:9,sep="_"),paste("zt4",1:9,sep="_"),
+                              paste("zt8",1:9,sep="_"),paste("zt12",1:9,sep="_"),
+                              paste("zt16",1:9,sep="_"),paste("zt20",1:9,sep="_"))
+
+swath.raw.data[names(prot.zt0.1),"zt0_1"] <- prot.zt0.1
+swath.raw.data[names(prot.zt0.2),"zt0_2"] <- prot.zt0.2
+swath.raw.data[names(prot.zt0.3),"zt0_3"] <- prot.zt0.3
+swath.raw.data[names(prot.zt0.4),"zt0_4"] <- prot.zt0.4
+swath.raw.data[names(prot.zt0.5),"zt0_5"] <- prot.zt0.5
+swath.raw.data[names(prot.zt0.6),"zt0_6"] <- prot.zt0.6
+swath.raw.data[names(prot.zt0.7),"zt0_7"] <- prot.zt0.7
+swath.raw.data[names(prot.zt0.8),"zt0_8"] <- prot.zt0.8
+swath.raw.data[names(prot.zt0.9),"zt0_9"] <- prot.zt0.9
+
+swath.raw.data[names(prot.zt4.1),"zt4_1"] <- prot.zt4.1
+swath.raw.data[names(prot.zt4.2),"zt4_2"] <- prot.zt4.2
+swath.raw.data[names(prot.zt4.3),"zt4_3"] <- prot.zt4.3
+swath.raw.data[names(prot.zt4.4),"zt4_4"] <- prot.zt4.4
+swath.raw.data[names(prot.zt4.5),"zt4_5"] <- prot.zt4.5
+swath.raw.data[names(prot.zt4.6),"zt4_6"] <- prot.zt4.6
+swath.raw.data[names(prot.zt4.7),"zt4_7"] <- prot.zt4.7
+swath.raw.data[names(prot.zt4.8),"zt4_8"] <- prot.zt4.8
+swath.raw.data[names(prot.zt4.9),"zt4_9"] <- prot.zt4.9
+
+swath.raw.data[names(prot.zt8.1),"zt8_1"] <- prot.zt8.1
+swath.raw.data[names(prot.zt8.2),"zt8_2"] <- prot.zt8.2
+swath.raw.data[names(prot.zt8.3),"zt8_3"] <- prot.zt8.3
+swath.raw.data[names(prot.zt8.4),"zt8_4"] <- prot.zt8.4
+swath.raw.data[names(prot.zt8.5),"zt8_5"] <- prot.zt8.5
+swath.raw.data[names(prot.zt8.6),"zt8_6"] <- prot.zt8.6
+swath.raw.data[names(prot.zt8.7),"zt8_7"] <- prot.zt8.7
+swath.raw.data[names(prot.zt8.8),"zt8_8"] <- prot.zt8.8
+swath.raw.data[names(prot.zt8.9),"zt8_9"] <- prot.zt8.9
+
+swath.raw.data[names(prot.zt12.1),"zt12_1"] <- prot.zt12.1
+swath.raw.data[names(prot.zt12.2),"zt12_2"] <- prot.zt12.2
+swath.raw.data[names(prot.zt12.3),"zt12_3"] <- prot.zt12.3
+swath.raw.data[names(prot.zt12.4),"zt12_4"] <- prot.zt12.4
+swath.raw.data[names(prot.zt12.5),"zt12_5"] <- prot.zt12.5
+swath.raw.data[names(prot.zt12.6),"zt12_6"] <- prot.zt12.6
+swath.raw.data[names(prot.zt12.7),"zt12_7"] <- prot.zt12.7
+swath.raw.data[names(prot.zt12.8),"zt12_8"] <- prot.zt12.8
+swath.raw.data[names(prot.zt12.9),"zt12_9"] <- prot.zt12.9
+
+swath.raw.data[names(prot.zt16.1),"zt16_1"] <- prot.zt16.1
+swath.raw.data[names(prot.zt16.2),"zt16_2"] <- prot.zt16.2
+swath.raw.data[names(prot.zt16.3),"zt16_3"] <- prot.zt16.3
+swath.raw.data[names(prot.zt16.4),"zt16_4"] <- prot.zt16.4
+swath.raw.data[names(prot.zt16.5),"zt16_5"] <- prot.zt16.5
+swath.raw.data[names(prot.zt16.6),"zt16_6"] <- prot.zt16.6
+swath.raw.data[names(prot.zt16.7),"zt16_7"] <- prot.zt16.7
+swath.raw.data[names(prot.zt16.8),"zt16_8"] <- prot.zt16.8
+swath.raw.data[names(prot.zt16.9),"zt16_9"] <- prot.zt16.9
+
+swath.raw.data[names(prot.zt20.1),"zt20_1"] <- prot.zt20.1
+swath.raw.data[names(prot.zt20.2),"zt20_2"] <- prot.zt20.2
+swath.raw.data[names(prot.zt20.3),"zt20_3"] <- prot.zt20.3
+swath.raw.data[names(prot.zt20.4),"zt20_4"] <- prot.zt20.4
+swath.raw.data[names(prot.zt20.5),"zt20_5"] <- prot.zt20.5
+swath.raw.data[names(prot.zt20.6),"zt20_6"] <- prot.zt20.6
+swath.raw.data[names(prot.zt20.7),"zt20_7"] <- prot.zt20.7
+swath.raw.data[names(prot.zt20.8),"zt20_8"] <- prot.zt20.8
+swath.raw.data[names(prot.zt20.9),"zt20_9"] <- prot.zt20.9
+
+boxplot(swath.raw.data,outline=F,las=2,col=rep(rainbow(6),each=9),
+        main="Before Normalization",cex.main=2)
+
+swath.raw.data.frame <- data.frame(rownames(swath.raw.data),swath.raw.data)
+head(swath.raw.data.frame)
+colnames(swath.raw.data.frame)[1] <- "ProtID"
+write.table(x = swath.raw.data.frame,file = "swath_proteomic_data/SD_swath_raw_data.tsv",
+            quote = F,row.names = F,
+            sep = "\t")

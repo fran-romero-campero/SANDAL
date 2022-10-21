@@ -2498,6 +2498,7 @@ First, we found that under short day conditions 2036 rhythmic genes correspondin
 ```{r barplot_ld_sd_amplitude_effect}
 par(lwd=3)
 boxplot(circacompare.ld.sd[,"ld amplitude estimate" ],circacompare.ld.sd[,"sd amplitude estimate" ],outline=F,col=c("blue","red"),names=c("LD","SD"),cex.axis=2)
+wilcox.test(x = circacompare.ld.sd[,"ld amplitude estimate" ], y = circacompare.ld.sd[,"sd amplitude estimate" ], alternative = "greater")$p.value
 ```
 
 ```{r ld_sd_mesor_effect}
@@ -3907,3 +3908,440 @@ plot.sd(gene.id="ostta08g01570", gene.name="UGE", gene.expression)
 ```
 
 ## **Proteomic data analysis**
+
+Proteomic data preprocessing.
+
+```{r ld_proteomic_data_preprocessing}
+ld.swath.raw.data <- read.table(file = "swath_proteomic_data/LD_swath_raw_data.tsv",header = T,sep = "\t",as.is = T)
+nrow(ld.swath.raw.data)
+head(ld.swath.raw.data)
+
+boxplot(ld.swath.raw.data[,2:55],outline=F,las=2,col=rep(rainbow(6),each=9),
+        main="Before Normalization",cex.main=2)
+
+
+design <- data.frame(sample=colnames(swath.raw.data),
+                     group=c(rep("zt0",9),rep("zt4",9),rep("zt8",9),
+                             rep("zt12",9),rep("zt16",9),rep("zt20",9)))
+
+write.table(x = design,file = "swath_proteomic_data/LD_3days_design.tsv",quote = F,row.names = F,
+            sep = "\t")
+
+library("NormalyzerDE")
+
+normalyzer(jobName = "LD_normalization",designPath = "swath_proteomic_data/LD_3days_design.tsv",
+           dataPath = "swath_proteomic_data/LD_swath_raw_data.tsv",outputDir = "swath_proteomic_data/")
+
+ld.normalized.proteomic.data <- read.table(file = "swath_proteomic_data/LD_normalization/Quantile-normalized.txt",header = T,sep="\t",as.is=T)
+head(ld.normalized.proteomic.data)
+
+boxplot(ld.normalized.proteomic.data[,2:55],las=2,col=rep(rainbow(6),each=9),
+        outline = F,main="After Normalization",cex.main=2)
+
+```
+```{r ld_proteomic_data_imputation}
+sum(is.na(ld.normalized.proteomic.data))
+for(i in 1:nrow(ld.normalized.proteomic.data))
+{
+  if(sum(is.na(ld.normalized.proteomic.data[i,])) != 0)
+  { 
+    na.points <- colnames(ld.normalized.proteomic.data)[which(is.na(ld.normalized.proteomic.data[i,]))]
+    for(j in 1:length(na.points))
+    {
+      zt <- strsplit(na.points[j],split="_")[[1]][1]  
+
+      imputed.value <- mean(as.numeric(ld.normalized.proteomic.data[i,paste(zt,1:9,sep="_")]),na.rm = T)
+      if(!is.nan(imputed.value))
+      {
+         ld.normalized.proteomic.data[i,na.points[j]] <- imputed.value
+      }
+    }
+  }
+}
+
+sum(is.na(ld.normalized.proteomic.data))
+
+for(i in 1:nrow(ld.normalized.proteomic.data))
+{
+ if(sum(is.na(ld.normalized.proteomic.data[i,])) != 0)
+ {
+  na.points <- colnames(ld.normalized.proteomic.data)[which(is.na(ld.normalized.proteomic.data[i,]))]
+  
+  zts <- unique(sapply(X = strsplit(na.points,split="_"), FUN = function(x){ return(x[1])}))
+  
+  for(j in 1:length(zts))
+  {
+   current.time.point <- as.numeric(strsplit(zts[j],split="t")[[1]][2])
+   
+   if(current.time.point > 0)
+   {
+    previous.time.point <- paste("zt",current.time.point-4,sep="")
+   } else
+   {
+    previous.time.point <- "zt20"
+   }
+   
+   if(current.time.point < 20)
+   {
+    next.time.point <- paste("zt",current.time.point+4,sep="")
+   } else
+   {
+    next.time.point <- "zt0"
+   }
+   
+   ld.normalized.proteomic.data[i,paste(zts[j],1:9,sep="_")] <-  mean(as.numeric(c(ld.normalized.proteomic.data[i,paste(previous.time.point,1:9,sep="_")],
+   ld.normalized.proteomic.data[i,paste(next.time.point,1:9,sep="_")])))
+  }
+ }
+}
+
+sum(is.na(ld.normalized.proteomic.data))
+
+ld.normalized.proteomic.data[is.na(ld.normalized.proteomic.data)] <- min(ld.normalized.proteomic.data[,2:55],na.rm = T)
+head(ld.normalized.proteomic.data)
+
+ld.protein.ids <- ld.normalized.proteomic.data$ProtID
+
+ld.normalized.proteomic.data <- as.matrix(ld.normalized.proteomic.data[,2:55])
+head(ld.normalized.proteomic.data)
+rownames(ld.normalized.proteomic.data) <- ld.protein.ids
+
+ld.zt0.1 <- rowMeans(ld.normalized.proteomic.data[,paste("zt0",1:3,sep="_")])
+ld.zt0.2 <- rowMeans(ld.normalized.proteomic.data[,paste("zt0",4:6,sep="_")])
+ld.zt0.3 <- rowMeans(ld.normalized.proteomic.data[,paste("zt0",7:9,sep="_")])
+
+ld.zt4.1 <- rowMeans(ld.normalized.proteomic.data[,paste("zt4",1:3,sep="_")])
+ld.zt4.2 <- rowMeans(ld.normalized.proteomic.data[,paste("zt4",4:6,sep="_")])
+ld.zt4.3 <- rowMeans(ld.normalized.proteomic.data[,paste("zt4",7:9,sep="_")])
+
+ld.zt8.1 <- rowMeans(ld.normalized.proteomic.data[,paste("zt8",1:3,sep="_")])
+ld.zt8.2 <- rowMeans(ld.normalized.proteomic.data[,paste("zt8",4:6,sep="_")])
+ld.zt8.3 <- rowMeans(ld.normalized.proteomic.data[,paste("zt8",7:9,sep="_")])
+
+ld.zt12.1 <- rowMeans(ld.normalized.proteomic.data[,paste("zt12",1:3,sep="_")])
+ld.zt12.2 <- rowMeans(ld.normalized.proteomic.data[,paste("zt12",4:6,sep="_")])
+ld.zt12.3 <- rowMeans(ld.normalized.proteomic.data[,paste("zt12",7:9,sep="_")])
+
+ld.zt16.1 <- rowMeans(ld.normalized.proteomic.data[,paste("zt16",1:3,sep="_")])
+ld.zt16.2 <- rowMeans(ld.normalized.proteomic.data[,paste("zt16",4:6,sep="_")])
+ld.zt16.3 <- rowMeans(ld.normalized.proteomic.data[,paste("zt16",7:9,sep="_")])
+
+ld.zt20.1 <- rowMeans(ld.normalized.proteomic.data[,paste("zt20",1:3,sep="_")])
+ld.zt20.2 <- rowMeans(ld.normalized.proteomic.data[,paste("zt20",4:6,sep="_")])
+ld.zt20.3 <- rowMeans(ld.normalized.proteomic.data[,paste("zt20",7:9,sep="_")])
+
+
+ld.protein.abundance <-  matrix(c(ld.zt0.1,ld.zt0.2,ld.zt0.3,
+         ld.zt4.1,ld.zt4.2,ld.zt4.3,
+         ld.zt8.1,ld.zt8.2,ld.zt8.3,
+         ld.zt12.1,ld.zt12.2,ld.zt12.3,
+         ld.zt16.1,ld.zt16.2,ld.zt16.3,
+         ld.zt20.1,ld.zt20.2,ld.zt20.3),ncol=18)
+rownames(ld.protein.abundance) <- ld.protein.ids
+colnames(ld.protein.abundance) <- c(paste("zt0",1:3,sep="_"),
+                                    paste("zt4",1:3,sep="_"),
+                                    paste("zt8",1:3,sep="_"),
+                                    paste("zt12",1:3,sep="_"),
+                                    paste("zt16",1:3,sep="_"),
+                                    paste("zt20",1:3,sep="_"))
+ 
+results.ld.proteomics <- rain(t(ld.protein.abundance), deltat=4, period=24, verbose=FALSE, nr.series=3)
+sum(results.ld.proteomics$pVal < 0.05)/nrow(ld.protein.abundance)
+rhythmic.proteins.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05))
+
+results.ld.proteomics.12 <- rain(t(ld.protein.abundance), deltat=4, period=12, verbose=FALSE, nr.series=3)
+sum(results.ld.proteomics.12$pVal < 0.05)/nrow(ld.protein.abundance)
+rhythmic.proteins.ld.12 <- rownames(subset(results.ld.proteomics.12, pVal < 0.05))
+
+results.ld.proteomics.8 <- rain(t(ld.protein.abundance), deltat=4, period=8, verbose=FALSE, nr.series=3)
+sum(results.ld.proteomics.8$pVal < 0.05)/nrow(ld.protein.abundance)
+complete.rhythmic.proteins.ld <- unique(c(rhythmic.proteins.ld, rhythmic.proteins.ld.12))
+length(complete.rhythmic.proteins.ld)
+non.rhythmic.proteins.ld <- setdiff(ld.protein.ids, complete.rhythmic.proteins.ld)
+length(non.rhythmic.proteins.ld)
+
+data.proteins.ld <- matrix(c(length(complete.rhythmic.proteins.ld),
+                          length(non.rhythmic.proteins.ld)),nrow=2)
+
+sum(data.proteins.ld)
+
+barplot(data.proteins.ld, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+        col=c("blue", "white"), 
+        border="black", 
+        font.axis=2, 
+        xlab="",ylim=c(0,3500)) #178 445
+
+
+
+
+write(x = complete.rhythmic.proteins.ld,file = "protein_sets/rhythmic_proteins_ld.txt")
+
+
+
+pca.protein.abundance.ld <- data.frame(colnames(ld.protein.abundance[complete.rhythmic.proteins.ld,]),t(ld.protein.abundance[complete.rhythmic.proteins.ld,]))
+colnames(pca.protein.abundance.ld)[1] <- "Time point"
+
+res.pca.protein.ld <- PCA(pca.protein.abundance.ld, graph = FALSE,scale.unit = TRUE,quali.sup = 1 )
+res.hcpc.protein.ld <- HCPC(res.pca.protein.ld, graph=FALSE)   
+fviz_dend(res.hcpc.protein.ld,k=3,
+          cex = 1,                       # Label size
+          palette = "jco",               # Color palette see ?ggpubr::ggpar
+          rect = TRUE, rect_fill = TRUE, # Add rectangle around groups
+          rect_border = "jco",           # Rectangle color
+          type="rectangle",
+          labels_track_height = 50      # Augment the room for labels
+)
+
+fviz_pca_ind(res.pca.protein.ld, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT04", "ZT04",
+                                     "ZT08", "ZT08", "ZT08", "ZT12", "ZT12", "ZT12",
+                                     "ZT16", "ZT16", "ZT16", "ZT20", "ZT20", "ZT20"), 
+             pointsize=2, pointshape=21,fill="black",
+             repel = TRUE, 
+             addEllipses = TRUE,ellipse.type = "confidence",
+             legend.title="Conditions",
+             title="",
+             show_legend=TRUE,show_guide=TRUE) 
+
+
+
+
+
+
+
+i <- 1
+plot(ld.protein.abundance[rhythmic.proteins.ld[i],c(paste(paste("zt",seq(from=0,to=20,by=4),sep=""),1,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
+i <- i + 1
+
+
+
+"ostta03g03015" %in% rhythmic.proteins.ld #YeiP
+plot(ld.protein.abundance["ostta03g03015",c(paste(paste("zt",seq(from=0,to=20,by=4),sep=""),1,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
+
+"ostta04g00090" %in% rhythmic.proteins.ld #EF1B
+plot(ld.protein.abundance["ostta04g00090",c(paste(paste("zt",seq(from=0,to=20,by=4),sep=""),1,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
+
+"ostta05g04560" %in% rhythmic.proteins.ld #PsbR
+plot(ld.protein.abundance["ostta05g04560",c(paste(paste("zt",seq(from=0,to=20,by=4),sep=""),1,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
+
+"ostta06g02890" %in% rhythmic.proteins.ld #PCNA
+plot(ld.protein.abundance["ostta06g02890",c(paste(paste("zt",seq(from=0,to=20,by=4),sep=""),1,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
+
+"ostta01g04440" %in% rhythmic.proteins.ld #CLC
+plot(ld.protein.abundance["ostta01g04440",c(paste(paste("zt",seq(from=0,to=20,by=4),sep=""),1,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
+
+"ostta18g01010" %in% rhythmic.proteins.ld #ADC
+plot(ld.protein.abundance["ostta18g01010",c(paste(paste("zt",seq(from=0,to=20,by=4),sep=""),1,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
+paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
+
+```
+
+
+```{r sd_proteomic_data_preprocessing}
+sd.swath.raw.data <- read.table(file = "swath_proteomic_data/SD_swath_raw_data.tsv",header = T,sep = "\t",as.is = T)
+nrow(sd.swath.raw.data)
+head(sd.swath.raw.data)
+
+boxplot(sd.swath.raw.data[,2:55],outline=F,las=2,col=rep(rainbow(6),each=9),
+        main="Before Normalization",cex.main=2)
+
+
+design <- data.frame(sample=colnames(sd.swath.raw.data[,2:55]),
+                     group=c(rep("zt0",9),rep("zt4",9),rep("zt8",9),
+                             rep("zt12",9),rep("zt16",9),rep("zt20",9)))
+
+write.table(x = design,file = "swath_proteomic_data/SD_3days_design.tsv",quote = F,row.names = F,
+            sep = "\t")
+
+library("NormalyzerDE")
+
+normalyzer(jobName = "SD_normalization",designPath = "swath_proteomic_data/SD_3days_design.tsv",
+           dataPath = "swath_proteomic_data/SD_swath_raw_data.tsv",outputDir = "swath_proteomic_data/")
+
+sd.normalized.proteomic.data <- read.table(file = "swath_proteomic_data/SD_normalization/Quantile-normalized.txt",header = T,sep="\t",as.is=T)
+head(sd.normalized.proteomic.data)
+
+boxplot(sd.normalized.proteomic.data[,2:55],las=2,col=rep(rainbow(6),each=9),
+        outline = F,main="After Normalization",cex.main=2)
+```
+
+
+```{r sd_proteomic_data_imputation}
+sum(is.na(sd.normalized.proteomic.data))
+for(i in 1:nrow(sd.normalized.proteomic.data))
+{
+  if(sum(is.na(sd.normalized.proteomic.data[i,])) != 0)
+  { 
+    na.points <- colnames(sd.normalized.proteomic.data)[which(is.na(sd.normalized.proteomic.data[i,]))]
+    for(j in 1:length(na.points))
+    {
+      zt <- strsplit(na.points[j],split="_")[[1]][1]  
+
+      imputed.value <- mean(as.numeric(sd.normalized.proteomic.data[i,paste(zt,1:9,sep="_")]),na.rm = T)
+      if(!is.nan(imputed.value))
+      {
+         sd.normalized.proteomic.data[i,na.points[j]] <- imputed.value
+      }
+    }
+  }
+}
+
+sum(is.na(sd.normalized.proteomic.data))
+
+for(i in 1:nrow(sd.normalized.proteomic.data))
+{
+ if(sum(is.na(sd.normalized.proteomic.data[i,])) != 0)
+ {
+  na.points <- colnames(sd.normalized.proteomic.data)[which(is.na(sd.normalized.proteomic.data[i,]))]
+  
+  zts <- unique(sapply(X = strsplit(na.points,split="_"), FUN = function(x){ return(x[1])}))
+  
+  for(j in 1:length(zts))
+  {
+   current.time.point <- as.numeric(strsplit(zts[j],split="t")[[1]][2])
+   
+   if(current.time.point > 0)
+   {
+    previous.time.point <- paste("zt",current.time.point-4,sep="")
+   } else
+   {
+    previous.time.point <- "zt20"
+   }
+   
+   if(current.time.point < 20)
+   {
+    next.time.point <- paste("zt",current.time.point+4,sep="")
+   } else
+   {
+    next.time.point <- "zt0"
+   }
+   
+   sd.normalized.proteomic.data[i,paste(zts[j],1:9,sep="_")] <-  mean(as.numeric(c(sd.normalized.proteomic.data[i,paste(previous.time.point,1:9,sep="_")],
+   sd.normalized.proteomic.data[i,paste(next.time.point,1:9,sep="_")])))
+  }
+ }
+}
+
+sum(is.na(sd.normalized.proteomic.data))
+
+sd.normalized.proteomic.data[is.na(sd.normalized.proteomic.data)] <- min(sd.normalized.proteomic.data[,2:55],na.rm = T)
+head(sd.normalized.proteomic.data)
+
+sd.protein.ids <- sd.normalized.proteomic.data$ProtID
+
+sd.normalized.proteomic.data <- as.matrix(sd.normalized.proteomic.data[,2:55])
+head(sd.normalized.proteomic.data)
+rownames(sd.normalized.proteomic.data) <- sd.protein.ids
+
+sd.zt0.1 <- rowMeans(sd.normalized.proteomic.data[,paste("zt0",1:3,sep="_")])
+sd.zt0.2 <- rowMeans(sd.normalized.proteomic.data[,paste("zt0",4:6,sep="_")])
+sd.zt0.3 <- rowMeans(sd.normalized.proteomic.data[,paste("zt0",7:9,sep="_")])
+
+sd.zt4.1 <- rowMeans(sd.normalized.proteomic.data[,paste("zt4",1:3,sep="_")])
+sd.zt4.2 <- rowMeans(sd.normalized.proteomic.data[,paste("zt4",4:6,sep="_")])
+sd.zt4.3 <- rowMeans(sd.normalized.proteomic.data[,paste("zt4",7:9,sep="_")])
+
+sd.zt8.1 <- rowMeans(sd.normalized.proteomic.data[,paste("zt8",1:3,sep="_")])
+sd.zt8.2 <- rowMeans(sd.normalized.proteomic.data[,paste("zt8",4:6,sep="_")])
+sd.zt8.3 <- rowMeans(sd.normalized.proteomic.data[,paste("zt8",7:9,sep="_")])
+
+sd.zt12.1 <- rowMeans(sd.normalized.proteomic.data[,paste("zt12",1:3,sep="_")])
+sd.zt12.2 <- rowMeans(sd.normalized.proteomic.data[,paste("zt12",4:6,sep="_")])
+sd.zt12.3 <- rowMeans(sd.normalized.proteomic.data[,paste("zt12",7:9,sep="_")])
+
+sd.zt16.1 <- rowMeans(sd.normalized.proteomic.data[,paste("zt16",1:3,sep="_")])
+sd.zt16.2 <- rowMeans(sd.normalized.proteomic.data[,paste("zt16",4:6,sep="_")])
+sd.zt16.3 <- rowMeans(sd.normalized.proteomic.data[,paste("zt16",7:9,sep="_")])
+
+sd.zt20.1 <- rowMeans(sd.normalized.proteomic.data[,paste("zt20",1:3,sep="_")])
+sd.zt20.2 <- rowMeans(sd.normalized.proteomic.data[,paste("zt20",4:6,sep="_")])
+sd.zt20.3 <- rowMeans(sd.normalized.proteomic.data[,paste("zt20",7:9,sep="_")])
+
+
+sd.protein.abundance <-  matrix(c(sd.zt0.1,sd.zt0.2,sd.zt0.3,
+         sd.zt4.1,sd.zt4.2,sd.zt4.3,
+         sd.zt8.1,sd.zt8.2,sd.zt8.3,
+         sd.zt12.1,sd.zt12.2,sd.zt12.3,
+         sd.zt16.1,sd.zt16.2,sd.zt16.3,
+         sd.zt20.1,sd.zt20.2,sd.zt20.3),ncol=18)
+rownames(sd.protein.abundance) <- sd.protein.ids
+colnames(sd.protein.abundance) <- c(paste("zt0",1:3,sep="_"),
+                                    paste("zt4",1:3,sep="_"),
+                                    paste("zt8",1:3,sep="_"),
+                                    paste("zt12",1:3,sep="_"),
+                                    paste("zt16",1:3,sep="_"),
+                                    paste("zt20",1:3,sep="_"))
+ 
+results.sd.proteomics <- rain(t(sd.protein.abundance), deltat=4, period=24, verbose=FALSE, nr.series=3)
+sum(results.sd.proteomics$pVal < 0.05)/nrow(sd.protein.abundance)
+rhythmic.proteins.sd <- rownames(subset(results.sd.proteomics, pVal < 0.05))
+
+results.sd.proteomics.12 <- rain(t(sd.protein.abundance), deltat=4, period=12, verbose=FALSE, nr.series=3)
+sum(results.sd.proteomics.12$pVal < 0.05)/nrow(sd.protein.abundance)
+rhythmic.proteins.sd.12 <- rownames(subset(results.sd.proteomics.12, pVal < 0.05))
+
+results.sd.proteomics.8 <- rain(t(sd.protein.abundance), deltat=4, period=8, verbose=FALSE, nr.series=3)
+sum(results.sd.proteomics.8$pVal < 0.05)/nrow(sd.protein.abundance)
+complete.rhythmic.proteins.sd <- unique(c(rhythmic.proteins.sd, rhythmic.proteins.sd.12))
+length(complete.rhythmic.proteins.sd)
+non.rhythmic.proteins.sd <- setdiff(sd.protein.ids, complete.rhythmic.proteins.sd)
+length(non.rhythmic.proteins.sd)
+
+data.proteins.sd <- matrix(c(length(complete.rhythmic.proteins.sd),
+                          length(non.rhythmic.proteins.sd)),nrow=2)
+
+sum(data.proteins.sd)
+
+barplot(data.proteins.sd, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+        col=c("red", "white"), 
+        border="black", 
+        font.axis=2, 
+        xlab="",ylim=c(0,3500)) #178 445
+
+
+
+
+write(x = complete.rhythmic.proteins.sd,file = "protein_sets/rhythmic_proteins_sd.txt")
+
+
+
+pca.protein.abundance.sd <- data.frame(colnames(sd.protein.abundance[complete.rhythmic.proteins.sd,]),t(sd.protein.abundance[complete.rhythmic.proteins.sd,]))
+colnames(pca.protein.abundance.sd)[1] <- "Time point"
+
+res.pca.protein.sd <- PCA(pca.protein.abundance.sd, graph = FALSE,scale.unit = TRUE,quali.sup = 1 )
+res.hcpc.protein.sd <- HCPC(res.pca.protein.sd, graph=FALSE)   
+fviz_dend(res.hcpc.protein.sd,k=3,
+          cex = 1,                       # Label size
+          palette = "jco",               # Color palette see ?ggpubr::ggpar
+          rect = TRUE, rect_fill = TRUE, # Add rectangle around groups
+          rect_border = "jco",           # Rectangle color
+          type="rectangle",
+          labels_track_height = 75      # Augment the room for labels
+)
+
+fviz_pca_ind(res.pca.protein.sd, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT04", "ZT04",
+                                     "ZT08", "ZT08", "ZT08", "ZT12", "ZT12", "ZT12",
+                                     "ZT16", "ZT16", "ZT16", "ZT20", "ZT20", "ZT20"), 
+             pointsize=2, pointshape=21,fill="black",
+             repel = TRUE, 
+             addEllipses = TRUE,ellipse.type = "confidence",
+             legend.title="Conditions",
+             title="",
+             show_legend=TRUE,show_guide=TRUE) 
+
+grid.newpage()
+draw.pairwise.venn(area1 = length(complete.rhythmic.proteins.ld),area2 = length(complete.rhythmic.proteins.sd),cross.area =  length(intersect(complete.rhythmic.proteins.ld,complete.rhythmic.proteins.sd)),lwd = 3,category = c("LD","SD"),euler.d = T,col = c("blue","red"),fill = c(" blue","red"),alpha = 0.3,cex = 2,cat.cex = 2)
+```
+
