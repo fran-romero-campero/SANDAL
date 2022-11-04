@@ -3917,7 +3917,7 @@ nrow(ld.swath.raw.data)
 head(ld.swath.raw.data)
 
 boxplot(ld.swath.raw.data[,2:55],outline=F,las=2,col=rep(rainbow(6),each=9),
-        main="Before Normalization",cex.main=2)
+        main="LD Proteomics Data Before Normalization",cex.main=2)
 
 
 design <- data.frame(sample=colnames(swath.raw.data),
@@ -3936,7 +3936,7 @@ ld.normalized.proteomic.data <- read.table(file = "swath_proteomic_data/LD_norma
 head(ld.normalized.proteomic.data)
 
 boxplot(ld.normalized.proteomic.data[,2:55],las=2,col=rep(rainbow(6),each=9),
-        outline = F,main="After Normalization",cex.main=2)
+        outline = F,main="LD Proteomics Data After Normalization",cex.main=2)
 
 ```
 ```{r ld_proteomic_data_imputation}
@@ -4060,12 +4060,15 @@ length(complete.rhythmic.proteins.ld)
 non.rhythmic.proteins.ld <- setdiff(ld.protein.ids, complete.rhythmic.proteins.ld)
 length(non.rhythmic.proteins.ld)
 
+length(intersect(rhythmic.genes.ld.12,rhythmic.proteins.ld.12))/length(rhythmic.proteins.ld.12)
+
 data.proteins.ld <- matrix(c(length(complete.rhythmic.proteins.ld),
                           length(non.rhythmic.proteins.ld)),nrow=2)
 
 sum(data.proteins.ld)
 
-barplot(data.proteins.ld, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+par(lwd=3)
+barplot(data.proteins.ld, lwd=3, names.arg = "",cex.names = 2,cex.axis = 1.5,
         col=c("blue", "white"), 
         border="black", 
         font.axis=2, 
@@ -4075,8 +4078,6 @@ barplot(data.proteins.ld, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
 
 
 write(x = complete.rhythmic.proteins.ld,file = "protein_sets/rhythmic_proteins_ld.txt")
-
-
 
 pca.protein.abundance.ld <- data.frame(colnames(ld.protein.abundance[complete.rhythmic.proteins.ld,]),t(ld.protein.abundance[complete.rhythmic.proteins.ld,]))
 colnames(pca.protein.abundance.ld)[1] <- "Time point"
@@ -4101,11 +4102,6 @@ fviz_pca_ind(res.pca.protein.ld, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT
              legend.title="Conditions",
              title="",
              show_legend=TRUE,show_guide=TRUE) 
-
-
-
-
-
 
 
 i <- 1
@@ -4146,7 +4142,337 @@ plot(ld.protein.abundance["ostta18g01010",c(paste(paste("zt",seq(from=0,to=20,by
 paste(paste("zt",seq(from=0,to=20,by=4),sep=""),2,sep="_"),
 paste(paste("zt",seq(from=0,to=20,by=4),sep=""),3,sep="_"))],type="o")
 
+
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006108","malate metabolic process",0.0826787928896238,2.66859528060254,0.738841597262421,0,"malate metabolic process"),
+c("GO:0009117","nucleotide metabolic process",1.40094621285196,1.4881199296299,0.602091344292803,0.63538194,"malate metabolic process"),
+c("GO:0019752","carboxylic acid metabolic process",4.4462817509531,1.91283507084552,0.625175355834492,0.55713715,"malate metabolic process"),
+c("GO:0043648","dicarboxylic acid metabolic process",0.436360295806348,1.88845786342838,0.699835371968233,0.66556582,"malate metabolic process"),
+c("GO:0055086","nucleobase-containing small molecule metabolic process",1.88323917137476,1.31065579504451,0.631997197433989,0.66191227,"malate metabolic process"),
+c("GO:0006260","DNA replication",0.675210141931928,2.56666264813171,0.792365418960641,0.08842434,"DNA replication"),
+c("GO:0001505","regulation of neurotransmitter levels",0.00459326627164577,2.38995320520681,0.97092114841269,0.43940066,"DNA replication"),
+c("GO:0005975","carbohydrate metabolic process",5.18579762068807,1.87191521487905,0.866287777556541,0.14722108,"DNA replication"),
+c("GO:0006790","sulfur compound metabolic process",1.84189977492995,1.44963473706621,0.860572170185384,0.143392,"DNA replication"),
+c("GO:0019637","organophosphate metabolic process",2.93050388131,1.40258441052798,0.801983608038446,0.1529118,"DNA replication"),
+c("GO:0042133","neurotransmitter metabolic process",3.12829656337943,2.38995320520681,0.824737696342239,0.12638798,"DNA replication"),
+c("GO:0044281","small molecule metabolic process",7.84989205824262,2.26019183433259,0.88222310898327,0.1348386,"DNA replication"),
+c("GO:0072527","pyrimidine-containing compound metabolic process",0.298562307656975,1.88845786342838,0.812869875298591,0.32250485,"DNA replication"),
+c("GO:0072528","pyrimidine-containing compound biosynthetic process",0.215883514767351,1.60785554978551,0.818021608654045,0.31311476,"DNA replication"),
+c("GO:0016192","vesicle-mediated transport",2.42065132515732,3.06200405558916,0.618423216906132,0,"vesicle-mediated transport"),
+c("GO:0015031","protein transport",3.74810527766295,1.97311072005111,0.495214438552703,0.52578184,"vesicle-mediated transport"),
+c("GO:0015833","peptide transport",0.234256579853934,1.91926207730473,0.668566427494455,0.59459352,"vesicle-mediated transport"),
+c("GO:0033036","macromolecule localization",5.54407238987644,1.82261280306103,0.58930544491423,0.58253109,"vesicle-mediated transport"),
+c("GO:0042886","amide transport",0.330715171558495,1.91926207730473,0.658223408320978,0.61738691,"vesicle-mediated transport"),
+c("GO:0051641","cellular localization",4.34982315924854,1.65792912426216,0.57108363001552,0.54700372,"vesicle-mediated transport"),
+c("GO:0071705","nitrogen compound transport",5.32359560883744,1.76926085830689,0.581788162601663,0.60273194,"vesicle-mediated transport"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,      
+  lowerbound.cex.labels = 0,
+   position.legend = "none"
+)
 ```
+
+
+```{r ld_gene_protein_function}
+plot.ld.gene.prot <- function(gene.id, gene.name, gene.expression, protein.data)
+{
+  ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),
+                                                          paste(ld.zt,2,sep="_"),
+                                                          paste(ld.zt,3,sep="_"))]
+  current.gene.expression.ld <- (current.gene.expression.ld - mean(current.gene.expression.ld))/sd(current.gene.expression.ld)
+  
+  zts <- paste("zt",seq(from=0,to=20,by=4),sep="")
+  current.protein.ld <- 2^protein.data[gene.id,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))]
+  
+  current.protein.ld <- current.protein.ld/max(current.protein.ld)
+  
+  current.protein.ld <- (current.protein.ld - mean(current.protein.ld))/sd(current.protein.ld)
+  
+  min.expression <- min(c(current.gene.expression.ld, current.protein.ld))
+  max.expression <- max(c(current.gene.expression.ld, current.protein.ld))
+  range.value <- max(c(abs(min.expression), max.expression))
+  range.expression <- max.expression - min.expression
+  
+  plot(as.numeric(current.protein.ld),type="o",lwd=3,col="blue",axes=F,xlab="",
+       ylab="",
+       ylim=c(-range.value-1,range.value+1),xlim=c(0,21),
+       cex.lab=1.3,
+       main=paste(gene.id,gene.name,sep=" - "),cex.main=2)
+  at.vec <- seq(from=round(-range.value-1),to=round(range.value+1),by=1) 
+  axis(side=2,lwd=3,
+       at=at.vec,
+       labels=rep("",length(at.vec)))
+  axis(side = 1,pos =-range.value-1, at = seq(from=1,to=18),
+       labels = rep(paste("ZT",seq(from=0,to=20,by=4)),3),las=2,lwd=3)
+  
+  lines(as.numeric(current.gene.expression.ld),type="o",lwd=3,col="lightblue",lty=2)
+
+  polygon(x = c(1,5,5,1),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="blue")
+  
+  polygon(x = c(5,7,7,5),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(7,11,11,7),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="blue")
+  
+  polygon(x = c(11,13,13,11),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="blue",col="blue")
+  
+  polygon(x = c(13,17,17,13),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="blue")
+  
+  polygon(x = c(17,18,18,17),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="blue",col="blue")
+}
+
+
+plot.ld.gene.prot(gene.id = "ostta10g00920", gene.name = "NR", gene.expression = gene.expression, protein.data = ld.protein.abundance)
+
+i <- 1
+
+plot.ld.gene.prot(gene.id = rhythmic.proteins.ld[i], gene.name = rhythmic.proteins.ld[i], gene.expression = gene.expression, protein.data = ld.protein.abundance)
+i <- i + 1
+
+
+plot.ld.gene.prot(gene.id = "ostta03g05500", gene.name = "SBPase", gene.expression = gene.expression, protein.data = ld.protein.abundance)
+
+"ostta03g05500" %in% rhythmic.proteins.ld
+
+i <- 1
+
+plot.ld.gene.prot(gene.id = non.rhythmic.proteins.ld[i], gene.name = non.rhythmic.proteins.ld[i], gene.expression = gene.expression, protein.data = ld.protein.abundance)
+i <- i + 1
+
+"ostta01g00550"
+
+results.ld.proteomics["ostta01g00550",]
+results.ld.proteomics["ostta01g01080",]
+results.ld.proteomics["ostta01g02010",]
+```
+
+current.gene <- "ostta02g00555"
+
+```{r ld_sd_gene_vs_protein_examples}
+plot.ld.gene.prot(gene.id="ostta17g02160", gene.name="DRH1", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta17g02160", gene.name="DRH1", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+
+plot.ld.gene.prot(gene.id="ostta17g00890", gene.name="EOL1", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta17g00890", gene.name="EOL1", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta11g01400", gene.name="POLA2", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta11g01400", gene.name="POLA2", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta11g00910", gene.name="MCM2", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta11g00910", gene.name="MCM2", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta03g03780", gene.name="SMC1", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta03g03780", gene.name="SMC1", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta06g02960", gene.name="SCC1", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta06g02960", gene.name="SCC1", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta10g00640", gene.name="LIG1", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta10g00640", gene.name="LIG1", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta02g04680", gene.name="RPS1", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta02g04680", gene.name="RPS1", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta01g04480", gene.name="CCD", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta01g04480", gene.name="CCD", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta03g04920", gene.name="LHCA2", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id="ostta03g04920", gene.name="LHCA2", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+non.rhythmic.proteins.ld.sd <- intersect(non.rhythmic.proteins.ld,non.rhythmic.proteins.sd)
+i <- 1
+current.gene <- non.rhythmic.proteins.ld.sd[i]
+print(current.gene)
+plot.ld.gene.prot(gene.id=current.gene, gene.name="", gene.expression=gene.expression, protein.data=ld.protein.abundance) #600 400
+plot.sd.gene.prot(gene.id=current.gene, gene.name="", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+i <- i + 1
+
+```
+
+
+
+```{r ld_gene_vs_protein}
+circacompare.ld.gene.protein <- matrix(nrow=length(ld.protein.ids),ncol=15)
+rownames(circacompare.ld.gene.protein) <- ld.protein.ids
+
+time.points <- seq(from=0,by=4,length.out = 18)
+
+for(i in 1:length(ld.protein.ids))
+{
+  print(i)
+  gene.i <- ld.protein.ids[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  ld.abundance.i <- ld.protein.abundance[gene.i,c(paste(paste("zt",seq(from=0, to=20,by=4),sep=""),1,sep="_"),paste(paste("zt",seq(from=0, to=20,by=4),sep=""),2,sep="_"),paste(paste("zt",seq(from=0, to=20,by=4),sep=""),3,sep="_") )]
+  
+  ld.gene.protein.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(ld.expression.i, ld.abundance.i),
+                         group=c(rep("gene",18),rep("protein",18)))
+  
+  out.i <- circacompare(x = ld.gene.protein.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.ld.gene.protein[i,] <- out.i[[2]][,2]
+  }
+}
+
+
+colnames(circacompare.ld.gene.protein) <- out.i$summary$parameter
+circa.rhythmic.ld.proteins <- ld.protein.ids[circacompare.ld.gene.protein[,2] < 0.05]
+length(ld.protein.ids)
+length(complete.rhythmic.proteins.ld)
+
+length(intersect(complete.rhythmic.proteins.ld,ld.protein.ids))
+
+circacompare.ld.gene.protein["ostta01g00550",]
+circacompare.ld.gene.protein["ostta01g01080",]
+circacompare.ld.gene.protein["ostta01g02010",]
+
+circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,]
+
+hist(circacompare.ld.gene.protein[,11],breaks = 12)
+hist(circacompare.ld.gene.protein[,13])
+par(lwd=3)
+hist(circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,"protein peak time hours"],breaks = 12,col="blue",border="black",lwd=3,xlab="",ylab="",main="",cex.axis=1.5,las=2)
+
+phase.diffs.ld <- circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,"Phase difference estimate"]
+phase.diffs.ld[phase.diffs.ld < 0] <- phase.diffs.ld[phase.diffs.ld < 0] + 24
+hist(phase.diffs.ld)
+
+
+par(lwd=3)
+hist(phase.diffs.ld,col="blue",border="black",lwd=3,xlab="",ylab="",main="",cex.axis=1.5,las = 2,axes = F)
+axis(side = 2,lwd=3,cex.axis=1.5)
+axis(side = 1,lwd=3,cex.axis=1.5,at = seq(from=0,to=24,by=4),labels = seq(from=0,to=24,by=4))
+```
+
+
+```{r ld_sets}
+results.ld.proteomics$phase <-  results.ld.proteomics$phase - 4
+
+proteins.phase.0.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05 & phase==0))
+length(proteins.phase.0.ld)
+write(x = proteins.phase.0.ld,file = "protein_sets/LD_proteins_phase_0.txt")
+
+proteins.phase.4.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05 & phase==4))
+length(proteins.phase.4.ld)
+write(x = proteins.phase.4.ld,file = "protein_sets/LD_proteins_phase_4.txt")
+
+proteins.phase.8.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05 & phase==8))
+length(proteins.phase.8.ld)
+write(x = proteins.phase.8.ld,file = "protein_sets/LD_proteins_phase_8.txt")
+
+proteins.phase.12.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05 & phase==12))
+length(proteins.phase.12.ld)
+write(x = proteins.phase.12.ld,file = "protein_sets/LD_proteins_phase_12.txt")
+
+proteins.phase.16.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05 & phase==16))
+length(proteins.phase.16.ld)
+write(x = proteins.phase.16.ld,file = "protein_sets/LD_proteins_phase_16.txt")
+
+proteins.phase.20.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05 & phase==4))
+length(proteins.phase.20.ld)
+write(x = proteins.phase.20.ld,file = "protein_sets/LD_proteins_phase_20.txt")
+
+
+plot.ld.gene.prot(gene.id = "ostta01g00040", gene.name = "ostta01g00040", gene.expression = gene.expression, protein.data = ld.protein.abundance)
+
+```
+
+
+```{r prot_gene_correlation_ld} 
+plot.sd.gene.prot(gene.id="ostta10g00920", gene.name="NR", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+current.gene <- "ostta10g00920"
+
+
+cor.rhythmic.proteins.ld <- vector(mode = "numeric",length = length(rhythmic.proteins.ld))
+cor.rhythmic.proteins.ld.offset <- vector(mode = "numeric",length = length(rhythmic.proteins.ld))
+protein.data <- ld.protein.abundance
+
+for(i in 1:length(rhythmic.proteins.ld))
+{
+ print(i)
+ current.gene <- rhythmic.proteins.ld[i]
+ 
+ phase.diff <- circacompare.ld.gene.protein[current.gene,"Phase difference estimate"]
+if(phase.diff < 0)
+{
+ phase.diff <- phase.diff + 24
+}
+
+offset <- round(phase.diff / 4)
+
+  ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  current.gene.expression.ld <- gene.expression[current.gene,c(paste(ld.zt,1,sep="_"),
+                                                          paste(ld.zt,2,sep="_"),
+                                                          paste(ld.zt,3,sep="_"))]
+  current.gene.expression.ld <- (current.gene.expression.ld - mean(current.gene.expression.ld))/sd(current.gene.expression.ld)
+  
+  zts <- paste("zt",seq(from=0,to=20,by=4),sep="")
+  current.protein.ld <- 2^protein.data[current.gene,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))]
+  
+  current.protein.ld <- (current.protein.ld - mean(current.protein.ld))/sd(current.protein.ld)
+  
+  cor.rhythmic.proteins.ld[i] <- cor(current.gene.expression.ld,current.protein.ld)
+  
+  if(offset > 0)
+  {
+     current.protein.ld.offset <- c(current.protein.ld[(offset+1):length(current.protein.ld)],current.protein.ld[1:offset])
+  } else
+  {
+        current.protein.ld.offset <- current.protein.ld
+  }
+
+  cor.rhythmic.proteins.ld.offset[i] <- cor(current.gene.expression.ld,current.protein.ld.offset)
+}
+
+boxplot(cor.rhythmic.proteins.ld, cor.rhythmic.proteins.ld.offset,outline=F)
+
+plot.sd.gene.prot(gene.id="ostta10g00920", gene.name="NR", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+plot.ld.gene.prot(gene.id="ostta06g02890", gene.name="PCNA", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.ld.gene.prot(gene.id="ostta05g04560", gene.name="PsbR", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+
+plot.sd.gene.prot(gene.id="ostta06g02890", gene.name="PCNA", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+plot.sd.gene.prot(gene.id="ostta05g04560", gene.name="PsbR", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+```
+
 
 
 ```{r sd_proteomic_data_preprocessing}
@@ -4155,7 +4481,7 @@ nrow(sd.swath.raw.data)
 head(sd.swath.raw.data)
 
 boxplot(sd.swath.raw.data[,2:55],outline=F,las=2,col=rep(rainbow(6),each=9),
-        main="Before Normalization",cex.main=2)
+        main="SD Proteomics Data Before Normalization",cex.main=2)
 
 
 design <- data.frame(sample=colnames(sd.swath.raw.data[,2:55]),
@@ -4174,7 +4500,7 @@ sd.normalized.proteomic.data <- read.table(file = "swath_proteomic_data/SD_norma
 head(sd.normalized.proteomic.data)
 
 boxplot(sd.normalized.proteomic.data[,2:55],las=2,col=rep(rainbow(6),each=9),
-        outline = F,main="After Normalization",cex.main=2)
+        outline = F,main="SD Proteomics Data After Normalization",cex.main=2)
 ```
 
 
@@ -4299,12 +4625,16 @@ length(complete.rhythmic.proteins.sd)
 non.rhythmic.proteins.sd <- setdiff(sd.protein.ids, complete.rhythmic.proteins.sd)
 length(non.rhythmic.proteins.sd)
 
+length(intersect(rhythmic.genes.sd.12,rhythmic.proteins.sd.12))/length(rhythmic.proteins.sd.12)
+length(rhythmic.proteins.sd.12)
+length(intersect(rhythmic.genes.sd.12,rhythmic.proteins.sd.12))
+
 data.proteins.sd <- matrix(c(length(complete.rhythmic.proteins.sd),
                           length(non.rhythmic.proteins.sd)),nrow=2)
 
 sum(data.proteins.sd)
-
-barplot(data.proteins.sd, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
+par(lwd=3)
+barplot(data.proteins.sd, lwd=3, names.arg = "",cex.names = 2,cex.axis = 1.5,
         col=c("red", "white"), 
         border="black", 
         font.axis=2, 
@@ -4343,5 +4673,841 @@ fviz_pca_ind(res.pca.protein.sd, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT
 
 grid.newpage()
 draw.pairwise.venn(area1 = length(complete.rhythmic.proteins.ld),area2 = length(complete.rhythmic.proteins.sd),cross.area =  length(intersect(complete.rhythmic.proteins.ld,complete.rhythmic.proteins.sd)),lwd = 3,category = c("LD","SD"),euler.d = T,col = c("blue","red"),fill = c(" blue","red"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0019752","carboxylic acid metabolic process",4.4462817509531,2.81530558540903,0.392822333478267,0,"carboxylic acid metabolic process"),
+c("GO:0001505","regulation of neurotransmitter levels",0.00459326627164577,1.60799551052543,0.964241947889512,0.43940066,"carboxylic acid metabolic process"),
+c("GO:0005975","carbohydrate metabolic process",5.18579762068807,1.6703340141206,0.743387428676697,0.16110445,"carboxylic acid metabolic process"),
+c("GO:0006418","tRNA aminoacylation for protein translation",0.275595976298746,2.42457563370858,0.315609373818932,0.63160935,"carboxylic acid metabolic process"),
+c("GO:0009059","macromolecule biosynthetic process",6.71076202287447,1.35157943607677,0.456831553272343,0.60411289,"carboxylic acid metabolic process"),
+c("GO:0009069","serine family amino acid metabolic process",0.307748840200266,1.40894865094696,0.461409737901018,0.66163687,"carboxylic acid metabolic process"),
+c("GO:0016051","carbohydrate biosynthetic process",1.55252399981627,2.41550321297496,0.433097466252197,0.13440917,"carboxylic acid metabolic process"),
+c("GO:0018130","heterocycle biosynthetic process",3.97317532497359,1.55751055248051,0.476151218744264,0.55323376,"carboxylic acid metabolic process"),
+c("GO:0019438","aromatic compound biosynthetic process",4.3360433604336,1.77379656289051,0.471664024160979,0.4569607,"carboxylic acid metabolic process"),
+c("GO:0034637","cellular carbohydrate biosynthetic process",1.04267144366359,2.50986423065067,0.410302721526566,0.64288953,"carboxylic acid metabolic process"),
+c("GO:0034645","cellular macromolecule biosynthetic process",4.69891139589362,1.40861797880273,0.433015540944422,0.56861054,"carboxylic acid metabolic process"),
+c("GO:0035556","intracellular signal transduction",2.69165403518442,1.40218669780612,0.921590800596915,0.2303724,"carboxylic acid metabolic process"),
+c("GO:0042133","neurotransmitter metabolic process",3.12829656337943,1.60799551052543,0.723209740062977,0.16260321,"carboxylic acid metabolic process"),
+c("GO:0043038","amino acid activation",0.289375775113683,2.29275603613353,0.466851455772504,0.6554175,"carboxylic acid metabolic process"),
+c("GO:0044271","cellular nitrogen compound biosynthetic process",6.7842542832208,1.32814619820322,0.437243962045042,0.61895329,"carboxylic acid metabolic process"),
+c("GO:0044272","sulfur compound biosynthetic process",0.71654953837674,1.42905551849866,0.57042468616189,0.3665967,"carboxylic acid metabolic process"),
+c("GO:0044281","small molecule metabolic process",7.84989205824262,2.77836508763452,0.778102908310183,0.14321761,"carboxylic acid metabolic process"),
+c("GO:1901362","organic cyclic compound biosynthetic process",4.94694777456249,1.70472486938813,0.476160358446283,0.54314467,"carboxylic acid metabolic process"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+
 ```
+
+```{r sd_gene_protein_function}
+plot.sd.gene.prot <- function(gene.id, gene.name, gene.expression, protein.data)
+{
+  sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),
+                                                          paste(sd.zt,2,sep="_"),
+                                                          paste(sd.zt,3,sep="_"))]
+  current.gene.expression.sd <- (current.gene.expression.sd - mean(current.gene.expression.sd))/sd(current.gene.expression.sd)
+  
+  zts <- paste("zt",seq(from=0,to=20,by=4),sep="")
+  current.protein.sd <- 2^protein.data[gene.id,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))]
+  
+  current.protein.sd <- current.protein.sd/max(current.protein.sd)
+  
+  current.protein.sd <- (current.protein.sd - mean(current.protein.sd))/sd(current.protein.sd)
+  
+  min.expression <- min(c(current.gene.expression.sd, current.protein.sd))
+  max.expression <- max(c(current.gene.expression.sd, current.protein.sd))
+  range.value <- max(c(abs(min.expression), max.expression))
+  range.expression <- max.expression - min.expression
+  
+  plot(as.numeric(current.protein.sd),type="o",lwd=3,col="red",axes=F,xlab="",
+       ylab="",
+       ylim=c(-range.value-1,range.value+1),xlim=c(0,21),
+       cex.lab=1.3,
+       main=paste(gene.id,gene.name,sep=" - "),cex.main=2)
+  at.vec <- seq(from=round(-range.value-1),to=round(range.value+1),by=1) 
+  axis(side=2,lwd=3,
+       at=at.vec,
+       labels=rep("",length(at.vec)))
+  axis(side = 1,pos =-range.value-1, at = seq(from=1,to=18),
+       labels = rep(paste("ZT",seq(from=0,to=20,by=4)),3),las=2,lwd=3)
+  
+  lines(as.numeric(current.gene.expression.sd),type="o",lwd=3,col="salmon",lty=2)
+
+  polygon(x = c(1,3,3,1),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="red")
+  
+  polygon(x = c(3,7,7,3),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="red",col="red")
+  
+  polygon(x = c(7,9,9,7),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="red")
+  
+  polygon(x = c(9,13,13,9),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="red",col="red")
+  
+  polygon(x = c(13,15,15,13),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="red")
+  
+  polygon(x = c(15,18,18,15),y=c(-range.value-0.6,
+                               -range.value-0.6,
+                               -range.value-0.9,
+                               -range.value-0.9),lwd=2,border="red",col="red")
+}
+
+plot.sd.gene.prot(gene.id="ostta10g00920", gene.name="NR", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+
+
+i <- 1
+plot.sd.gene.prot(gene.id=complete.rhythmic.proteins.sd[i], gene.expression=gene.expression, protein.data=sd.protein.abundance)
+i <- i + 1
+
+i <- 1
+plot.sd.gene.prot(gene.id=rhythmic.proteins.sd.12[i], gene.name=rhythmic.proteins.sd.12[i], gene.expression=gene.expression, protein.data=sd.protein.abundance)
+i <- i + 1
+
+#ostta11g00260
+#ostta01g05020
+gene.id <- "ostta01g05020"
+```
+
+```{r sd_gene_vs_protein}
+circacompare.sd.gene.protein <- matrix(nrow=length(sd.protein.ids),ncol=15)
+rownames(circacompare.sd.gene.protein) <- sd.protein.ids
+
+time.points <- seq(from=0,by=4,length.out = 18)
+
+for(i in 1:length(sd.protein.ids))
+{
+  print(i)
+  gene.i <- sd.protein.ids[i]
+  
+  sd.expression.i <- gene.expression[gene.i,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+  sd.abundance.i <- sd.protein.abundance[gene.i,c(paste(paste("zt",seq(from=0, to=20,by=4),sep=""),1,sep="_"),paste(paste("zt",seq(from=0, to=20,by=4),sep=""),2,sep="_"),paste(paste("zt",seq(from=0, to=20,by=4),sep=""),3,sep="_") )]
+  
+  sd.gene.protein.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(sd.expression.i, sd.abundance.i),
+                         group=c(rep("gene",18),rep("protein",18)))
+  
+  out.i <- circacompare(x = sd.gene.protein.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.sd.gene.protein[i,] <- out.i[[2]][,2]
+  }
+}
+
+
+colnames(circacompare.sd.gene.protein) <- out.i$summary$parameter
+circa.rhythmic.sd.proteins <- sd.protein.ids[circacompare.sd.gene.protein[,2] < 0.05]
+length(sd.protein.ids)
+length(complete.rhythmic.proteins.sd)
+
+length(complete.rhythmic.proteins.sd)/length(sd.protein.ids)
+length(circa.rhythmic.sd.proteins)/length(sd.protein.ids)
+
+length(intersect(complete.rhythmic.proteins.sd,sd.protein.ids))
+
+circacompare.sd.gene.protein[complete.rhythmic.proteins.sd,]
+
+par(lwd=3)
+hist(circacompare.sd.gene.protein[complete.rhythmic.proteins.sd,"protein peak time hours"],breaks = 12,col="red",border="black",lwd=3,xlab="",ylab="",main="",cex.axis=1.5,las = 2)
+phase.diffs.sd <- circacompare.sd.gene.protein[complete.rhythmic.proteins.sd,"Phase difference estimate"]
+phase.diffs.sd[phase.diffs.sd < 0] <- phase.diffs.sd[phase.diffs.sd < 0] + 24
+
+par(lwd=3)
+hist(phase.diffs.sd,col="red",border="black",lwd=3,xlab="",ylab="",main="",cex.axis=1.5,las = 2,axes = F)
+axis(side = 2,lwd=3,cex.axis=1.5)
+axis(side = 1,lwd=3,cex.axis=1.5,at = seq(from=0,to=24,by=4),labels = seq(from=0,to=24,by=4))
+
+hist(circacompare.sd.gene.protein[complete.rhythmic.proteins.sd,"Phase difference estimate"])
+
+
+hist(circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,"protein peak time hours"],breaks = 12,col="blue",border="black",lwd=3,xlab="",ylab="",main="",cex.axis=1.5,las=2)
+
+par(lwd=3)
+boxplot(phase.diffs.ld,phase.diffs.sd,col=c("blue","red"),cex.axis=1.5)
+
+```
+
+```{r sd_sets}
+results.sd.proteomics$phase <-  results.sd.proteomics$phase - 4
+
+proteins.phase.0.sd <- rownames(subset(results.sd.proteomics, pVal < 0.05 & phase==0))
+length(proteins.phase.0.sd)
+write(x = proteins.phase.0.sd,file = "protein_sets/SD_proteins_phase_0.txt")
+
+proteins.phase.4.sd <- rownames(subset(results.sd.proteomics, pVal < 0.05 & phase==4))
+length(proteins.phase.4.sd)
+write(x = proteins.phase.4.sd,file = "protein_sets/SD_proteins_phase_4.txt")
+
+proteins.phase.8.sd <- rownames(subset(results.sd.proteomics, pVal < 0.05 & phase==8))
+length(proteins.phase.8.sd)
+write(x = proteins.phase.8.sd,file = "protein_sets/SD_proteins_phase_8.txt")
+
+proteins.phase.12.sd <- rownames(subset(results.sd.proteomics, pVal < 0.05 & phase==12))
+length(proteins.phase.12.sd)
+write(x = proteins.phase.12.sd,file = "protein_sets/SD_proteins_phase_12.txt")
+
+proteins.phase.16.sd <- rownames(subset(results.sd.proteomics, pVal < 0.05 & phase==16))
+length(proteins.phase.16.sd)
+write(x = proteins.phase.16.sd,file = "protein_sets/SD_proteins_phase_16.txt")
+
+proteins.phase.20.sd <- rownames(subset(results.sd.proteomics, pVal < 0.05 & phase==20))
+length(proteins.phase.20.sd)
+write(x = proteins.phase.20.sd,file = "protein_sets/SD_proteins_phase_20.txt")
+```
+
+
+
+```{r prot_gene_correlation_sd} 
+plot.sd.gene.prot(gene.id="ostta10g00920", gene.name="NR", gene.expression=gene.expression, protein.data=sd.protein.abundance)
+current.gene <- "ostta10g00920"
+
+
+cor.rhythmic.proteins.sd <- vector(mode = "numeric",length = length(rhythmic.proteins.sd))
+cor.rhythmic.proteins.sd.offset <- vector(mode = "numeric",length = length(rhythmic.proteins.sd))
+current.gene <- "ostta01g01480"
+for(i in 1:length(rhythmic.proteins.sd))
+{
+ print(i)
+ current.gene <- rhythmic.proteins.sd[i]
+ 
+ phase.diff <- circacompare.sd.gene.protein[current.gene,"Phase difference estimate"]
+if(phase.diff < 0)
+{
+ phase.diff <- phase.diff + 24
+}
+
+offset <- round(phase.diff / 4)
+
+  sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+  current.gene.expression.sd <- gene.expression[current.gene,c(paste(sd.zt,1,sep="_"),
+                                                          paste(sd.zt,2,sep="_"),
+                                                          paste(sd.zt,3,sep="_"))]
+  current.gene.expression.sd <- (current.gene.expression.sd - mean(current.gene.expression.sd))/sd(current.gene.expression.sd)
+  
+  zts <- paste("zt",seq(from=0,to=20,by=4),sep="")
+  current.protein.sd <- 2^protein.data[current.gene,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))]
+  
+  current.protein.sd <- (current.protein.sd - mean(current.protein.sd))/sd(current.protein.sd)
+  
+  cor.rhythmic.proteins.sd[i] <- cor(current.gene.expression.sd,current.protein.sd)
+  
+  if(offset > 0)
+  {
+     current.protein.sd.offset <- c(current.protein.sd[(offset+1):length(current.protein.sd)],current.protein.sd[1:offset])
+  } else
+  {
+        current.protein.sd.offset <- current.protein.sd
+  }
+
+  cor.rhythmic.proteins.sd.offset[i] <- cor(current.gene.expression.sd,current.protein.sd.offset)
+}
+
+boxplot(cor.rhythmic.proteins.sd, cor.rhythmic.proteins.sd.offset,outline=F)
+```
+
+
+```{r offset_vs_protein_properties_ld}
+library(seqinr)
+ostta.proteome <- read.fasta(file = "swath_proteomic_data/ostreococcus_tauri_proteome.fasta",seqtype = "AA",as.string = T)
+ostta.proteom.seqs <- getSequence(ostta.proteome,as.string = T)
+names(ostta.proteom.seqs) <- getName(ostta.proteome)
+length(ostta.proteom.seqs)
+
+complete.rhythmic.proteins.ld.seqs <- ostta.proteom.seqs[complete.rhythmic.proteins.ld]
+length(complete.rhythmic.proteins.ld.seqs)
+
+complete.rhythmic.proteins.ld.indices <- matrix(data = 0,nrow = length(complete.rhythmic.proteins.ld),ncol=20)
+colnames(complete.rhythmic.proteins.ld.indices) <- c("Tiny", "Small", "Aliphatic", "Aromatic", "NonPolar", "Polar",   "Charged", "Basic", "Acidic","AliphaticIndex", "BomanIndex", "Charge", "hmoment", "hydrophobicity", "instaIndex", "length", "mv", "pI","phase","offset")
+rownames(complete.rhythmic.proteins.ld.indices) <- complete.rhythmic.proteins.ld
+
+complete.rhythmic.proteins.ld.indices[,"phase"] <- results.ld[complete.rhythmic.proteins.ld, "phase"] - 4
+
+ld.offsets <- circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,"Phase difference estimate"]
+ld.offsets[ld.offsets < 0] <- ld.offsets[ld.offsets < 0] + 24
+complete.rhythmic.proteins.ld.indices[,"offset"] <- ld.offsets
+
+for(i in 1:length(complete.rhythmic.proteins.ld))
+{
+ curren.prot.seq <- complete.rhythmic.proteins.ld.seqs[[i]][[1]]
+
+ complete.rhythmic.proteins.ld.indices[i,c("Tiny", "Small", "Aliphatic", "Aromatic", "NonPolar", "Polar",   "Charged", "Basic", "Acidic")] <- as.vector(aaComp(seq = curren.prot.seq)[[1]][,2])
+ complete.rhythmic.proteins.ld.indices[i,"AliphaticIndex"] <- aIndex(seq = curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"BomanIndex"] <- boman(seq=curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"Charge"] <- charge(seq=curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"hmoment"] <- hmoment(seq=curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"hydrophobicity"] <- hydrophobicity(seq=curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"instaIndex"] <- instaIndex(seq=curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"length"] <- lengthpep(seq=curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"mv"] <-mw(seq=curren.prot.seq)
+ complete.rhythmic.proteins.ld.indices[i,"pI"] <-pI(seq=curren.prot.seq)
+}
+
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Tiny"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Tiny AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Small"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Small AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Aliphatic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Aliphatic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Aromatic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Aromatic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"NonPolar"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content NonPolar AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Polar"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Polar AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Charged"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Charged AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Basic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Basic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Acidic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Acidic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"AliphaticIndex"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Aliphatic Index",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"BomanIndex"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Boman Index",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"Charge"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Charge",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"hmoment"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Hydrophobicity Moment",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"hydrophobicity"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Hydrophobicity",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"instaIndex"],pch=19,xlab="Gene/Protein Shift (h)",ylab="instaIndex",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"length"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Length",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"mv"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Molecular Weight",cex.lab=1.5)
+plot(complete.rhythmic.proteins.ld.indices[,"offset"],complete.rhythmic.proteins.ld.indices[,"pI"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Isoelectric Point",cex.lab=1.5)
+par(lwd=3)
+boxplot(complete.rhythmic.proteins.ld.indices[,"offset"] ~ complete.rhythmic.proteins.ld.indices[,"phase"],outline=F,col="blue",names=paste("ZT",seq(from=0,to=20, by=4),sep=""),xlab="Gene Phase",ylab="Gene/Protein Shift(h)",cex.lab=1.5,las=2,cex.axis=1.1)
+```
+
+```{r offset_vs_protein_properties_sd}
+library(seqinr)
+ostta.proteome <- read.fasta(file = "swath_proteomic_data/ostreococcus_tauri_proteome.fasta",seqtype = "AA",as.string = T)
+ostta.proteom.seqs <- getSequence(ostta.proteome,as.string = T)
+names(ostta.proteom.seqs) <- getName(ostta.proteome)
+length(ostta.proteom.seqs)
+
+complete.rhythmic.proteins.sd.seqs <- ostta.proteom.seqs[complete.rhythmic.proteins.sd]
+length(complete.rhythmic.proteins.sd.seqs)
+
+complete.rhythmic.proteins.sd.indices <- matrix(data = 0,nrow = length(complete.rhythmic.proteins.sd),ncol=20)
+colnames(complete.rhythmic.proteins.sd.indices) <- c("Tiny", "Small", "Aliphatic", "Aromatic", "NonPolar", "Polar",   "Charged", "Basic", "Acidic","AliphaticIndex", "BomanIndex", "Charge", "hmoment", "hydrophobicity", "instaIndex", "length", "mv", "pI","phase","offset")
+rownames(complete.rhythmic.proteins.sd.indices) <- complete.rhythmic.proteins.sd
+
+complete.rhythmic.proteins.sd.indices[,"phase"] <- results.sd[complete.rhythmic.proteins.sd, "phase"] - 4
+
+sd.offsets <- circacompare.sd.gene.protein[complete.rhythmic.proteins.sd,"Phase difference estimate"]
+sd.offsets[sd.offsets < 0] <- sd.offsets[sd.offsets < 0] + 24
+complete.rhythmic.proteins.sd.indices[,"offset"] <- sd.offsets
+
+for(i in 1:length(complete.rhythmic.proteins.sd))
+{
+ curren.prot.seq <- complete.rhythmic.proteins.sd.seqs[[i]][[1]]
+
+ complete.rhythmic.proteins.sd.indices[i,c("Tiny", "Small", "Aliphatic", "Aromatic", "NonPolar", "Polar",   "Charged", "Basic", "Acidic")] <- as.vector(aaComp(seq = curren.prot.seq)[[1]][,2])
+ complete.rhythmic.proteins.sd.indices[i,"AliphaticIndex"] <- aIndex(seq = curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"BomanIndex"] <- boman(seq=curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"Charge"] <- charge(seq=curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"hmoment"] <- hmoment(seq=curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"hydrophobicity"] <- hydrophobicity(seq=curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"instaIndex"] <- instaIndex(seq=curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"length"] <- lengthpep(seq=curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"mv"] <-mw(seq=curren.prot.seq)
+ complete.rhythmic.proteins.sd.indices[i,"pI"] <-pI(seq=curren.prot.seq)
+}
+
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Tiny"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Tiny AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Small"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Small AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Aliphatic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Aliphatic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Aromatic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Aromatic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"NonPolar"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content NonPolar AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Polar"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Polar AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Charged"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Charged AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Basic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Basic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Acidic"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Content Acidic AA %",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"AliphaticIndex"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Aliphatic Index",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"BomanIndex"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Boman Index",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"Charge"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Charge",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"hmoment"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Hydrophobicity Moment",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"hydrophobicity"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Hydrophobicity",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"instaIndex"],pch=19,xlab="Gene/Protein Shift (h)",ylab="instaIndex",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"length"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Length",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"mv"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Molecular Weight",cex.lab=1.5)
+plot(complete.rhythmic.proteins.sd.indices[,"offset"],complete.rhythmic.proteins.sd.indices[,"pI"],pch=19,xlab="Gene/Protein Shift (h)",ylab="Isoelectric Point",cex.lab=1.5)
+par(lwd=3)
+boxplot(complete.rhythmic.proteins.sd.indices[,"offset"] ~ complete.rhythmic.proteins.sd.indices[,"phase"],outline=F,col="red",names=paste("ZT",seq(from=0,to=20, by=4),sep=""),xlab="Gene Phase",ylab="Gene/Protein Shift(h)",cex.lab=1.5,las=2,cex.axis=1.1)
+
+
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 8,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 0,"offset"],alternative = "greater") #p-value = 5.564e-09
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 8,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 4,"offset"],alternative = "greater") # p-value = 0.02872
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 8,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 12,"offset"],alternative = "greater")
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 8,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 16,"offset"],alternative = "greater")
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 8,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 20,"offset"],alternative = "greater")
+
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 12,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 0,"offset"],alternative = "greater") #p-value = 9.285e-07
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 12,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 4,"offset"],alternative = "greater") # p-value = 0.05263
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 12,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 16,"offset"],alternative = "greater")
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 12,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 20,"offset"],alternative = "greater")
+
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 16,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 0,"offset"],alternative = "greater") #p-value = p-value = 7.938e-05
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 16,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 4,"offset"],alternative = "greater") # p-value = 0.04907
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 16,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 20,"offset"],alternative = "greater")
+
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 20,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 0,"offset"],alternative = "greater") #p-value = 0.0529
+wilcox.test(x = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.ld.indices[,"phase"] == 20,"offset"], y = complete.rhythmic.proteins.sd.indices[complete.rhythmic.proteins.sd.indices[,"phase"] == 4,"offset"],alternative = "greater") #p-value = 0.00304
+
+complete.rhytmic.proteins.ld.sd <- intersect(complete.rhythmic.proteins.ld, complete.rhythmic.proteins.sd)
+length(complete.rhytmic.proteins.ld.sd)
+
+
+plot(x = complete.rhythmic.proteins.sd.indices[complete.rhytmic.proteins.ld.sd,"offset"], y = complete.rhythmic.proteins.ld.indices[complete.rhytmic.proteins.ld.sd,"offset"])
+
+
+cor(x = complete.rhythmic.proteins.sd.indices[complete.rhytmic.proteins.ld.sd,"offset"], y = complete.rhythmic.proteins.ld.indices[complete.rhytmic.proteins.ld.sd,"offset"])
+
+i <- 1
+plot.ld.gene.prot(gene.id=complete.rhytmic.proteins.ld.sd[i], gene.name=complete.rhytmic.proteins.ld.sd[i], gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id=complete.rhytmic.proteins.ld.sd[i], gene.name=complete.rhytmic.proteins.ld.sd[i], gene.expression=gene.expression, protein.data=sd.protein.abundance)
+i <- i + 1
+
+#ostta01g00130
+#ostta01g02350
+#ostta01g04480
+#ostta02g01245
+#ostta02g04550
+#ostta02g04680
+#ostta02g04750
+#ostta03g00820
+#ostta03g03780
+#ostta03g04330
+#ostta03g04920
+#ostta04g01720
+#ostta06g02440
+#ostta06g02960
+#ostta07g00080
+#ostta07g00380
+#ostta09g01210 *
+#ostta10g00640
+#ostta10g00870
+#ostta10g00920
+#ostta10g01240
+#ostta11g00690
+#ostta11g00910
+#ostta11g01400
+#ostta12g00430
+#ostta17g00890
+#ostta17g02160
+#ostta04g00740
+
+
+current.gene <- "ostta10g00640"
+current.gene <- "ostta11g00910"
+current.gene <- "ostta11g01400"
+current.gene <- "ostta18g01440"
+current.gene <- "ostta02g00555"
+
+plot.ld.gene.prot(gene.id=current.gene, gene.name=current.gene, gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id=current.gene, gene.name=current.gene, gene.expression=gene.expression, protein.data=sd.protein.abundance)
+
+enrich.go.rhythmic.proteins <- enrichGO(gene = complete.rhythmic.proteins.sd,
+                                          OrgDb = org.Otauri.eg.db,
+                                          ont = "BP",
+                                          pAdjustMethod = "BH",
+                                          pvalueCutoff  = 0.05,
+                                          readable = TRUE,
+                                          keyType = "GID")
+
+as.data.frame(enrich.go.rhythmic.proteins)
+barplot(enrich.go.rhythmic.proteins,drop=TRUE,showCategory = 30)
+dotplot(enrich.go.rhythmic.proteins)
+cnetplot(enrich.go.rhythmic.proteins)
+enrich.go.rhythmic.proteins <- pairwise_termsim(enrich.go.rhythmic.proteins)
+emapplot(enrich.go.rhythmic.proteins)
+
+
+
+
+
+
+```
+
+```{r cellular_component_enrichment}
+
+identified.proteins <- unique(c(ld.protein.ids, sd.protein.ids))
+length(identified.proteins)
+length(identified.proteins)/number.genes # 47.89%
+
+write(x = identified.proteins,file = "swath_proteomic_data/identified_proteins_LD_SD.txt")
+
+library(clusterProfiler)
+library(org.Otauri.eg.db)
+library(enrichplot)
+
+enrich.go.identified.proteins <- enrichGO(gene = identified.proteins,
+                                          OrgDb = org.Otauri.eg.db,
+                                          ont = "CC",
+                                          pAdjustMethod = "BH",
+                                          pvalueCutoff  = 0.05,
+                                          readable = TRUE,
+                                          keyType = "GID")
+
+as.data.frame(enrich.go.identified.proteins)
+barplot(enrich.go.identified.proteins,drop=TRUE,showCategory = 30)
+dotplot(enrich.go.identified.proteins)
+cnetplot(enrich.go.identified.proteins)
+enrich.go.identified.proteins <- pairwise_termsim(enrich.go.identified.proteins)
+emapplot(enrich.go.identified.proteins)
+```
+
+```{r offset_depends_on_biological_function}
+library(GO.db)
+genes2go <- select(org.Otauri.eg.db,columns = c("GO"),keys=keys(org.Otauri.eg.db,keytype = "GID"))
+
+get.genes.with.go <- function(go.id,genes2go)
+{
+ go.id.offspring <- c(go.id, GOBPOFFSPRING[[go.id]])
+ #go.id.offspring <- go.id
+ return(subset(genes2go, GO %in% go.id.offspring)$GID)
+}
+
+go.dna.replication <- GOID( GOTERM[ Term(GOTERM) == "DNA replication"])
+genes.dna.replication <- get.genes.with.go(go.id=go.dna.replication,genes2go)
+
+go.translation <- GOID( GOTERM[ Term(GOTERM) == "translation"])
+genes.translation <- get.genes.with.go(go.id=go.translation,genes2go)
+
+go.photosynthesis <- GOID( GOTERM[ Term(GOTERM) == "photosynthesis"])
+genes.photosynthesis <- get.genes.with.go(go.id=go.photosynthesis,genes2go)
+
+go.ribosome.biogenesis <- GOID( GOTERM[ Term(GOTERM) == "ribosome biogenesis"])
+genes.ribosome.biogenesis <- get.genes.with.go(go.id=go.ribosome.biogenesis,genes2go)
+
+par(lwd=3)
+boxplot(complete.rhythmic.proteins.ld.indices[intersect(genes.dna.replication,complete.rhythmic.proteins.ld),"offset"],
+        complete.rhythmic.proteins.ld.indices[intersect(genes.translation,complete.rhythmic.proteins.ld),"offset"],
+        complete.rhythmic.proteins.ld.indices[intersect(genes.photosynthesis,complete.rhythmic.proteins.ld),"offset"],
+        complete.rhythmic.proteins.ld.indices[intersect(genes.ribosome.biogenesis,complete.rhythmic.proteins.ld),"offset"])
+
+boxplot(complete.rhythmic.proteins.ld.indices[intersect(genes.dna.replication,complete.rhythmic.proteins.ld),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.dna.replication,complete.rhythmic.proteins.sd),"offset"],
+        NULL,
+        complete.rhythmic.proteins.ld.indices[intersect(genes.photosynthesis,complete.rhythmic.proteins.ld),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.photosynthesis,complete.rhythmic.proteins.sd),"offset"],
+        NULL,
+        complete.rhythmic.proteins.ld.indices[intersect(genes.translation,complete.rhythmic.proteins.ld),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.translation,complete.rhythmic.proteins.sd),"offset"],outline=F, col=c("blue", "red", "white"),names.arg=c(""))
+
+
+#ostta18g01440 RFA Replication factor A 1B
+current.gene <- "ostta18g01440"
+plot.ld.gene.prot(gene.id="ostta18g01440", gene.name="RFA1B", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id="ostta18g01440", gene.name="RFA1B", gene.expression=gene.expression, protein.data=sd.protein.abundance) #600 400
+
+plot.ld.gene.prot(gene.id="ostta14g01840", gene.name="KRS1", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id="ostta14g01840", gene.name="KRS1", gene.expression=gene.expression, protein.data=sd.protein.abundance) #600 400
+
+plot.ld.gene.prot(gene.id="ostta14g02660", gene.name="RF1", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id="ostta14g02660", gene.name="RF1", gene.expression=gene.expression, protein.data=sd.protein.abundance) #600 400
+
+plot.ld.gene.prot(gene.id="ostta02g01010", gene.name="PRPL35", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id="ostta02g01010", gene.name="PRPL35", gene.expression=gene.expression, protein.data=sd.protein.abundance) #600 400
+
+plot.ld.gene.prot(gene.id="ostta03g03015", gene.name="YeiP", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id="ostta03g03015", gene.name="YeiP", gene.expression=gene.expression, protein.data=sd.protein.abundance) #600 400
+
+
+plot.ld.gene.prot(gene.id="ostta04g00090", gene.name="EF1B", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id="ostta04g00090", gene.name="EF1B", gene.expression=gene.expression, protein.data=sd.protein.abundance) #600 400
+
+current.gene <- "ostta17g00570"
+
+plot.ld.gene.prot(gene.id=current.gene, gene.name=current.gene, gene.expression=gene.expression, protein.data=ld.protein.abundance)
+plot.sd.gene.prot(gene.id=current.gene, gene.name=current.gene, gene.expression=gene.expression, protein.data=sd.protein.abundance) #600 400
+
+
+
+
+boxplot(complete.rhythmic.proteins.ld.indices[intersect(genes.dna.replication,complete.rhytmic.proteins.ld.sd),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.dna.replication,complete.rhytmic.proteins.ld.sd),"offset"],
+        NULL,
+        complete.rhythmic.proteins.ld.indices[intersect(genes.photosynthesis,complete.rhytmic.proteins.ld.sd),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.photosynthesis,complete.rhytmic.proteins.ld.sd),"offset"],
+        NULL,
+        complete.rhythmic.proteins.ld.indices[intersect(genes.translation,complete.rhytmic.proteins.ld.sd),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.translation,complete.rhytmic.proteins.ld.sd),"offset"],outline=F)
+
+
+
+
+
+
+results.ld[intersect(genes.photosynthesis,complete.rhythmic.proteins.ld),]
+
+
+boxplot(complete.rhythmic.proteins.sd.indices[intersect(genes.dna.replication,complete.rhythmic.proteins.sd),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.photosynthesis,complete.rhythmic.proteins.sd),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.translation,complete.rhythmic.proteins.sd),"offset"])
+        # 
+        # complete.rhythmic.proteins.sd.indices[intersect(genes.ribosome.biogenesis,complete.rhythmic.proteins.sd),"offset"])
+
+
+
+
+boxplot(complete.rhythmic.proteins.sd.indices[intersect(genes.dna.replication,complete.rhythmic.proteins.sd),"offset"],
+        complete.rhythmic.proteins.sd.indices[intersect(genes.translation,complete.rhythmic.proteins.sd),"offset"],
+                complete.rhythmic.proteins.sd.indices[intersect(genes.photosynthesis,complete.rhythmic.proteins.sd),"offset"])
+
+
+
+sd(complete.rhythmic.proteins.ld.indices[intersect(genes.dna.replication,complete.rhythmic.proteins.ld),"offset"])
+sd(complete.rhythmic.proteins.ld.indices[,"offset"])
+```
+
+```{r go}
+genes2go <- select(org.Otauri.eg.db,columns = c("GO"),keys=keys(org.Otauri.eg.db,keytype = "GID"))
+
+get.genes.with.go <- function(go.id,genes2go)
+{
+ #go.id.offspring <- c(go.id, GOBPOFFSPRING[[go.id]])
+ go.id.offspring <- go.id
+ return(subset(genes2go, GO %in% go.id.offspring)$GID)
+}
+
+all.go <- unique(genes2go$GO)
+offset.go.median <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.median) <- all.go
+offset.go.mean <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.mean) <- all.go
+offset.go.sd <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.sd) <- all.go
+offset.go.length <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.length) <- all.go
+
+i <- 1
+for(i in 1:length(all.go))
+{
+ print(i)
+ current.go <- all.go[i]
+ current.go.genes <- get.genes.with.go(go.id=current.go,genes2go)
+ current.go.proteins <- intersect(current.go.genes,complete.rhythmic.proteins.ld)
+ 
+ offset.go.length[i] <- length(current.go.proteins)
+ offset.go.median[i] <- median(complete.rhythmic.proteins.ld.indices[current.go.proteins,"offset"])
+ offset.go.mean[i] <- mean(complete.rhythmic.proteins.ld.indices[current.go.proteins,"offset"])
+ offset.go.sd[i] <- sd(complete.rhythmic.proteins.ld.indices[current.go.proteins,"offset"])
+
+}
+
+sum(offset.go.length > 5)
+offset.go.length <- offset.go.length[-which(is.na(names(offset.go.length)))]
+offset.go.median[offset.go.length > 5]
+offset.go.median <- offset.go.median[-which(is.na(names(offset.go.median)))]
+sum(offset.go.length > 5)
+
+barplot(sort(offset.go.median[offset.go.length > ]),col=rainbow(76),las=2,cex.names = 0.8, ylim=c(0,16)) #1200 400
+
+write(x = names(sort(offset.go.median[offset.go.length > 5])[1:20]), file="enrichments/GO_LD_offsets_20_fastest.txt")
+
+write(x = names(sort(offset.go.median[offset.go.length > 3])[1:20]), file="enrichments/GO_LD_offsets_20_fastest_2.txt")
+
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006260","DNA replication",1.47064002254612,2,0.898951011137536,0,"DNA replication"),
+c("GO:0005975","carbohydrate metabolic process",5.82619132132875,2,0.898951011137536,0.10373946,"DNA replication"),
+c("GO:0006810","transport",18.081452126523,2,1,0,"transport"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,  
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+
+
+sum(offset.go.length > 3)
+offset.go.length <- offset.go.length[-which(is.na(names(offset.go.length)))]
+offset.go.median[offset.go.length > 3]
+offset.go.median <- offset.go.median[-which(is.na(names(offset.go.median)))]
+sum(offset.go.length > 3)
+
+barplot(sort(offset.go.median[offset.go.length > 3]),col=rainbow(104),las=2,cex.names = 0.8, ylim=c(0,20)) #1600 400
+
+write(x = names(sort(offset.go.median[offset.go.length > 5])[1:20]), file="enrichments/GO_LD_offsets_20_fastest.txt")
+
+write(x = names(sort(offset.go.median[offset.go.length > 3])[1:30]), file="enrichments/GO_LD_offsets_20_fastest_2.txt")
+
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006260","DNA replication",1.47064002254612,2,0.898951011137536,0,"DNA replication"),
+c("GO:0005975","carbohydrate metabolic process",5.82619132132875,2,0.898951011137536,0.10373946,"DNA replication"),
+c("GO:0006810","transport",18.081452126523,2,1,0,"transport"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,  
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+)
+
+
+
+write(x = names(sort(offset.go.median[offset.go.length > 5],decreasing = T)[1:20]), file="enrichments/GO_LD_offsets_20_slowest.txt")
+
+write(x = names(sort(offset.go.median[offset.go.length > 3],decreasing = T)[1:30]), file="enrichments/GO_LD_offsets_20_slowest_2.txt")
+
+revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
+revigo.data <- rbind(c("GO:0006418","tRNA aminoacylation for protein translation",0.983965528172663,2,0.603843430405122,0,"tRNA aminoacylation for protein translation"),
+c("GO:0006108","malate metabolic process",0.0542426908363648,2,0.840637516084543,0.36855849,"tRNA aminoacylation for protein translation"),
+c("GO:0006396","RNA processing",3.95590749649223,2,0.719475428625882,0.5890698,"tRNA aminoacylation for protein translation"),
+c("GO:0006508","proteolysis",5.13675685219537,2,0.793282613783876,0.36407788,"tRNA aminoacylation for protein translation"),
+c("GO:0007165","signal transduction",7.83941060962102,2,0.984457381767146,0.01585203,"signal transduction"),
+c("GO:0008152","metabolic process",60.5596218240454,2,1,0,"metabolic process"),
+c("GO:0015031","protein transport",2.72570819953152,2,1,0,"protein transport"));
+
+stuff <- data.frame(revigo.data);
+names(stuff) <- revigo.names;
+
+stuff$value <- as.numeric( as.character(stuff$value) );
+stuff$frequency <- as.numeric( as.character(stuff$frequency) );
+stuff$uniqueness <- as.numeric( as.character(stuff$uniqueness) );
+stuff$dispensability <- as.numeric( as.character(stuff$dispensability) );
+
+treemap(
+  stuff,
+  index = c("representative","description"),
+  vSize = "value",
+  type = "categorical",
+  vColor = "representative",
+  title = "",
+  inflate.labels = T,
+  lowerbound.cex.labels = 0,
+  position.legend = "none"
+) #702 461
+
+
+
+all.go <- unique(genes2go$GO)
+offset.go.median <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.median) <- all.go
+offset.go.mean <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.mean) <- all.go
+offset.go.sd <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.sd) <- all.go
+offset.go.length <- vector(mode = "numeric",length = length(all.go))
+names(offset.go.length) <- all.go
+
+i <- 1
+for(i in 1:length(all.go))
+{
+ print(i)
+ current.go <- all.go[i]
+ current.go.genes <- get.genes.with.go(go.id=current.go,genes2go)
+ current.go.proteins <- intersect(current.go.genes,complete.rhythmic.proteins.sd)
+ 
+ offset.go.length[i] <- length(current.go.proteins)
+ offset.go.median[i] <- median(complete.rhythmic.proteins.sd.indices[current.go.proteins,"offset"])
+ offset.go.mean[i] <- mean(complete.rhythmic.proteins.sd.indices[current.go.proteins,"offset"])
+ offset.go.sd[i] <- sd(complete.rhythmic.proteins.sd.indices[current.go.proteins,"offset"])
+
+}
+
+sum(offset.go.length > 5)
+offset.go.length <- offset.go.length[-which(is.na(names(offset.go.length)))]
+offset.go.median[offset.go.length > 5]
+offset.go.median <- offset.go.median[-which(is.na(names(offset.go.median)))]
+sum(offset.go.length > 5)
+
+barplot(sort(offset.go.median[offset.go.length > 5]),col=rainbow(76),las=2,cex.names = 0.8) #1200 400
+
+write(x = names(sort(offset.go.median[offset.go.length > 5])[1:20]), file="enrichments/GO_SD_offsets_20_fastest.txt")
+
+write(x = names(sort(offset.go.median[offset.go.length > 5],decreasing = T)[1:20]), file="enrichments/GO_SD_offsets_20_slowest.txt")
+
+sum(offset.go.length > 3)
+offset.go.length <- offset.go.length[-which(is.na(names(offset.go.length)))]
+offset.go.median[offset.go.length > 3]
+offset.go.median <- offset.go.median[-which(is.na(names(offset.go.median)))]
+sum(offset.go.length > 3)
+
+barplot(sort(offset.go.median[offset.go.length > 3]),col=rainbow(141),las=2,cex.names = 0.8) #1600 400
+
+write(x = names(sort(offset.go.median[offset.go.length > 5])[1:20]), file="enrichments/GO_SD_offsets_20_fastest.txt")
+
+write(x = names(sort(offset.go.median[offset.go.length > 5],decreasing = T)[1:20]), file="enrichments/GO_SD_offsets_20_slowest.txt")
+
+write(x = names(sort(offset.go.median[offset.go.length > 3])[1:30]), file="enrichments/GO_SD_offsets_20_fastest_2.txt")
+
+write(x = names(sort(offset.go.median[offset.go.length > 3],decreasing = T)[1:30]), file="enrichments/GO_SD_offsets_20_slowest_2.txt")
+
+
+
+
+max(offset.go.median[offset.go.length > 5])
+which.max(offset.go.median[offset.go.length > 5])
+which(offset.go.median[offset.go.length > 3] > 12)
+
+names(sort(offset.go.median[offset.go.length > 10])[1:10])
+
+
+which.min(offset.go.median[offset.go.length > 5])[1:10]
+#"GO:0016887" ATP hydrolysis activity
+#"GO:0005975" carbohydrate metabolic process
+#"GO:0016021"  membrane
+#"GO:0006260" DNA replication
+#"GO:0017111" ribonucleoside triphosphate phosphatase activity
+#"GO:0005515" protein binding
+#"GO:0005525"  GTP binding 
+#"GO:0000166"  nucleotide binding
+#"GO:0003924"  GTPase activity
+#"GO:0005488" molecular binding
+
+names(sort(offset.go.median[offset.go.length > 10],decreasing=T)[1:10])
+offset.go.sd[offset.go.length > 5]
+sd(complete.rhythmic.proteins.ld.indices[,"offset"])
+```
+
+
+
+
+
+
 

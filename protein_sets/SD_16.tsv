@@ -1,0 +1,6 @@
+GO ID	Description	p-value	q-value	Enrichment (Target Ratio; BG Ration)	Genes
+GO:0006260	DNA replication	0.014702375008229	0.478760327059276	4.14 (4/49; 48/2435)	ostta04g00450 ostta10g00640 ostta11g01400 ostta15g01090
+GO:0016567	protein ubiquitination	0.0262655216306078	0.478760327059276	2.92 (5/49; 85/2435)	ostta03g04660 ostta09g00020 ostta09g00510 ostta12g01490 ostta20g00890
+GO:0032446	protein modification by small protein conjugation	0.0262655216306078	0.478760327059276	2.92 (5/49; 85/2435)	ostta03g04660 ostta09g00020 ostta09g00510 ostta12g01490 ostta20g00890
+GO:0070647	protein modification by small protein conjugation or removal	0.0262655216306078	0.478760327059276	2.92 (5/49; 85/2435)	ostta03g04660 ostta09g00020 ostta09g00510 ostta12g01490 ostta20g00890
+GO:0016999	antibiotic metabolic process	0.0268663024630407	0.478760327059276	7.65 (2/49; 13/2435)	ostta07g04200 ostta15g00650
