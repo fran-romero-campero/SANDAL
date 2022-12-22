@@ -20,11 +20,9 @@ treemap(
   vSize = "uniqueness",
   type = "categorical",
   vColor = "representative",
-  title = "Revigo TreeMap",
+  title = "",
   inflate.labels = T,      # set this to TRUE for space-filling group labels - good for posters
   lowerbound.cex.labels = 0,
   position.legend = "none"
 )
-
-dev.off()
 

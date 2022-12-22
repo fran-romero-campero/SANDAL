@@ -4463,6 +4463,24 @@ offset <- round(phase.diff / 4)
 
 boxplot(cor.rhythmic.proteins.ld, cor.rhythmic.proteins.ld.offset,outline=F)
 
+rhythmic.proteins.ld[which(cor.rhythmic.proteins.ld.offset > 0.85)]
+current.gene <- "ostta04g04630"
+current.gene <- "ostta05g01660" 
+current.gene <- "ostta05g03640" 
+current.gene <- "ostta07g01810" 
+current.gene <- "ostta08g01840" 
+current.gene <- "ostta10g01710"
+current.gene <- "ostta11g01980"
+
+rhythmic.proteins.ld[which(cor.rhythmic.proteins.ld.offset > 0.80 & cor.rhythmic.proteins.ld.offset <= 0.85)]
+
+#current.gene <- "ostta04g00490" 
+current.gene <- "ostta05g02330" #MRF MA3 DOMAIN-CONTAINING TRANSLATION REGULATORY FACTOR
+current.gene <- "ostta06g00090" #NRPC7 NUCLEAR RNA POLYMERASE C, SUBUNIT 7
+
+plot.ld.gene.prot(gene.id="ostta05g02330", gene.name="MRF", gene.expression=gene.expression, protein.data=ld.protein.abundance)
+
+
 plot.sd.gene.prot(gene.id="ostta10g00920", gene.name="NR", gene.expression=gene.expression, protein.data=sd.protein.abundance)
 
 plot.ld.gene.prot(gene.id="ostta06g02890", gene.name="PCNA", gene.expression=gene.expression, protein.data=ld.protein.abundance)
@@ -4855,7 +4873,7 @@ hist(circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,"protein peak ti
 
 par(lwd=3)
 boxplot(phase.diffs.ld,phase.diffs.sd,col=c("blue","red"),cex.axis=1.5)
-
+wilcox.test(x = phase.diffs.ld, y = phase.diffs.sd, alternative = "less")$p.value
 ```
 
 ```{r sd_sets}
@@ -5506,8 +5524,2596 @@ sd(complete.rhythmic.proteins.ld.indices[,"offset"])
 ```
 
 
+## **Physiological data analysis**
+
+### **Cell cycle**
+
+
+```{r cell_cycle_genes}
+cell.cycle.genes <- read.table(file="physiological_data/cell_cycle/cell_cycle_gene_ids.tsv", header=F, sep="\t" )
+
+i <- 1
+for(i in 1:nrow(cell.cycle.genes))
+{
+ print(i)
+ current.gene.id <- cell.cycle.genes$V1[i]
+ current.gene.name <- cell.cycle.genes$V2[i]
+ current.cell.cycle.phase <- cell.cycle.genes$V3[i]
+ 
+ files.prefix <- paste("physiological_data/cell_cycle/plots_cell_cycle/",paste(c(current.cell.cycle.phase,current.gene.id,current.gene.name),collapse="_"),sep="")
+ jpeg(filename = paste(files.prefix,"_LD_LL.jpg",sep=""),width = 400,height = 300)
+ plot.expression.profile(gene.id = current.gene.id, gene.name = current.gene.name, gene.expression,entrainment="LD",free.running="LL",param=F)
+ dev.off()
+ 
+ jpeg(filename = paste(files.prefix,"_LD_DD.jpg",sep=""),width = 400,height = 300)
+ plot.expression.profile(gene.id = current.gene.id, gene.name = current.gene.name, gene.expression,entrainment="LD",free.running="DD",param=F)
+ dev.off()
+ 
+ jpeg(filename = paste(files.prefix,"_SD_LL.jpg",sep=""),width = 400,height = 300)
+ plot.expression.profile(gene.id = current.gene.id, gene.name = current.gene.name, gene.expression,entrainment="SD",free.running="LL",param=F)
+ dev.off()
+ 
+ jpeg(filename = paste(files.prefix,"_SD_DD.jpg",sep=""),width = 400,height = 300)
+ plot.expression.profile(gene.id = current.gene.id, gene.name = current.gene.name, gene.expression,entrainment="SD",free.running="DD",param=F)
+ dev.off()
+ 
+ jpeg(filename = paste(files.prefix,"_LD_SD.jpg",sep=""),width = 400,height = 300)
+ plot.ld.sd(gene.id = current.gene.id, gene.name = current.gene.name, gene.expression)
+ dev.off()
+ 
+ if(current.gene.id %in% ld.protein.ids)
+ {
+   jpeg(filename = paste(files.prefix,"_prot_LD.jpg",sep=""),width = 400,height = 300)
+   plot.ld.gene.prot(gene.id = current.gene.id, gene.name = current.gene.name, gene.expression = gene.expression, protein.data = ld.protein.abundance)
+   dev.off()
+ }
+
+ if(current.gene.id %in% sd.protein.ids)
+ {
+   jpeg(filename = paste(files.prefix,"_prot_SD.jpg",sep=""),width = 400,height = 300)
+   plot.sd.gene.prot(gene.id = current.gene.id, gene.name = current.gene.name, gene.expression = gene.expression, protein.data = sd.protein.abundance) 
+   dev.off()
+ }
+}
+```
+
+
+```{r cell_cycle_LD}
+percentage <- read.csv(file = "physiological_data/cell_cycle/freq_of_parent_LD.csv", header = T, sep = ",")
+
+time.points <- percentage$X
+
+G1.percentage.LD <- percentage$G1
+names(G1.percentage.LD) <- time.points
+G1.day1.LD <- G1.percentage.LD[1:6]
+names(G1.day1.LD) <- time.points[1:6]
+G1.day2.LD <- G1.percentage.LD[7:12]
+names(G1.day2.LD) <- time.points[7:12]
+G1.day3.LD <- G1.percentage.LD[13:18]
+names(G1.day3.LD) <- time.points[13:18]
+G1.day4.LD <- G1.percentage.LD[19:24]
+names(G1.day4.LD) <- time.points[19:24]
+
+G2.percentage.LD <- percentage$G2
+names(G2.percentage.LD) <- time.points
+G2.day1.LD <- G2.percentage.LD[1:6]
+names(G2.day1.LD) <- time.points[1:6]
+G2.day2.LD <- G2.percentage.LD[7:12]
+names(G2.day2.LD) <- time.points.LD[7:12]
+G2.day3.LD <- G2.percentage.LD[13:18]
+names(G2.day3.LD) <- time.points[13:18]
+G2.day4.LD <- G2.percentage.LD[19:24]
+names(G2.day4.LD) <- time.points[19:24]
+
+
+S.percentage.LD <- percentage$S
+names(S.percentage.LD) <- time.points
+S.day1.LD <- S.percentage.LD[1:6]
+names(S.day1.LD) <- time.points[1:6]
+S.day2.LD <- S.percentage.LD[7:12]
+names(S.day2.LD) <- time.points[7:12]
+S.day3.LD <- S.percentage.LD[13:18]
+names(S.day3.LD) <- time.points[13:18]
+S.day4.LD <- S.percentage.LD[19:24]
+names(S.day4.LD) <- time.points[19:24]
+
+t.percentage<- t(percentage)
+
+ZT0.1.LD <- t.percentage[,1]
+ZT0.2.LD <- t.percentage[,7]
+ZT0.3.LD <- t.percentage[,13]
+ZT0.4.LD <- t.percentage[,19]
+
+ZT4.1.LD <- t.percentage[,2]
+ZT4.2.LD <- t.percentage[,8]
+ZT4.3.LD <- t.percentage[,14]
+ZT4.4.LD <- t.percentage[,20]
+
+ZT8.1.LD <- t.percentage[,3]
+ZT8.2.LD <- t.percentage[,9]
+ZT8.3.LD <- t.percentage[,15]
+ZT8.4.LD <- t.percentage[,21]
+
+ZT12.1.LD <- t.percentage[,4]
+ZT12.2.LD <- t.percentage[,10]
+ZT12.3.LD <- t.percentage[,16]
+ZT12.4.LD <- t.percentage[,22]
+
+ZT16.1.LD <- t.percentage[,5]
+ZT16.2.LD <- t.percentage[,11]
+ZT16.3.LD <- t.percentage[,17]
+ZT16.4.LD <- t.percentage[,23]
+
+ZT20.1.LD <- t.percentage[,6]
+ZT20.2.LD <- t.percentage[,12]
+ZT20.3.LD <- t.percentage[,18]
+ZT20.4.LD <- t.percentage[,24]
+
+ZT0.G1.mean.LD <- (as.numeric(ZT0.1.LD["G1"]) + as.numeric(ZT0.2.LD["G1"]) + 
+                   as.numeric(ZT0.3.LD["G1"]) + as.numeric(ZT0.4.LD["G1"]))/4
+
+ZT4.G1.mean.LD <- (as.numeric(ZT4.1.LD["G1"]) + as.numeric(ZT4.3.LD["G1"]) + as.numeric(ZT4.4.LD["G1"]))/3
+
+ZT8.G1.mean.LD <- (as.numeric(ZT8.1.LD["G1"]) + as.numeric(ZT8.2.LD["G1"]) + 
+                   as.numeric(ZT8.3.LD["G1"]) + as.numeric(ZT8.4.LD["G1"]))/4
+
+ZT12.G1.mean.LD <- (as.numeric(ZT12.1.LD["G1"]) + as.numeric(ZT12.2.LD["G1"]) + 
+                    as.numeric(ZT12.3.LD["G1"]) + as.numeric(ZT12.4.LD["G1"]))/4
+
+ZT16.G1.mean.LD <- (as.numeric(ZT16.1.LD["G1"]) + as.numeric(ZT16.2.LD["G1"]) + 
+                    as.numeric(ZT16.3.LD["G1"]) + as.numeric(ZT16.4.LD["G1"]))/4
+
+ZT20.G1.mean.LD <- (as.numeric(ZT20.1.LD["G1"]) + as.numeric(ZT20.2.LD["G1"]) + 
+                    as.numeric(ZT20.3.LD["G1"]) + as.numeric(ZT20.4.LD["G1"]))/4
+
+G1.percentage.mean.LD <- c(ZT0.G1.mean.LD, ZT4.G1.mean.LD, ZT8.G1.mean.LD, 
+                        ZT12.G1.mean.LD, ZT16.G1.mean.LD, ZT20.G1.mean.LD)
+G1.rain.data.LD <- c(as.numeric(ZT0.1.LD["G1"]),as.numeric(ZT0.2.LD["G1"]),
+                 as.numeric(ZT0.3.LD["G1"]),as.numeric(ZT0.4.LD["G1"]),
+                 as.numeric(ZT4.1.LD["G1"]),as.numeric(ZT4.2.LD["G1"]),as.numeric(ZT4.3.LD["G1"]),
+                 as.numeric(ZT4.4.LD["G1"]), as.numeric(ZT8.1.LD["G1"]),
+                 as.numeric(ZT8.2.LD["G1"]), as.numeric(ZT8.3.LD["G1"]),
+                 as.numeric(ZT8.4.LD["G1"]), as.numeric(ZT12.1.LD["G1"]), 
+                 as.numeric(ZT12.2.LD["G1"]), as.numeric(ZT12.3.LD["G1"]),
+                 as.numeric(ZT12.4.LD["G1"]), as.numeric(ZT16.1.LD["G1"]), 
+                 as.numeric(ZT16.2.LD["G1"]), as.numeric(ZT16.3.LD["G1"]),
+                 as.numeric(ZT16.4.LD["G1"]), as.numeric(ZT20.1.LD["G1"]), 
+                 as.numeric(ZT20.2.LD["G1"]), as.numeric(ZT20.3.LD["G1"]), 
+                 as.numeric(ZT20.4.LD["G1"]))
+
+ZT0.G2.mean.LD <- (as.numeric(ZT0.1.LD["G2"]) + as.numeric(ZT0.2.LD["G2"]) + 
+                   as.numeric(ZT0.3.LD["G2"]) + as.numeric(ZT0.4.LD["G2"]))/4
+
+ZT4.G2.mean.LD <- (as.numeric(ZT4.1.LD["G2"]) + as.numeric(ZT4.3.LD["G2"]) + as.numeric(ZT4.4.LD["G2"]))/3
+
+ZT8.G2.mean.LD <- (as.numeric(ZT8.1.LD["G2"]) + as.numeric(ZT8.2.LD["G2"]) + 
+                   as.numeric(ZT8.3.LD["G2"]) + as.numeric(ZT8.4.LD["G2"]))/4
+
+ZT12.G2.mean.LD <- (as.numeric(ZT12.1.LD["G2"]) + as.numeric(ZT12.2.LD["G2"]) + 
+                    as.numeric(ZT12.3.LD["G2"]) + as.numeric(ZT12.4.LD["G2"]))/4
+
+ZT16.G2.mean.LD <- (as.numeric(ZT16.1.LD["G2"]) + as.numeric(ZT16.2.LD["G2"]) + 
+                    as.numeric(ZT16.3.LD["G2"]) + as.numeric(ZT16.4.LD["G2"]))/4
+
+ZT20.G2.mean.LD <- (as.numeric(ZT20.1.LD["G2"]) + as.numeric(ZT20.2.LD["G2"]) + 
+                    as.numeric(ZT20.3.LD["G2"]) + as.numeric(ZT20.4.LD["G2"]))/4
+
+
+G2.percentage.mean.LD <- c(ZT0.G2.mean.LD, ZT4.G2.mean.LD, ZT8.G2.mean.LD, 
+                        ZT12.G2.mean.LD, ZT16.G2.mean.LD, ZT20.G2.mean.LD)
+
+G2.rain.data.LD <- c(as.numeric(ZT0.1.LD["G2"]),as.numeric(ZT0.2.LD["G2"]),
+                 as.numeric(ZT0.3.LD["G2"]),as.numeric(ZT0.4.LD["G2"]),
+                 as.numeric(ZT4.1.LD["G2"]),as.numeric(ZT4.2.LD["G2"]),as.numeric(ZT4.3.LD["G2"]),
+                 as.numeric(ZT4.4.LD["G2"]), as.numeric(ZT8.1.LD["G2"]),
+                 as.numeric(ZT8.2.LD["G2"]), as.numeric(ZT8.3.LD["G2"]),
+                 as.numeric(ZT8.4.LD["G2"]), as.numeric(ZT12.1.LD["G2"]), 
+                 as.numeric(ZT12.2.LD["G2"]), as.numeric(ZT12.3.LD["G2"]),
+                 as.numeric(ZT12.4.LD["G2"]), as.numeric(ZT16.1.LD["G2"]), 
+                 as.numeric(ZT16.2.LD["G2"]), as.numeric(ZT16.3.LD["G2"]),
+                 as.numeric(ZT16.4.LD["G2"]), as.numeric(ZT20.1.LD["G2"]), 
+                 as.numeric(ZT20.2.LD["G2"]), as.numeric(ZT20.3.LD["G2"]), 
+                 as.numeric(ZT20.4.LD["G2"]))
+ZT0.S.mean.LD <- (as.numeric(ZT0.1.LD["S"]) + as.numeric(ZT0.2.LD["S"]) + 
+                   as.numeric(ZT0.3.LD["S"]) + as.numeric(ZT0.4.LD["S"]))/4
+
+ZT4.S.mean.LD <- (as.numeric(ZT4.1.LD["S"]) + as.numeric(ZT4.3.LD["S"]) + as.numeric(ZT4.4.LD["S"]))/3
+
+ZT8.S.mean.LD <- (as.numeric(ZT8.1.LD["S"]) + as.numeric(ZT8.2.LD["S"]) + 
+                   as.numeric(ZT8.3.LD["S"]) + as.numeric(ZT8.4.LD["S"]))/4
+
+ZT12.S.mean.LD <- (as.numeric(ZT12.1.LD["S"]) + as.numeric(ZT12.2.LD["S"]) + 
+                    as.numeric(ZT12.3.LD["S"]) + as.numeric(ZT12.4.LD["S"]))/4
+
+ZT16.S.mean.LD <- (as.numeric(ZT16.1.LD["S"]) + as.numeric(ZT16.2.LD["S"]) + 
+                    as.numeric(ZT16.3.LD["S"]) + as.numeric(ZT16.4.LD["S"]))/4
+
+ZT20.S.mean.LD <- (as.numeric(ZT20.1.LD["S"]) + as.numeric(ZT20.2.LD["S"]) + 
+                    as.numeric(ZT20.3.LD["S"]) + as.numeric(ZT20.4.LD["S"]))/4
+
+
+S.percentage.mean.LD <- c(ZT0.S.mean.LD, ZT4.S.mean.LD, ZT8.S.mean.LD, 
+                       ZT12.S.mean.LD, ZT16.S.mean.LD, ZT20.S.mean.LD)
+
+S.rain.data.LD <- c(as.numeric(ZT0.1.LD["S"]),as.numeric(ZT0.2.LD["S"]),
+                  as.numeric(ZT0.3.LD["S"]),as.numeric(ZT0.4.LD["S"]),
+                  as.numeric(ZT4.1.LD["S"]),as.numeric(ZT4.2.LD["S"]),as.numeric(ZT4.3.LD["S"]),
+                  as.numeric(ZT4.4.LD["S"]), as.numeric(ZT8.1.LD["S"]),
+                  as.numeric(ZT8.2.LD["S"]), as.numeric(ZT8.3.LD["S"]),
+                  as.numeric(ZT8.4.LD["S"]), as.numeric(ZT12.1.LD["S"]), 
+                  as.numeric(ZT12.2.LD["S"]), as.numeric(ZT12.3.LD["S"]),
+                  as.numeric(ZT12.4.LD["S"]), as.numeric(ZT16.1.LD["S"]), 
+                  as.numeric(ZT16.2.LD["S"]), as.numeric(ZT16.3.LD["S"]),
+                  as.numeric(ZT16.4.LD["S"]), as.numeric(ZT20.1.LD["S"]), 
+                  as.numeric(ZT20.2.LD["S"]), as.numeric(ZT20.3.LD["S"]), 
+                  as.numeric(ZT20.4.LD["S"]))
+
+
+
+plot(G1.percentage.mean.LD, type= "b",
+     col= "blue",
+     pch=10,
+     lwd=5,
+     cex= 1.5,
+     xlab="",
+     ylab= "% of cells",
+     axes=F,
+     cex.lab= 1.8,
+     cex.axis= 1.5,
+     main= "G1 phase",
+     cex.main=2,
+     ylim= c(50,90))
+lines(G1.day1.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(G1.day2.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(G1.day3.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(G1.day4.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+
+axis(side=2, cex.axis=1.5,lwd=3)
+axis(side=1, at= seq(from=1, to=6),
+     labels= paste("ZT", seq(from=0, to=20, by=4)), cex.axis=1.5, cex.lab=1.5,las=2,lwd=3)
+
+polygon(x = c(1,5,5,1),y=c(53, 53, 50, 50),lwd=2,border="blue")
+polygon(x = c(5,6,6,5),y=c(53, 53, 50, 50),lwd=2,border="blue",col="blue") #475 475
+
+
+plot(G2.percentage.mean.LD, type= "b",
+     col= "blue",
+     pch=10,
+     lwd=5,
+     cex= 1.5,
+     xlab="",
+     ylab= "% of cells",
+     axes=F,
+     cex.lab= 1.8,
+     cex.axis= 1.5,
+     main= "G2 phase",
+     cex.main=2,
+     ylim= c(5,25))
+lines(G2.day1.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(G2.day2.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(G2.day3.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(G2.day4.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+
+axis(side=2, cex.axis=1.5,lwd=3)
+axis(side=1, at= seq(from=1, to=6),
+     labels= paste("ZT", seq(from=0, to=20, by=4)), cex.axis=1.5, cex.lab=1.5,lwd=3,las=2)
+
+polygon(x = c(1,5,5,1),y=c(6.5, 6.5, 5, 5),lwd=2,border="blue")
+polygon(x = c(5,6,6,5),y=c(6.5, 6.5, 5, 5),lwd=2,border="blue",col="blue") #475 475
+
+
+plot(S.percentage.mean.LD, type= "b",
+     col= "blue",
+     pch=10,
+     lwd=5,
+     cex= 1.5,
+     xlab="",
+     ylab= "% of cells",
+     axes=F,
+     cex.lab= 1.8,
+     cex.axis= 1.5,
+     cex.main=2,
+     main= "S phase",
+     ylim= c(0,20))
+lines(S.day1.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(S.day2.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(S.day3.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+lines(S.day4.LD, type="p", col="steelblue3",
+      pch=16, cex=1)
+
+axis(side=2, cex.axis=1.5,lwd=3)
+axis(side=1, at= seq(from=1, to=6),
+     labels= paste("ZT", seq(from=0, to=20, by=4)), cex.axis=1.5, cex.lab=1.5,lwd=3, las=2)
+
+polygon(x = c(1,5,5,1),y=c(1.5, 1.5, 0, 0),lwd=2,border="blue")
+polygon(x = c(5,6,6,5),y=c(1.5, 1.5, 0, 0),lwd=2,border="blue",col="blue") #475 475
+```
+
+
+```{r cell_cycle_LD_rain}
+library(rain)
+
+G1.rain.LD <- (rain(x = G1.rain.data.LD,deltat = 4, period = 24, verbose = F, nr.series = 4))
+S.rain.LD <- (rain(x = S.rain.data.LD,deltat = 4, period = 24, verbose = F, nr.series = 4))
+G2.rain.LD <- (rain(x = G2.rain.data.LD,deltat = 4, period = 24, verbose = F, nr.series = 4))
+
+G1.rain.phase.LD <- G1.rain.LD$phase -4
+G1.rain.trough.LD <- (G1.rain.phase.LD+G1.rain.LD$peak.shape) %% 24 
+G1.rain.pvalue.LD <- G1.rain.LD$pVal
+
+G2.rain.phase.LD <- G2.rain.LD$phase -4
+G2.rain.trough.LD <- (G2.rain.phase.LD+G2.rain.LD$peak.shape) %% 24 
+G2.rain.pvalue.LD <- G2.rain.LD$pVal
+
+S.rain.phase.LD <- S.rain.LD$phase -4
+S.rain.trough.LD <- (S.rain.phase.LD+S.rain.LD$peak.shape) %% 24 
+S.rain.pvalue.LD <- S.rain.LD$pVal
+
+rain.results.LD <- matrix(0:11, byrow=F, ncol=3, nrow=3)
+rain.results.LD[1,]<- c(G1.rain.pvalue.LD, G1.rain.phase.LD, G1.rain.trough.LD)
+rain.results.LD[2,] <- c(S.rain.pvalue.LD, S.rain.phase.LD, S.rain.trough.LD)
+rain.results.LD[3,] <-c(G2.rain.pvalue.LD, G2.rain.phase.LD, G2.rain.trough.LD)
+colnames(rain.results.LD) <- c("pVal", "phase", "trough")
+rownames(rain.results.LD) <- c("G1", "S", "G2")
+write.table(file="physiological_data/cell_cycle/LD_rain_results.tsv", x = rain.results.LD  , quote= F, sep= "\t")
+```
+
+```{r circular_heatmap_LD}
+########Cellcycle circular representation
+library(circlize)
+
+#generation of cellcycle matrix with mean values
+cellcycle <- matrix(c(G1.percentage.mean.LD, S.percentage.mean.LD, G2.percentage.mean.LD),
+                    nrow=6,ncol=3)
+#adding ZT0 at the end to make it circular
+cellcycle <- rbind(cellcycle,cellcycle[1,])
+
+
+time.serie <- c("ZT0", "ZT4", "ZT8", "ZT12", "ZT16", "ZT20", "ZT24")
+rownames(cellcycle) <- time.serie
+colnames(cellcycle) <- c("G1", "S", "G2") 
+
+#generate time series matrix for light cycle representation
+cycle <- c(rep(4,40),rep(4,40),rep(4,40),rep(4,40),
+           rep(0,40),rep(0,41))
+names(cycle) <- c(rep("ZT0",40),rep("ZT4",40),rep("ZT8",40),rep("ZT12",40),
+                  rep("ZT16",40),rep("ZT20",41))
+
+#approx function used to smooth the heatmap 
+time.points <- c(0, 4, 8, 12, 16, 20, 24)
+extended.cell.cycle <- matrix(data = c(approx(x=time.points,cellcycle[,1],xout=seq(from=0,to=24,by=0.1))[[2]],
+                approx(x=time.points,cellcycle[,2],xout=seq(from=0,to=24,by=0.1))[[2]],
+                approx(x=time.points,cellcycle[,3],xout=seq(from=0,to=24,by=0.1))[[2]]),
+       ncol=3)
+
+
+#Ahora seguimos con los ciclos. 
+circos.par("track.height" = 0.1)
+col_fun_g1 = colorRamp2(c(floor(min(extended.cell.cycle[,1])),
+                          (floor(min(extended.cell.cycle[,1])) + ceiling(max(extended.cell.cycle[,1])))/2,
+                          ceiling(max(extended.cell.cycle[,1]))), 
+                        c("black", "blue", "yellow"))
+circos.heatmap(extended.cell.cycle[,1], #data in a matrix
+               col = col_fun_g1, #color function defined previosly
+               show.sector.labels = F, #labels of track (col names) or levels
+               cluster = F) #F to avoid cluster organization 
+
+
+#####S PHASE CIRCLE
+circos.par("track.height" = 0.1)
+col_fun_s = colorRamp2(c(floor(min(extended.cell.cycle[,2])),
+                         (floor(min(extended.cell.cycle[,2])) + ceiling(max(extended.cell.cycle[,2])))/2,
+                         ceiling(max(extended.cell.cycle[,2]))), 
+                       c("black", "blue", "yellow"))
+circos.heatmap(extended.cell.cycle[,2], col = col_fun_s,show.sector.labels = F,cluster = F)
+
+
+
+#####G2 PHASE CIRCLE
+circos.par("track.height" = 0.1)
+col_fun_g2 = colorRamp2(c(floor(min(extended.cell.cycle[,3])),
+                          (floor(min(extended.cell.cycle[,3]))+ceiling(max(extended.cell.cycle[,3])))/2,
+                         ceiling(max(extended.cell.cycle[,3]))), 
+                        c("black", "blue", "yellow"))
+circos.heatmap(extended.cell.cycle[,3], col = col_fun_g2,show.sector.labels = F,cluster = F)
+
+circos.clear()
+```
+
+
+```{r cell_cycle_SD}
+percentage <- read.csv(file = "physiological_data/freq_of_parent_SD.csv", header = T, sep = ",")
+
+time.points <- percentage$X
+
+G1.percentage.SD <- percentage$G1
+names(G1.percentage.SD) <- time.points
+G1.day1.SD <- G1.percentage.SD[1:6]
+names(G1.day1.SD) <- time.points[1:6]
+G1.day2.SD <- G1.percentage.SD[7:12]
+names(G1.day2.SD) <- time.points[7:12]
+G1.day3.SD <- G1.percentage.SD[13:18]
+names(G1.day3.SD) <- time.points[13:18]
+G1.day4.SD <- G1.percentage.SD[19:24]
+names(G1.day4.SD) <- time.points[19:24]
+
+
+G2.percentage.SD <- percentage$G2
+names(G2.percentage.SD) <- time.points
+G2.day1.SD <- G2.percentage.SD[1:6]
+names(G2.day1.SD) <- time.points[1:6]
+G2.day2.SD <- G2.percentage.SD[7:12]
+names(G2.day2.SD) <- time.points[7:12]
+G2.day3.SD <- G2.percentage.SD[13:18]
+names(G2.day3.SD) <- time.points[13:18]
+G2.day4.SD <- G2.percentage.SD[19:24]
+names(G2.day4.SD) <- time.points[19:24]
+
+
+S.percentage.SD <- percentage$S
+names(S.percentage.SD) <- time.points
+S.day1.SD <- S.percentage[1:6]
+names(S.day1.SD) <- time.points[1:6]
+S.day2.SD <- S.percentage[7:12]
+names(S.day2.SD) <- time.points[7:12]
+S.day3.SD <- S.percentage[13:18]
+names(S.day3.SD) <- time.points[13:18]
+S.day4.SD <- S.percentage[19:24]
+names(S.day4.SD) <- time.points[19:24]
+
+t.percentage<- t(percentage)
+
+ZT0.1.SD <- t.percentage[,1]
+ZT0.2.SD <- t.percentage[,7]
+ZT0.3.SD <- t.percentage[,13]
+ZT0.4.SD <- t.percentage[,19]
+
+ZT4.1.SD <- t.percentage[,2]
+ZT4.2.SD <- t.percentage[,8]
+ZT4.3.SD <- t.percentage[,14]
+ZT4.4.SD <- t.percentage[,20]
+
+ZT8.1.SD <- t.percentage[,3]
+ZT8.2.SD <- t.percentage[,9]
+ZT8.3.SD <- t.percentage[,15]
+ZT8.4.SD <- t.percentage[,21]
+
+ZT12.1.SD <- t.percentage[,4]
+ZT12.2.SD <- t.percentage[,10]
+ZT12.3.SD <- t.percentage[,16]
+ZT12.4.SD <- t.percentage[,22]
+
+ZT16.1.SD <- t.percentage[,5]
+ZT16.2.SD <- t.percentage[,11]
+ZT16.3.SD <- t.percentage[,17]
+ZT16.4.SD <- t.percentage[,23]
+
+ZT20.1.SD <- t.percentage[,6]
+ZT20.2.SD <- t.percentage[,12]
+ZT20.3.SD <- t.percentage[,18]
+ZT20.4.SD <- t.percentage[,24]
+
+ZT0.G1.mean.SD <- (as.numeric(ZT0.1.SD["G1"]) + as.numeric(ZT0.2.SD["G1"]) + 
+                   as.numeric(ZT0.3.SD["G1"]) + as.numeric(ZT0.4.SD["G1"]))/4
+
+ZT4.G1.mean.SD <- (as.numeric(ZT4.1.SD["G1"]) + as.numeric(ZT4.2.SD["G1"]) +
+                   as.numeric(ZT4.3.SD["G1"]) + as.numeric(ZT4.4.SD["G1"]))/4
+
+ZT8.G1.mean.SD <- (as.numeric(ZT8.1.SD["G1"]) + as.numeric(ZT8.2.SD["G1"]) + 
+                   as.numeric(ZT8.3.SD["G1"]) + as.numeric(ZT8.4.SD["G1"]))/4
+
+ZT12.G1.mean.SD <- (as.numeric(ZT12.1.SD["G1"]) + as.numeric(ZT12.2.SD["G1"]) + 
+                    as.numeric(ZT12.3.SD["G1"]) + as.numeric(ZT12.4.SD["G1"]))/4
+
+ZT16.G1.mean.SD <- (as.numeric(ZT16.1.SD["G1"]) + as.numeric(ZT16.2.SD["G1"]) + 
+                    as.numeric(ZT16.3.SD["G1"]) + as.numeric(ZT16.4.SD["G1"]))/4
+
+ZT20.G1.mean.SD <- (as.numeric(ZT20.1.SD["G1"]) + as.numeric(ZT20.2.SD["G1"]) + 
+                    as.numeric(ZT20.3.SD["G1"]) + as.numeric(ZT20.4.SD["G1"]))/4
+
+G1.percentage.mean.SD <- c(ZT0.G1.mean.SD, ZT4.G1.mean.SD, ZT8.G1.mean.SD, 
+                        ZT12.G1.mean.SD, ZT16.G1.mean.SD, ZT20.G1.mean.SD)
+
+G1.rain.data.SD <- c(as.numeric(ZT0.1.SD["G1"]),as.numeric(ZT0.2.SD["G1"]),
+                  as.numeric(ZT0.3.SD["G1"]),as.numeric(ZT0.4.SD["G1"]),
+                  as.numeric(ZT4.1.SD["G1"]),NA,as.numeric(ZT4.3.SD["G1"]),
+                  as.numeric(ZT4.4.SD["G1"]), as.numeric(ZT8.1.SD["G1"]),
+                  as.numeric(ZT8.2.SD["G1"]), as.numeric(ZT8.3.SD["G1"]),
+                  as.numeric(ZT8.4.SD["G1"]), as.numeric(ZT12.1.SD["G1"]), 
+                  as.numeric(ZT12.2.SD["G1"]), as.numeric(ZT12.3.SD["G1"]),
+                  as.numeric(ZT12.4.SD["G1"]), as.numeric(ZT16.1.SD["G1"]), 
+                  as.numeric(ZT16.2.SD["G1"]), as.numeric(ZT16.3.SD["G1"]),
+                  as.numeric(ZT16.4.SD["G1"]), as.numeric(ZT20.1.SD["G1"]), 
+                  as.numeric(ZT20.2.SD["G1"]), as.numeric(ZT20.3.SD["G1"]), 
+                  as.numeric(ZT20.4.SD["G1"]))
+
+ZT0.G2.mean.SD <- (as.numeric(ZT0.1.SD["G2"]) + as.numeric(ZT0.2.SD["G2"]) + 
+                   as.numeric(ZT0.3.SD["G2"]) + as.numeric(ZT0.4.SD["G2"]))/4
+
+ZT4.G2.mean.SD <- (as.numeric(ZT4.1.SD["G2"]) + as.numeric(ZT4.2.SD["G2"]) +
+                   as.numeric(ZT4.3.SD["G2"]) + as.numeric(ZT4.4.SD["G2"]))/4
+
+ZT8.G2.mean.SD <- (as.numeric(ZT8.1.SD["G2"]) + as.numeric(ZT8.2.SD["G2"]) + 
+                   as.numeric(ZT8.3.SD["G2"]) + as.numeric(ZT8.4.SD["G2"]))/4
+
+ZT12.G2.mean.SD <- (as.numeric(ZT12.1.SD["G2"]) + as.numeric(ZT12.2.SD["G2"]) + 
+                    as.numeric(ZT12.3.SD["G2"]) + as.numeric(ZT12.4.SD["G2"]))/4
+
+ZT16.G2.mean.SD <- (as.numeric(ZT16.1.SD["G2"]) + as.numeric(ZT16.2.SD["G2"]) + 
+                    as.numeric(ZT16.3.SD["G2"]) + as.numeric(ZT16.4.SD["G2"]))/4
+
+ZT20.G2.mean.SD <- (as.numeric(ZT20.1.SD["G2"]) + as.numeric(ZT20.2.SD["G2"]) + 
+                    as.numeric(ZT20.3.SD["G2"]) + as.numeric(ZT20.4.SD["G2"]))/4
+
+G2.percentage.mean.SD <- c(ZT0.G2.mean.SD, ZT4.G2.mean.SD, ZT8.G2.mean.SD, 
+                        ZT12.G2.mean.SD, ZT16.G2.mean.SD, ZT20.G2.mean.SD)
+G2.rain.data.SD <- c(as.numeric(ZT0.1.SD["G2"]),as.numeric(ZT0.2.SD["G2"]),
+                  as.numeric(ZT0.3.SD["G2"]),as.numeric(ZT0.4.SD["G2"]),
+                  as.numeric(ZT4.1.SD["G2"]),NA,as.numeric(ZT4.3.SD["G2"]),
+                  as.numeric(ZT4.4.SD["G2"]), as.numeric(ZT8.1.SD["G2"]),
+                  as.numeric(ZT8.2.SD["G2"]), as.numeric(ZT8.3.SD["G2"]),
+                  as.numeric(ZT8.4.SD["G2"]), as.numeric(ZT12.1.SD["G2"]), 
+                  as.numeric(ZT12.2.SD["G2"]), as.numeric(ZT12.3.SD["G2"]),
+                  as.numeric(ZT12.4.SD["G2"]), as.numeric(ZT16.1.SD["G2"]), 
+                  as.numeric(ZT16.2.SD["G2"]), as.numeric(ZT16.3.SD["G2"]),
+                  as.numeric(ZT16.4.SD["G2"]), as.numeric(ZT20.1.SD["G2"]), 
+                  as.numeric(ZT20.2.SD["G2"]), as.numeric(ZT20.3.SD["G2"]), 
+                  as.numeric(ZT20.4.SD["G2"]))
+
+ZT0.S.mean.SD <- (as.numeric(ZT0.1.SD["S"]) + as.numeric(ZT0.2.SD["S"]) + 
+                   as.numeric(ZT0.3.SD["S"]) + as.numeric(ZT0.4.SD["S"]))/4
+
+ZT4.S.mean.SD <- (as.numeric(ZT4.1.SD["S"]) + as.numeric(ZT4.2.SD["S"]) +
+                  as.numeric(ZT4.3.SD["S"]) + as.numeric(ZT4.4.SD["S"]))/4
+
+ZT8.S.mean.SD <- (as.numeric(ZT8.1.SD["S"]) + as.numeric(ZT8.2.SD["S"]) + 
+                   as.numeric(ZT8.3.SD["S"]) + as.numeric(ZT8.4.SD["S"]))/4
+
+ZT12.S.mean.SD <- (as.numeric(ZT12.1.SD["S"]) + as.numeric(ZT12.2.SD["S"]) + 
+                    as.numeric(ZT12.3.SD["S"]) + as.numeric(ZT12.4.SD["S"]))/4
+
+ZT16.S.mean.SD <- (as.numeric(ZT16.1.SD["S"]) + as.numeric(ZT16.2.SD["S"]) + 
+                    as.numeric(ZT16.3.SD["S"]) + as.numeric(ZT16.4.SD["S"]))/4
+
+ZT20.S.mean.SD <- (as.numeric(ZT20.1.SD["S"]) + as.numeric(ZT20.2.SD["S"]) + 
+                    as.numeric(ZT20.3.SD["S"]) + as.numeric(ZT20.4.SD["S"]))/4
+
+S.percentage.mean.SD <- c(ZT0.S.mean.SD, ZT4.S.mean.SD, ZT8.S.mean.SD, 
+                       ZT12.S.mean.SD, ZT16.S.mean.SD, ZT20.S.mean.SD)
+
+S.rain.data.SD <- c(as.numeric(ZT0.1.SD["S"]),as.numeric(ZT0.2.SD["S"]),
+                 as.numeric(ZT0.3.SD["S"]),as.numeric(ZT0.4.SD["S"]),
+                 as.numeric(ZT4.1.SD["S"]),NA,as.numeric(ZT4.3.SD["S"]),
+                 as.numeric(ZT4.4.SD["S"]), as.numeric(ZT8.1.SD["S"]),
+                 as.numeric(ZT8.2.SD["S"]), as.numeric(ZT8.3.SD["S"]),
+                 as.numeric(ZT8.4.SD["S"]), as.numeric(ZT12.1.SD["S"]), 
+                 as.numeric(ZT12.2.SD["S"]), as.numeric(ZT12.3.SD["S"]),
+                 as.numeric(ZT12.4.SD["S"]), as.numeric(ZT16.1.SD["S"]), 
+                 as.numeric(ZT16.2.SD["S"]), as.numeric(ZT16.3.SD["S"]),
+                 as.numeric(ZT16.4.SD["S"]), as.numeric(ZT20.1.SD["S"]), 
+                 as.numeric(ZT20.2.SD["S"]), as.numeric(ZT20.3.SD["S"]), 
+                 as.numeric(ZT20.4.SD["S"]))
+
+plot(G1.percentage.mean.SD, type= "b",
+     col= "red",
+     pch=10,
+     lwd=5,
+     cex= 1.5,
+     xlab="",
+     ylab= "% of cells",
+     axes=F,
+     cex.lab= 1.8,
+     cex.axis= 1.5,
+     main= "G1 phase",
+     cex.main=2,
+     ylim= c(50,90))
+lines(G1.day1.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(G1.day2.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(G1.day3.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(G1.day4.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+
+axis(side=2, cex.axis=1.5,lwd=3)
+axis(side=1, at= seq(from=1, to=6),
+     labels= paste("ZT", seq(from=0, to=20, by=4)), cex.axis=1.5, cex.lab=1.5,las=2,lwd=3)
+
+polygon(x = c(1,3,3,1),y=c(53, 53, 50, 50),lwd=2,border="red")
+polygon(x = c(3,6,6,3),y=c(53, 53, 50, 50),lwd=2,border="red",col="red") #475 475
+
+
+plot(G2.percentage.mean.SD, type= "b",
+     col= "red",
+     pch=10,
+     lwd=5,
+     cex= 1.5,
+     xlab="",
+     ylab= "% of cells",
+     axes=F,
+     cex.lab= 1.8,
+     cex.axis= 1.5,
+     main= "G2 phase",
+     cex.main=2,
+     ylim= c(5,25))
+lines(G2.day1.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(G2.day2.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(G2.day3.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(G2.day4.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+
+axis(side=2, cex.axis=1.5,lwd=3)
+axis(side=1, at= seq(from=1, to=6),
+     labels= paste("ZT", seq(from=0, to=20, by=4)), cex.axis=1.5, cex.lab=1.5,lwd=3,las=2)
+
+polygon(x = c(1,3,3,1),y=c(6.5, 6.5, 5, 5),lwd=2,border="red")
+polygon(x = c(3,6,6,3),y=c(6.5, 6.5, 5, 5),lwd=2,border="red",col="red") #475 475
+
+
+plot(S.percentage.mean.SD, type= "b",
+     col= "red",
+     pch=10,
+     lwd=5,
+     cex= 1.5,
+     xlab="",
+     ylab= "% of cells",
+     axes=F,
+     cex.lab= 1.8,
+     cex.axis= 1.5,
+     cex.main=2,
+     main= "S phase",
+     ylim= c(0,20))
+lines(S.day1.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(S.day2.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(S.day3.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+lines(S.day4.SD, type="p", col="darksalmon",
+      pch=16, cex=1)
+
+axis(side=2, cex.axis=1.5,lwd=3)
+axis(side=1, at= seq(from=1, to=6),
+     labels= paste("ZT", seq(from=0, to=20, by=4)), cex.axis=1.5, cex.lab=1.5,lwd=3, las=2)
+
+polygon(x = c(1,3,3,1),y=c(1.5, 1.5, 0, 0),lwd=2,border="red")
+polygon(x = c(3,6,6,3),y=c(1.5, 1.5, 0, 0),lwd=2,border="red",col="red") #475 475
+
+```
+
+
+
+```{r cell_cycle_SD_rain}
+G1.rain.SD <- (rain(x = G1.rain.data.SD,deltat = 4, period = 24, verbose = F, nr.series = 4))
+S.rain.SD <- (rain(x = S.rain.data.SD,deltat = 4, period = 24, verbose = F, nr.series = 4))
+G2.rain.SD <- (rain(x = G2.rain.data.SD,deltat = 4, period = 24, verbose = F, nr.series = 4))
+
+G1.rain.phase.SD <- G1.rain.SD$phase -4
+G1.rain.trough.SD <- (G1.rain.phase.SD+G1.rain.SD$peak.shape) %% 24 
+G1.rain.pvalue.SD <- G1.rain.SD$pVal
+
+G2.rain.phase.SD <- G2.rain.SD$phase -4
+G2.rain.trough.SD <- (G2.rain.phase.SD+G2.rain.SD$peak.shape) %% 24 
+G2.rain.pvalue.SD <- G2.rain.SD$pVal
+
+S.rain.phase.SD <- S.rain.SD$phase -4
+S.rain.trough.SD <- (S.rain.phase.SD+S.rain.SD$peak.shape) %% 24 
+S.rain.pvalue.SD <- S.rain.SD$pVal
+
+rain.results.SD <- matrix(0:11, byrow=F, ncol=3, nrow=3)
+rain.results.SD[1,]<- c(G1.rain.pvalue.SD, G1.rain.phase.SD, G1.rain.trough.SD)
+rain.results.SD[2,] <- c(S.rain.pvalue.SD, S.rain.phase.SD, S.rain.trough.SD)
+rain.results.SD[3,] <-c(G2.rain.pvalue.SD, G2.rain.phase.SD, G2.rain.trough.SD)
+colnames(rain.results.SD) <- c("pVal", "phase", "trough")
+rownames(rain.results.SD) <- c("G1", "S", "G2")
+
+write.table(file="physiological_data/cell_cycle/SD_rain_results.tsv", x = rain.results.SD  , quote= F, sep= "\t")
+```
+
+```{r circular_heatmap_SD}
+cellcycle <- matrix(c(G1.percentage.mean, S.percentage.mean, G2.percentage.mean),
+                    nrow=6,ncol=3)
+cellcycle <- rbind(cellcycle,cellcycle[1,])
+
+rownames(cellcycle) <- c("ZT0", "ZT4", "ZT8", "ZT12", "ZT16", "ZT20", "ZT24")
+colnames(cellcycle) <- c("G1", "S", "G2") 
+time.points.cycle <- c("ZT0", "ZT4", "ZT8", "ZT12", "ZT16", "ZT20", "ZT24")
+cycle <- c(rep(4,40),rep(4,40),rep(0,40),rep(0,40),
+           rep(0,40),rep(0,41))
+names(cycle) <- c(rep("ZT0",40),rep("ZT4",40),rep("ZT8",40),rep("ZT12",40),
+                  rep("ZT16",40),rep("ZT20",41))
+
+time.points.cycle <- c(0, 4, 8, 12, 16, 20, 24)
+extended.cell.cycle <- matrix(data = c(approx(x=time.points.cycle ,cellcycle[,1],xout=seq(from=0,to=24,by=0.1))[[2]],
+                                       approx(x=time.points.cycle,cellcycle[,2],xout=seq(from=0,to=24,by=0.1))[[2]],
+                                       approx(x=time.points.cycle,cellcycle[,3],xout=seq(from=0,to=24,by=0.1))[[2]]),
+                              ncol=3)
+
+#####G1 PHASE CIRCLE
+circos.par("track.height" = 0.1)
+col_fun_g1 = colorRamp2(c(floor(min(extended.cell.cycle[,1])),
+                          (floor(min(extended.cell.cycle[,1])) + ceiling(max(extended.cell.cycle[,1])))/2,
+                          ceiling(max(extended.cell.cycle[,1]))), c("black", "blue", "yellow"))
+circos.heatmap(extended.cell.cycle[,1], #data in a matrix
+               col = col_fun_g1, #color function defined previosly
+               show.sector.labels = F, #labels of track (col names) or levels
+               cluster = F) #F to avoid cluster organization 
+
+#####S PHASE CIRCLE
+circos.par("track.height" = 0.1)
+col_fun_s = colorRamp2(c(floor(min(extended.cell.cycle[,2])),
+                         (floor(min(extended.cell.cycle[,2])) + ceiling(max(extended.cell.cycle[,2])))/2,
+                         max(extended.cell.cycle[,2])), 
+                       c("black", "blue", "yellow"))
+circos.heatmap(extended.cell.cycle[,2], col = col_fun_s,show.sector.labels = F,cluster = F)
+
+#####G2 PHASE CIRCLE
+circos.par("track.height" = 0.1)
+col_fun_g2 = colorRamp2(c(floor(min(extended.cell.cycle[,3])),
+                          (floor(min(extended.cell.cycle[,3]))+ceiling(max(extended.cell.cycle[,3])))/2,
+                          ceiling(max(extended.cell.cycle[,3]))), c("black", "blue", "yellow"))
+circos.heatmap(extended.cell.cycle[,3], col = col_fun_g2,show.sector.labels = F,cluster = F)
+
+circos.clear()
+```
+
+```{r cell_cycle_LD_SD_comparison}
+cell.cycle.time.points <- seq(from=0,by=4,length.out = 18)
+circacompare.data <- data.frame(time=c(cell.cycle.time.points,
+                                       cell.cycle.time.points),
+                                measure=c(S.percentage.LD[1:18],
+                                          S.percentage.SD[1:18]),
+                                group=c(rep("LD",18),rep("SD",18)))
+
+result.i <- circacompare(x = circacompare.data, 
+                         col_time = "time", 
+                         col_group = "group", 
+                         col_outcome = "measure",
+                         alpha_threshold = 1)
+result.i.values <- result.i$summary$value
+names(result.i.values) <- result.i$summary$parameter
+time.ld.sd <- seq(from=0,to=72,by=0.01)
+line.ld <- wave.form(mesor = result.i.values["LD mesor estimate"],
+                              amplitude = result.i.values["LD amplitude estimate"],
+                              period = result.i.values["Shared period estimate"],
+                              phase = result.i.values["LD peak time hours"],
+                              time = time.ld.sd)
+line.sd <- wave.form(mesor = result.i.values["SD mesor estimate"],
+                               amplitude = result.i.values["SD amplitude estimate"],
+                               period = result.i.values["Shared period estimate"],
+                               phase = result.i.values["SD peak time hours"],
+                               time = time.ld.sd)
+plot(x = time.ld.sd,type="l",
+     y = line.ld,lwd=3,col="blue",axes=F,xlab="",ylab="",
+     #ylim=c(min.expression-expression.step,max.expression),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=0.8,ylim=c(-1,16))
+lines(x = time.ld.sd, y = line.sd,col="red", 
+      type="l",lwd=3)
+points(x = seq(from=0,by=4,length.out=18),S.percentage.LD[1:18],pch=19,col="blue",cex=0.5)
+points(x = seq(from=0,by=4,length.out=18),S.percentage.SD[1:18],pch=19,col="red",cex=0.5)
+axis(side=2,lwd=3,at = seq(from=4,to=16,by=3),cex.axis=1.2)
+
+polygon(x = c(0,8,8,0),y=c(-1, -1, 0, 0),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-1, -1, 0, 0),lwd=2,border="red",col="red")
+polygon(x = c(24,32,32,24),y=c(-1, -1, 0, 0),lwd=2,border="red")
+polygon(x = c(32,48,48,32),y=c(-1, -1, 0, 0),lwd=2,border="red",col="red")
+polygon(x = c(48,56,56,48),y=c(-1, -1, 0, 0),lwd=2,border="red")
+polygon(x = c(56,72,72,56),y=c(-1, -1, 0, 0),lwd=2,border="red",col="red")
+
+polygon(x = c(0,16,16,0),y=c(0.5, 0.5, 1.5, 1.5),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(0.5, 0.5, 1.5, 1.5),lwd=2,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(0.5, 0.5, 1.5, 1.5),lwd=2,border="blue")
+polygon(x = c(40,48,48,40),y=c(0.5, 0.5, 1.5, 1.5),lwd=2,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(0.5, 0.5, 1.5, 1.5),lwd=2,border="blue")
+polygon(x = c(64,72,72,64),y=c(0.5, 0.5, 1.5, 1.5),lwd=2,border="blue",col="blue")
+#590 420
+
+cell.cycle.time.points <- seq(from=0,by=4,length.out = 18)
+circacompare.data <- data.frame(time=c(cell.cycle.time.points,
+                                       cell.cycle.time.points),
+                                measure=c(G1.percentage.LD[1:18],
+                                          G1.percentage.SD[1:18]),
+                                group=c(rep("LD",18),rep("SD",18)))
+
+result.i <- circacompare(x = circacompare.data, 
+                         col_time = "time", 
+                         col_group = "group", 
+                         col_outcome = "measure",
+                         alpha_threshold = 1)
+result.i.values <- result.i$summary$value
+names(result.i.values) <- result.i$summary$parameter
+time.ld.sd <- seq(from=0,to=72,by=0.01)
+line.ld <- wave.form(mesor = result.i.values["LD mesor estimate"],
+                              amplitude = result.i.values["LD amplitude estimate"],
+                              period = result.i.values["Shared period estimate"],
+                              phase = result.i.values["LD peak time hours"],
+                              time = time.ld.sd)
+line.sd <- wave.form(mesor = result.i.values["SD mesor estimate"],
+                               amplitude = result.i.values["SD amplitude estimate"],
+                               period = result.i.values["Shared period estimate"],
+                               phase = result.i.values["SD peak time hours"],
+                               time = time.ld.sd)
+plot(x = time.ld.sd,type="l",
+     y = line.ld,lwd=3,col="blue",axes=F,xlab="",ylab="",
+     #ylim=c(min.expression-expression.step,max.expression),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=0.8,ylim=c(50,80))
+lines(x = time.ld.sd, y = line.sd,col="red", 
+      type="l",lwd=3)
+points(x = seq(from=0,by=4,length.out=18),G1.percentage.LD[1:18],pch=19,col="blue",cex=0.5)
+points(x = seq(from=0,by=4,length.out=18),G1.percentage.SD[1:18],pch=19,col="red",cex=0.5)
+axis(side=2,lwd=3,at = seq(from=60,to=80,by=5),cex.axis=1.2)
+
+polygon(x = c(0,8,8,0),y=c(50, 50, 52, 52),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(50, 50, 52, 52),lwd=2,border="red",col="red")
+polygon(x = c(24,32,32,24),y=c(50, 50, 52, 52),lwd=2,border="red")
+polygon(x = c(32,48,48,32),y=c(50, 50, 52, 52),lwd=2,border="red",col="red")
+polygon(x = c(48,56,56,48),y=c(50, 50, 52, 52),lwd=2,border="red")
+polygon(x = c(56,72,72,56),y=c(50, 50, 52, 52),lwd=2,border="red",col="red")
+
+polygon(x = c(0,16,16,0),y=c(53, 53, 55, 55),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(53, 53, 55, 55),lwd=2,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(53, 53, 55, 55),lwd=2,border="blue")
+polygon(x = c(40,48,48,40),y=c(53, 53, 55, 55),lwd=2,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(53, 53, 55, 55),lwd=2,border="blue")
+polygon(x = c(64,72,72,64),y=c(53, 53, 55, 55),lwd=2,border="blue",col="blue")
+#590 420
+
+cell.cycle.time.points <- seq(from=0,by=4,length.out = 18)
+circacompare.data <- data.frame(time=c(cell.cycle.time.points,
+                                       cell.cycle.time.points),
+                                measure=c(G2.percentage.LD[1:18],
+                                          G2.percentage.SD[1:18]),
+                                group=c(rep("LD",18),rep("SD",18)))
+
+result.i <- circacompare(x = circacompare.data, 
+                         col_time = "time", 
+                         col_group = "group", 
+                         col_outcome = "measure",
+                         alpha_threshold = 1)
+result.i.values <- result.i$summary$value
+names(result.i.values) <- result.i$summary$parameter
+time.ld.sd <- seq(from=0,to=72,by=0.01)
+line.ld <- wave.form(mesor = result.i.values["LD mesor estimate"],
+                              amplitude = result.i.values["LD amplitude estimate"],
+                              period = result.i.values["Shared period estimate"],
+                              phase = result.i.values["LD peak time hours"],
+                              time = time.ld.sd)
+line.sd <- wave.form(mesor = result.i.values["SD mesor estimate"],
+                               amplitude = result.i.values["SD amplitude estimate"],
+                               period = result.i.values["Shared period estimate"],
+                               phase = result.i.values["SD peak time hours"],
+                               time = time.ld.sd)
+plot(x = time.ld.sd,type="l",
+     y = line.ld,lwd=3,col="blue",axes=F,xlab="",ylab="",
+     #ylim=c(min.expression-expression.step,max.expression),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=0.8,ylim=c(5,25))
+lines(x = time.ld.sd, y = line.sd,col="red", 
+      type="l",lwd=3)
+points(x = seq(from=0,by=4,length.out=18),G2.percentage.LD[1:18],pch=19,col="blue",cex=0.5)
+points(x = seq(from=0,by=4,length.out=18),G2.percentage.SD[1:18],pch=19,col="red",cex=0.5)
+axis(side=2,lwd=3,at = seq(from=10,to=25,by=5),cex.axis=1.2)
+
+polygon(x = c(0,8,8,0),y=c(5, 5, 6.5, 6.5),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(5, 5, 6.5, 6.5),lwd=2,border="red",col="red")
+polygon(x = c(24,32,32,24),y=c(5, 5, 6.5, 6.5),lwd=2,border="red")
+polygon(x = c(32,48,48,32),y=c(5, 5, 6.5, 6.5),lwd=2,border="red",col="red")
+polygon(x = c(48,56,56,48),y=c(5, 5, 6.5, 6.5),lwd=2,border="red")
+polygon(x = c(56,72,72,56),y=c(5, 5, 6.5, 6.5),lwd=2,border="red",col="red")
+
+polygon(x = c(0,16,16,0),y=c(7, 7, 8.5, 8.5),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(7, 7, 8.5, 8.5),lwd=2,border="blue",col="blue")
+polygon(x = c(24,40,40,24),y=c(7, 7, 8.5, 8.5),lwd=2,border="blue")
+polygon(x = c(40,48,48,40),y=c(7, 7, 8.5, 8.5),lwd=2,border="blue",col="blue")
+polygon(x = c(48,64,64,48),y=c(7, 7, 8.5, 8.5),lwd=2,border="blue")
+polygon(x = c(64,72,72,64),y=c(7, 7, 8.5, 8.5),lwd=2,border="blue",col="blue")
+```
+
+
+```{r mean_gene_expression}
+ld.zt.0 <- rowMeans(gene.expression[,ld.zt.i[,1]])
+ld.zt.4 <- rowMeans(gene.expression[,ld.zt.i[,2]])
+ld.zt.8 <- rowMeans(gene.expression[,ld.zt.i[,3]])
+ld.zt.12 <- rowMeans(gene.expression[,ld.zt.i[,4]])
+ld.zt.16 <- rowMeans(gene.expression[,ld.zt.i[,5]])
+ld.zt.20 <- rowMeans(gene.expression[,ld.zt.i[,6]])
+
+ld.mean.gene.expression <- matrix(data = c(ld.zt.0, ld.zt.4, ld.zt.8, ld.zt.12, ld.zt.16, ld.zt.20) ,ncol=6 )
+rownames(ld.mean.gene.expression) <- names(ld.zt.0)
+colnames(ld.mean.gene.expression) <- ld.zt
+head(ld.mean.gene.expression)
+
+ld.zt.0.sd <- apply(X = gene.expression[,ld.zt.i[,1]],MARGIN = 1,FUN = sd)
+ld.zt.4.sd <- apply(X = gene.expression[,ld.zt.i[,2]],MARGIN = 1,FUN = sd)
+ld.zt.8.sd <- apply(X = gene.expression[,ld.zt.i[,3]],MARGIN = 1,FUN = sd)
+ld.zt.12.sd <- apply(X = gene.expression[,ld.zt.i[,4]],MARGIN = 1,FUN = sd)
+ld.zt.16.sd <- apply(X = gene.expression[,ld.zt.i[,5]],MARGIN = 1,FUN = sd)
+ld.zt.20.sd <- apply(X = gene.expression[,ld.zt.i[,6]],MARGIN = 1,FUN = sd)
+
+ld.sd.gene.expression <- matrix(data = c(ld.zt.0.sd, ld.zt.4.sd, ld.zt.8.sd, ld.zt.12.sd, ld.zt.16.sd, ld.zt.20.sd) ,ncol=6 )
+rownames(ld.sd.gene.expression) <- names(ld.zt.0.sd)
+colnames(ld.sd.gene.expression) <- ld.zt
+head(ld.sd.gene.expression)
+
+ld.sem.gene.expression <- ld.sd.gene.expression / sqrt(3)
+head(ld.sem.gene.expression)
+
+sd.zt.0 <- rowMeans(gene.expression[,sd.zt.i[,1]])
+sd.zt.4 <- rowMeans(gene.expression[,sd.zt.i[,2]])
+sd.zt.8 <- rowMeans(gene.expression[,sd.zt.i[,3]])
+sd.zt.12 <- rowMeans(gene.expression[,sd.zt.i[,4]])
+sd.zt.16 <- rowMeans(gene.expression[,sd.zt.i[,5]])
+sd.zt.20 <- rowMeans(gene.expression[,sd.zt.i[,6]])
+
+sd.mean.gene.expression <- matrix(data = c(sd.zt.0, sd.zt.4, sd.zt.8, sd.zt.12, sd.zt.16, sd.zt.20) ,ncol=6 )
+rownames(sd.mean.gene.expression) <- names(sd.zt.0)
+colnames(sd.mean.gene.expression) <- sd.zt
+head(sd.mean.gene.expression)
+
+
+sd.zt.0.sd <- apply(X = gene.expression[,sd.zt.i[,1]],MARGIN = 1,FUN = sd)
+sd.zt.4.sd <- apply(X = gene.expression[,sd.zt.i[,2]],MARGIN = 1,FUN = sd)
+sd.zt.8.sd <- apply(X = gene.expression[,sd.zt.i[,3]],MARGIN = 1,FUN = sd)
+sd.zt.12.sd <- apply(X = gene.expression[,sd.zt.i[,4]],MARGIN = 1,FUN = sd)
+sd.zt.16.sd <- apply(X = gene.expression[,sd.zt.i[,5]],MARGIN = 1,FUN = sd)
+sd.zt.20.sd <- apply(X = gene.expression[,sd.zt.i[,6]],MARGIN = 1,FUN = sd)
+
+sd.sd.gene.expression <- matrix(data = c(sd.zt.0.sd, sd.zt.4.sd, sd.zt.8.sd, sd.zt.12.sd, sd.zt.16.sd, sd.zt.20.sd) ,ncol=6 )
+rownames(sd.sd.gene.expression) <- names(sd.zt.0.sd)
+colnames(sd.sd.gene.expression) <- sd.zt
+head(sd.sd.gene.expression)
+
+sd.sem.gene.expression <- sd.sd.gene.expression / sqrt(3)
+head(sd.sem.gene.expression)
+```
+
+```{r scaled_gene_expression}
+scaled.ld.gene.expression <- t(scale(t(ld.gene.expression)))
+
+scaled.sem.ld.zt.0 <- apply(X = scaled.ld.gene.expression[,ld.zt.i[,1]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.zt.4 <- apply(X = scaled.ld.gene.expression[,ld.zt.i[,2]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.zt.8 <- apply(X = scaled.ld.gene.expression[,ld.zt.i[,3]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.zt.12 <- apply(X = scaled.ld.gene.expression[,ld.zt.i[,4]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.zt.16 <- apply(X = scaled.ld.gene.expression[,ld.zt.i[,5]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.zt.20 <- apply(X = scaled.ld.gene.expression[,ld.zt.i[,6]],MARGIN = 1,FUN = sd)/sqrt(3)
+
+scaled.sem.ld.gene.expression <- matrix(data = c(scaled.sem.ld.zt.0, scaled.sem.ld.zt.4, scaled.sem.ld.zt.8, scaled.sem.ld.zt.12, scaled.sem.ld.zt.16, scaled.sem.ld.zt.20) ,ncol=6 )
+rownames(scaled.sem.ld.gene.expression) <- names(scaled.sem.ld.zt.0)
+colnames(scaled.sem.ld.gene.expression) <- ld.zt
+head(scaled.sem.ld.gene.expression)
+
+scaled.sd.gene.expression <- t(scale(t(sd.gene.expression)))
+
+scaled.sem.sd.zt.0 <- apply(X = scaled.sd.gene.expression[,sd.zt.i[,1]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.zt.4 <- apply(X = scaled.sd.gene.expression[,sd.zt.i[,2]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.zt.8 <- apply(X = scaled.sd.gene.expression[,sd.zt.i[,3]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.zt.12 <- apply(X = scaled.sd.gene.expression[,sd.zt.i[,4]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.zt.16 <- apply(X = scaled.sd.gene.expression[,sd.zt.i[,5]],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.zt.20 <- apply(X = scaled.sd.gene.expression[,sd.zt.i[,6]],MARGIN = 1,FUN = sd)/sqrt(3)
+
+scaled.sem.sd.gene.expression <- matrix(data = c(scaled.sem.sd.zt.0, scaled.sem.sd.zt.4, scaled.sem.sd.zt.8, scaled.sem.sd.zt.12, scaled.sem.sd.zt.16, scaled.sem.sd.zt.20) ,ncol=6 )
+rownames(scaled.sem.sd.gene.expression) <- names(scaled.sem.sd.zt.0)
+colnames(scaled.sem.sd.gene.expression) <- sd.zt
+head(scaled.sem.sd.gene.expression)
+```
 
 
 
 
+```{r mean_protein_abundance}
+head(ld.protein.abundance)
+ld.protein.abundance.zt0 <- rowMeans(2^ld.protein.abundance[,paste("zt0",1:3,sep="_")])
+ld.protein.abundance.zt4 <- rowMeans(2^ld.protein.abundance[,paste("zt4",1:3,sep="_")])
+ld.protein.abundance.zt8 <- rowMeans(2^ld.protein.abundance[,paste("zt8",1:3,sep="_")])
+ld.protein.abundance.zt12 <- rowMeans(2^ld.protein.abundance[,paste("zt12",1:3,sep="_")])
+ld.protein.abundance.zt16 <- rowMeans(2^ld.protein.abundance[,paste("zt16",1:3,sep="_")])
+ld.protein.abundance.zt20 <- rowMeans(2^ld.protein.abundance[,paste("zt20",1:3,sep="_")])
+
+ld.mean.protein.abundance <- matrix(data = c(ld.protein.abundance.zt0,
+                                             ld.protein.abundance.zt4,
+                                             ld.protein.abundance.zt8,
+                                             ld.protein.abundance.zt12,
+                                             ld.protein.abundance.zt16,
+                                             ld.protein.abundance.zt20) ,ncol=6 )
+rownames(ld.mean.protein.abundance) <- names(ld.protein.abundance.zt0)
+colnames(ld.mean.protein.abundance) <- paste("zt",seq(from=0,to=20,by=4),sep="")
+head(ld.mean.protein.abundance)
+
+ld.protein.abundance.zt0.sd <- apply(X = 2^ld.protein.abundance[,paste("zt0",1:3,sep="_")],MARGIN = 1,FUN = sd)
+ld.protein.abundance.zt4.sd <- apply(X = 2^ld.protein.abundance[,paste("zt4",1:3,sep="_")],MARGIN = 1,FUN = sd)
+ld.protein.abundance.zt8.sd <- apply(X = 2^ld.protein.abundance[,paste("zt8",1:3,sep="_")],MARGIN = 1,FUN = sd)
+ld.protein.abundance.zt12.sd <- apply(X = 2^ld.protein.abundance[,paste("zt12",1:3,sep="_")],MARGIN = 1,FUN = sd)
+ld.protein.abundance.zt16.sd <- apply(X = 2^ld.protein.abundance[,paste("zt16",1:3,sep="_")],MARGIN = 1,FUN = sd)
+ld.protein.abundance.zt20.sd <- apply(X = 2^ld.protein.abundance[,paste("zt20",1:3,sep="_")],MARGIN = 1,FUN = sd)
+
+ld.sd.protein.abundance <- matrix(data = c(ld.protein.abundance.zt0.sd,
+                                             ld.protein.abundance.zt4.sd,
+                                             ld.protein.abundance.zt8.sd,
+                                             ld.protein.abundance.zt12.sd,
+                                             ld.protein.abundance.zt16.sd,
+                                             ld.protein.abundance.zt20.sd) ,ncol=6 )
+rownames(ld.sd.protein.abundance) <- names(ld.protein.abundance.zt0.sd)
+colnames(ld.sd.protein.abundance) <- paste("zt",seq(from=0,to=20,by=4),sep="")
+head(ld.sd.protein.abundance)
+ld.sem.protein.abundance <- ld.sd.protein.abundance/sqrt(3)
+head(ld.sem.protein.abundance)
+
+
+head(sd.protein.abundance)
+sd.protein.abundance.zt0 <- rowMeans(2^sd.protein.abundance[,paste("zt0",1:3,sep="_")])
+sd.protein.abundance.zt4 <- rowMeans(2^sd.protein.abundance[,paste("zt4",1:3,sep="_")])
+sd.protein.abundance.zt8 <- rowMeans(2^sd.protein.abundance[,paste("zt8",1:3,sep="_")])
+sd.protein.abundance.zt12 <- rowMeans(2^sd.protein.abundance[,paste("zt12",1:3,sep="_")])
+sd.protein.abundance.zt16 <- rowMeans(2^sd.protein.abundance[,paste("zt16",1:3,sep="_")])
+sd.protein.abundance.zt20 <- rowMeans(2^sd.protein.abundance[,paste("zt20",1:3,sep="_")])
+
+sd.mean.protein.abundance <- matrix(data = c(sd.protein.abundance.zt0,
+                                             sd.protein.abundance.zt4,
+                                             sd.protein.abundance.zt8,
+                                             sd.protein.abundance.zt12,
+                                             sd.protein.abundance.zt16,
+                                             sd.protein.abundance.zt20) ,ncol=6 )
+rownames(sd.mean.protein.abundance) <- names(sd.protein.abundance.zt0)
+colnames(sd.mean.protein.abundance) <- paste("zt",seq(from=0,to=20,by=4),sep="")
+head(sd.mean.protein.abundance)
+
+head(sd.protein.abundance)
+sd.protein.abundance.zt0.sd <- apply(X = 2^sd.protein.abundance[,paste("zt0",1:3,sep="_")],MARGIN = 1,FUN = sd)
+sd.protein.abundance.zt4.sd <- apply(X = 2^sd.protein.abundance[,paste("zt4",1:3,sep="_")],MARGIN = 1,FUN = sd)
+sd.protein.abundance.zt8.sd <- apply(X = 2^sd.protein.abundance[,paste("zt8",1:3,sep="_")],MARGIN = 1,FUN = sd)
+sd.protein.abundance.zt12.sd <- apply(X = 2^sd.protein.abundance[,paste("zt12",1:3,sep="_")],MARGIN = 1,FUN = sd)
+sd.protein.abundance.zt16.sd <- apply(X = 2^sd.protein.abundance[,paste("zt16",1:3,sep="_")],MARGIN = 1,FUN = sd)
+sd.protein.abundance.zt20.sd <- apply(X = 2^sd.protein.abundance[,paste("zt20",1:3,sep="_")],MARGIN = 1,FUN = sd)
+
+sd.sd.protein.abundance <- matrix(data = c(sd.protein.abundance.zt0.sd,
+                                             sd.protein.abundance.zt4.sd,
+                                             sd.protein.abundance.zt8.sd,
+                                             sd.protein.abundance.zt12.sd,
+                                             sd.protein.abundance.zt16.sd,
+                                             sd.protein.abundance.zt20.sd) ,ncol=6 )
+rownames(sd.sd.protein.abundance) <- names(sd.protein.abundance.zt0.sd)
+colnames(sd.sd.protein.abundance) <- paste("zt",seq(from=0,to=20,by=4),sep="")
+head(sd.sd.protein.abundance)
+
+sd.sem.protein.abundance <- sd.sd.protein.abundance/sqrt(3)
+head(sd.sem.protein.abundance)
+```
+
+
+```{r scaled_protein_abundance}
+scaled.ld.protein.abundance <- t(scale(t(ld.protein.abundance)))
+
+scaled.sem.ld.protein.zt.0 <- apply(X = scaled.ld.protein.abundance[,paste("zt0",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.protein.zt.4 <- apply(X = scaled.ld.protein.abundance[,paste("zt4",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.protein.zt.8 <- apply(X = scaled.ld.protein.abundance[,paste("zt8",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.protein.zt.12 <- apply(X = scaled.ld.protein.abundance[,paste("zt12",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.protein.zt.16 <- apply(X = scaled.ld.protein.abundance[,paste("zt16",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.ld.protein.zt.20 <- apply(X = scaled.ld.protein.abundance[,paste("zt20",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+
+scaled.sem.ld.protein.abundance <- matrix(data = c(scaled.sem.ld.protein.zt.0, scaled.sem.ld.protein.zt.4, scaled.sem.ld.protein.zt.8, scaled.sem.ld.protein.zt.12, scaled.sem.ld.protein.zt.16, scaled.sem.ld.protein.zt.20) ,ncol=6 )
+rownames(scaled.sem.ld.protein.abundance) <- names(scaled.sem.ld.protein.zt.0)
+colnames(scaled.sem.ld.protein.abundance) <- paste("zt",seq(from=0,to=20,by=4),sep="")
+head(scaled.sem.ld.protein.abundance)
+
+scaled.sd.protein.abundance <- t(scale(t(sd.protein.abundance)))
+
+scaled.sem.sd.protein.zt.0 <- apply(X = scaled.sd.protein.abundance[,paste("zt0",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.protein.zt.4 <- apply(X = scaled.sd.protein.abundance[,paste("zt4",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.protein.zt.8 <- apply(X = scaled.sd.protein.abundance[,paste("zt8",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.protein.zt.12 <- apply(X = scaled.sd.protein.abundance[,paste("zt12",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.protein.zt.16 <- apply(X = scaled.sd.protein.abundance[,paste("zt16",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+scaled.sem.sd.protein.zt.20 <- apply(X = scaled.sd.protein.abundance[,paste("zt20",1:3,sep="_")],MARGIN = 1,FUN = sd)/sqrt(3)
+
+scaled.sem.sd.protein.abundance <- matrix(data = c(scaled.sem.sd.protein.zt.0, scaled.sem.sd.protein.zt.4, scaled.sem.sd.protein.zt.8, scaled.sem.sd.protein.zt.12, scaled.sem.sd.protein.zt.16, scaled.sem.sd.protein.zt.20) ,ncol=6 )
+rownames(scaled.sem.sd.protein.abundance) <- names(scaled.sem.sd.protein.zt.0)
+colnames(scaled.sem.sd.protein.abundance) <- paste("zt",seq(from=0,to=20,by=4),sep="")
+head(scaled.sem.sd.protein.abundance)
+```
+
+
+
+
+```{r violin_plot_s_phase_ld}
+S.cell.cycle.genes <- subset(cell.cycle.genes, V3 == "S")[[1]]
+
+scaled.S.percentage.mean.LD <- (S.percentage.mean.LD - mean(S.percentage.mean.LD))/sd(S.percentage.mean.LD)
+
+ld.mean.gene.expression[S.cell.cycle.genes,]
+scaled.S.ld.mean.gene.expression <- colMeans(t(scale(t(ld.mean.gene.expression[S.cell.cycle.genes,]))))
+
+scaled.S.ld.mean.protein.abundance <- colMeans(t(scale(t(ld.mean.protein.abundance[intersect(ld.protein.ids,S.cell.cycle.genes),]))))
+
+genes.scaled.profile <- scaled.S.ld.mean.gene.expression
+proteins.scaled.profile <- scaled.S.ld.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.S.percentage.mean.LD
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,12),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="lightblue")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="blue")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkblue")
+
+polygon(x = c(0,0,16,16),y=c(-4,-3,-3,-4),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(-4,-3,-3,-4),lwd=2,col="blue",border="blue") #510 420
+
+```
+
+
+
+```{r violin_plot_s_phase_sd}
+scaled.S.percentage.mean.SD <- (S.percentage.mean.SD - mean(S.percentage.mean.SD))/sd(S.percentage.mean.SD)
+
+sd.mean.gene.expression[S.cell.cycle.genes,]
+scaled.S.sd.mean.gene.expression <- colMeans(t(scale(t(sd.mean.gene.expression[S.cell.cycle.genes,]))))
+
+scaled.S.sd.mean.protein.abundance <- colMeans(t(scale(t(sd.mean.protein.abundance[intersect(sd.protein.ids,S.cell.cycle.genes),]))))
+
+genes.scaled.profile <- scaled.S.sd.mean.gene.expression
+proteins.scaled.profile <- scaled.S.sd.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.S.percentage.mean.SD
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,13),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="salmon")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="red")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkred")
+
+polygon(x = c(0,0,8,8),y=c(-4,-3,-3,-4),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-4,-3,-3,-4),lwd=2,col="red",border="red") #510 420
+
+```
+
+
+
+```{r violin_plot_g1_phase_ld}
+G1.cell.cycle.genes <- subset(cell.cycle.genes, V3 == "G1")[[1]]
+
+scaled.G1.percentage.mean.LD <- (G1.percentage.mean.LD - mean(G1.percentage.mean.LD))/sd(G1.percentage.mean.LD)
+
+ld.mean.gene.expression[G1.cell.cycle.genes,]
+scaled.G1.ld.mean.gene.expression <- colMeans(t(scale(t(ld.mean.gene.expression[G1.cell.cycle.genes,]))))
+
+scaled.G1.ld.mean.protein.abundance <- colMeans(t(scale(t(ld.mean.protein.abundance[intersect(ld.protein.ids,G1.cell.cycle.genes),]))))
+
+genes.scaled.profile <- scaled.G1.ld.mean.gene.expression
+proteins.scaled.profile <- scaled.G1.ld.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.G1.percentage.mean.LD
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,14),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="lightblue")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="blue")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkblue")
+
+polygon(x = c(0,0,16,16),y=c(-4,-3,-3,-4),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(-4,-3,-3,-4),lwd=2,col="blue",border="blue") #510 420
+
+```
+
+
+```{r violin_plot_g1_phase_sd}
+G1.cell.cycle.genes <- subset(cell.cycle.genes, V3 == "G1")[[1]]
+
+scaled.G1.percentage.mean.SD <- (G1.percentage.mean.SD - mean(G1.percentage.mean.SD))/sd(G1.percentage.mean.SD)
+
+sd.mean.gene.expression[G1.cell.cycle.genes,]
+scaled.G1.sd.mean.gene.expression <- colMeans(t(scale(t(sd.mean.gene.expression[G1.cell.cycle.genes,]))))
+
+scaled.G1.sd.mean.protein.abundance <- colMeans(t(scale(t(sd.mean.protein.abundance[intersect(sd.protein.ids,G1.cell.cycle.genes),]))))
+
+genes.scaled.profile <- scaled.G1.sd.mean.gene.expression
+proteins.scaled.profile <- scaled.G1.sd.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.G1.percentage.mean.SD
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,14),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="salmon")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="red")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkred")
+
+polygon(x = c(0,0,8,8),y=c(-4,-3,-3,-4),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-4,-3,-3,-4),lwd=2,col="red",border="red") #510 420
+
+```
+
+```{r violin_plot_g2_phase_ld}
+G2.cell.cycle.genes <- subset(cell.cycle.genes, V3 == "G2_M")[[1]]
+
+scaled.G2.percentage.mean.LD <- (G2.percentage.mean.LD - mean(G2.percentage.mean.LD))/sd(G2.percentage.mean.LD)
+
+ld.mean.gene.expression[G2.cell.cycle.genes,]
+scaled.G2.ld.mean.gene.expression <- colMeans(t(scale(t(ld.mean.gene.expression[G2.cell.cycle.genes,]))))
+
+scaled.G2.ld.mean.protein.abundance <- colMeans(t(scale(t(ld.mean.protein.abundance[intersect(ld.protein.ids,G2.cell.cycle.genes),]))))
+
+genes.scaled.profile <- scaled.G2.ld.mean.gene.expression
+proteins.scaled.profile <- scaled.G2.ld.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.G2.percentage.mean.LD
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,14),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="lightblue")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="blue")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkblue")
+
+polygon(x = c(0,0,16,16),y=c(-4,-3,-3,-4),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(-4,-3,-3,-4),lwd=2,col="blue",border="blue") #510 420
+
+```
+
+
+```{r violin_plot_g2_phase_sd}
+G2.cell.cycle.genes <- subset(cell.cycle.genes, V3 == "G2_M")[[1]]
+
+scaled.G2.percentage.mean.SD <- (G2.percentage.mean.SD - mean(G2.percentage.mean.SD))/sd(G2.percentage.mean.SD)
+
+sd.mean.gene.expression[G2.cell.cycle.genes,]
+scaled.G2.sd.mean.gene.expression <- colMeans(t(scale(t(sd.mean.gene.expression[G2.cell.cycle.genes,]))))
+
+scaled.G2.sd.mean.protein.abundance <- (sd.mean.protein.abundance[intersect(sd.protein.ids,G2.cell.cycle.genes),] - mean(sd.mean.protein.abundance[intersect(sd.protein.ids,G2.cell.cycle.genes),])) / sd(sd.mean.protein.abundance[intersect(sd.protein.ids,G2.cell.cycle.genes),])
+
+genes.scaled.profile <- scaled.G2.sd.mean.gene.expression
+proteins.scaled.profile <- scaled.G2.sd.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.G2.percentage.mean.SD
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,14),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="salmon")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="red")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkred")
+
+polygon(x = c(0,0,8,8),y=c(-4,-3,-3,-4),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-4,-3,-3,-4),lwd=2,col="red",border="red") #510 420
+
+```
+
+
+
+```{r cyclins_cdk_LD_SD}
+ld.cyca.expression <- ld.mean.gene.expression["ostta18g01570",]
+ld.cycb.expression <- ld.mean.gene.expression["ostta01g06150",]
+ld.cycd.expression <- ld.mean.gene.expression["ostta18g01420",]
+
+ld.cyca.expression.sem <- ld.sem.gene.expression["ostta18g01570",]
+ld.cycb.expression.sem <- ld.sem.gene.expression["ostta01g06150",]
+ld.cycd.expression.sem <- ld.sem.gene.expression["ostta18g01420",]
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.cyca.expression,ld.cyca.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-50,500),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="gold",lty=2)
+arrows(x0 = seq(from=0,to=24,by=4), y0 = c(ld.cyca.expression,ld.cyca.expression[1]) - c(ld.cyca.expression.sem,ld.cyca.expression.sem[1]), x1 = seq(from=0,to=24,by=4), y1 = c(ld.cyca.expression,ld.cyca.expression[1]) + c(ld.cyca.expression.sem,ld.cyca.expression.sem[1]),length = 0.05,angle = 90,code = 3,lwd=3,col="gold")
+lines(x = seq(from=0,to=24,by=4),y = c(ld.cycb.expression,ld.cycb.expression[1]),
+      lwd=3, col="purple",type="o",pch=20,cex=1.5,lty=2)
+arrows(x0 = seq(from=0,to=24,by=4), y0 = c(ld.cycb.expression,ld.cycb.expression[1]) - c(ld.cycb.expression.sem,ld.cycb.expression.sem[1]), x1 = seq(from=0,to=24,by=4), y1 = c(ld.cycb.expression,ld.cycb.expression[1]) + c(ld.cycb.expression.sem,ld.cycb.expression.sem[1]),length = 0.05,angle = 90,code = 3,lwd=3,col="purple")
+
+lines(x = seq(from=0,to=24,by=4),y = c(ld.cycd.expression,ld.cycd.expression[1]),
+      lwd=3, col="darkorange2",type="o", pch=20, cex=1.5,lty=2)
+arrows(x0 = seq(from=0,to=24,by=4), y0 = c(ld.cycd.expression,ld.cycd.expression[1]) - c(ld.cycd.expression.sem,ld.cycd.expression.sem[1]), x1 = seq(from=0,to=24,by=4), y1 = c(ld.cycd.expression,ld.cycd.expression[1]) + c(ld.cycd.expression.sem,ld.cycd.expression.sem[1]),length = 0.05,angle = 90,code = 3,lwd=3,col="darkorange2")
+
+
+axis(side=2,lwd=3,at = seq(from=0,to=500,by=100),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-50, -50, -20, -20),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-50, -50, -20, -20),lwd=2,border="blue",col="blue") #490 460
+
+
+sd.cyca.expression <- sd.mean.gene.expression["ostta18g01570",]
+sd.cycb.expression <- sd.mean.gene.expression["ostta01g06150",]
+sd.cycd.expression <- sd.mean.gene.expression["ostta18g01420",]
+
+sd.cyca.expression.sem <- sd.sem.gene.expression["ostta18g01570",]
+sd.cycb.expression.sem <- sd.sem.gene.expression["ostta01g06150",]
+sd.cycd.expression.sem <- sd.sem.gene.expression["ostta18g01420",]
+
+
+plot(x = seq(from=0,to=24,by=4),y = c(sd.cyca.expression,sd.cyca.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-150,1400),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="gold",lty=2)
+arrows(x0 = seq(from=0,to=24,by=4), y0 = c(sd.cyca.expression,sd.cyca.expression[1]) - c(sd.cyca.expression.sem,sd.cyca.expression.sem[1]), x1 = seq(from=0,to=24,by=4), y1 = c(sd.cyca.expression,sd.cyca.expression[1]) + c(sd.cyca.expression.sem,sd.cyca.expression.sem[1]),length = 0.05,angle = 90,code = 3,lwd=3,col="gold")
+
+lines(x = seq(from=0,to=24,by=4),y = c(sd.cycb.expression,sd.cycb.expression[1]),
+      lwd=3, col="purple",type="o",pch=20,cex=1.5,lty=2)
+arrows(x0 = seq(from=0,to=24,by=4), y0 = c(sd.cycb.expression,sd.cycb.expression[1]) - c(sd.cycb.expression.sem,sd.cycb.expression.sem[1]), x1 = seq(from=0,to=24,by=4), y1 = c(sd.cycb.expression,sd.cycb.expression[1]) + c(sd.cycb.expression.sem,sd.cycb.expression.sem[1]),length = 0.05,angle = 90,code = 3,lwd=3,col="purple")
+
+lines(x = seq(from=0,to=24,by=4),y = c(sd.cycd.expression,sd.cycd.expression[1]),
+      lwd=3, col="darkorange2",type="o", pch=20, cex=1.5,lty=2)
+arrows(x0 = seq(from=0,to=24,by=4), y0 = c(sd.cycd.expression,sd.cycd.expression[1]) - c(sd.cycd.expression.sem,sd.cycd.expression.sem[1]), x1 = seq(from=0,to=24,by=4), y1 = c(sd.cycd.expression,sd.cycd.expression[1]) + c(sd.cycd.expression.sem,sd.cycd.expression.sem[1]),length = 0.05,angle = 90,code = 3,lwd=3,col="darkorange2")
+
+axis(side=2,lwd=3,at = seq(from=0,to=1400,by=200),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(-150, -150, -50, -50),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-150, -150, -50, -50),lwd=2,border="red",col="red") #490 460
+```
+
+
+```{r cdk_LD_SD}
+ld.cdka.expression <- scale(ld.mean.gene.expression["ostta04g00110",],center = T,scale = T)[,1]
+ld.cdka.abundance <-scale(ld.mean.protein.abundance["ostta04g00110",],center = T,scale = T)[,1]
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.cdka.expression,ld.cdka.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="khaki1",lty=2)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.cdka.expression,ld.cdka.expression[1]) - c(scaled.sem.ld.gene.expression["ostta04g00110",],scaled.sem.ld.gene.expression["ostta04g00110",1]),x1 = seq(from=0,to=24,by=4), y1 = c(ld.cdka.expression,ld.cdka.expression[1]) + c(scaled.sem.ld.gene.expression["ostta04g00110",],scaled.sem.ld.gene.expression["ostta04g00110",1]),length = 0.05,angle = 90,code = 3,col = "khaki1",lwd=3)
+lines(x = seq(from=0,to=24,by=4),y = c(ld.cdka.abundance,ld.cdka.abundance[1]),
+      lwd=3, col="gold",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.cdka.abundance,ld.cdka.abundance[1]) - c(scaled.sem.ld.protein.abundance["ostta04g00110",],scaled.sem.ld.protein.abundance["ostta04g00110",1]),x1 = seq(from=0,to=24,by=4), y1 = c(ld.cdka.abundance,ld.cdka.abundance[1]) + c(scaled.sem.ld.protein.abundance["ostta04g00110",],scaled.sem.ld.protein.abundance["ostta04g00110",1]),length = 0.05,angle = 90,code = 3,col = "gold",lwd=3)
+
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+
+ld.cdkb.expression <- scale(ld.mean.gene.expression["ostta15g00670",],center = T,scale = T)[,1]
+ld.cdkb.abundance <- scale(ld.mean.protein.abundance["ostta15g00670",],center = T,scale = T)[,1]
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.cdkb.expression,ld.cdkb.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="lightsteelblue2",lty=2)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.cdkb.expression,ld.cdkb.expression[1]) - c(scaled.sem.ld.gene.expression["ostta15g00670",],scaled.sem.ld.gene.expression["ostta15g00670",1]),x1 = seq(from=0,to=24,by=4), y1 = c(ld.cdkb.expression,ld.cdkb.expression[1]) + c(scaled.sem.ld.gene.expression["ostta15g00670",],scaled.sem.ld.gene.expression["ostta15g00670",1]),length = 0.05,angle = 90,code = 3,col = "lightsteelblue2",lwd=3)
+lines(x = seq(from=0,to=24,by=4),y = c(ld.cdkb.abundance,ld.cdkb.abundance[1]),
+      lwd=3, col="purple",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.cdkb.abundance,ld.cdkb.abundance[1]) - c(scaled.sem.ld.protein.abundance["ostta15g00670",],scaled.sem.ld.protein.abundance["ostta15g00670",1]),x1 = seq(from=0,to=24,by=4), y1 = c(ld.cdkb.abundance,ld.cdkb.abundance[1]) + c(scaled.sem.ld.protein.abundance["ostta15g00670",],scaled.sem.ld.protein.abundance["ostta15g00670",1]),length = 0.05,angle = 90,code = 3,col = "purple",lwd=3)
+
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+
+
+sd.cdka.expression <- scale(sd.mean.gene.expression["ostta04g00110",],center = T,scale = T)[,1]
+sd.cdka.abundance <-scale(sd.mean.protein.abundance["ostta04g00110",],center = T,scale = T)[,1]
+
+plot(x = seq(from=0,to=24,by=4),y = c(sd.cdka.expression,sd.cdka.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,3),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="khaki1",lty=2)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.cdka.expression,sd.cdka.expression[1]) - c(scaled.sem.sd.gene.expression["ostta04g00110",],scaled.sem.sd.gene.expression["ostta04g00110",1]),x1 = seq(from=0,to=24,by=4), y1 = c(sd.cdka.expression,sd.cdka.expression[1]) + c(scaled.sem.sd.gene.expression["ostta04g00110",],scaled.sem.sd.gene.expression["ostta04g00110",1]),length = 0.05,angle = 90,code = 3,col = "khaki1",lwd=3)
+lines(x = seq(from=0,to=24,by=4),y = c(sd.cdka.abundance,sd.cdka.abundance[1]),
+      lwd=3, col="gold",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.cdka.abundance,sd.cdka.abundance[1]) - c(scaled.sem.sd.protein.abundance["ostta04g00110",],scaled.sem.sd.protein.abundance["ostta04g00110",1]),x1 = seq(from=0,to=24,by=4), y1 = c(sd.cdka.abundance,sd.cdka.abundance[1]) + c(scaled.sem.sd.protein.abundance["ostta04g00110",],scaled.sem.sd.protein.abundance["ostta04g00110",1]),length = 0.05,angle = 90,code = 3,col = "gold",lwd=3)
+
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+
+
+sd.cdkb.expression <- scale(sd.mean.gene.expression["ostta15g00670",],center = T,scale = T)[,1]
+
+plot(x = seq(from=0,to=24,by=4),y = c(sd.cdkb.expression,sd.cdkb.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="lightsteelblue2",lty=2)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.cdkb.expression,sd.cdkb.expression[1]) - c(scaled.sem.sd.gene.expression["ostta15g00670",],scaled.sem.sd.gene.expression["ostta15g00670",1]),x1 = seq(from=0,to=24,by=4), y1 = c(sd.cdkb.expression,sd.cdkb.expression[1]) + c(scaled.sem.sd.gene.expression["ostta15g00670",],scaled.sem.sd.gene.expression["ostta15g00670",1]),length = 0.05,angle = 90,code = 3,col = "lightsteelblue2",lwd=3)
+
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+```
+
+
+```{r ftsz_SD_LD}
+gene <- "ostta07g01610"
+
+plot(x = seq(from=0,to=24,by=4),y = c(sd.current.gene.expression,sd.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="grey",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.gene.expression,sd.current.gene.expression[1]) - c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.gene.expression,sd.current.gene.expression[1]) + c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),length = 0.05,angle = 90,code = 3,col = "grey",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(sd.current.protein.abundance,sd.current.protein.abundance[1]),
+      lwd=3, col="black",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.protein.abundance,sd.current.protein.abundance[1]) - c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.protein.abundance,sd.current.protein.abundance[1]) + c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "black",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+
+
+ld.current.gene.expression <- scale(ld.mean.gene.expression[gene,],center = T,scale = T)[,1]
+
+ld.current.protein.abundance <- scale(ld.protein.abundance[gene,c(-12,-15,-18)],center = T,scale = T)[,1]
+
+zt0.mean <- mean(ld.current.protein.abundance[1:3])
+zt0.sem <- sd(ld.current.protein.abundance[1:3]) /sqrt(3)
+
+zt4.mean <- mean(ld.current.protein.abundance[4:6])
+zt4.sem <- sd(ld.current.protein.abundance[4:6]) /sqrt(3)
+
+zt8.mean <- mean(ld.current.protein.abundance[7:9])
+zt8.sem <- sd(ld.current.protein.abundance[7:9]) /sqrt(3)
+
+zt12.mean <- mean(ld.current.protein.abundance[10:11])
+zt12.sem <- sd(ld.current.protein.abundance[10:11]) /sqrt(3)
+
+zt16.mean <- mean(ld.current.protein.abundance[12:13])
+zt16.sem <- sd(ld.current.protein.abundance[12:13]) /sqrt(3)
+
+zt20.mean <- mean(ld.current.protein.abundance[14:15])
+zt20.sem <- sd(ld.current.protein.abundance[14:15]) /sqrt(3)
+
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.current.gene.expression,ld.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="grey",lty=2)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.gene.expression,ld.current.gene.expression[1]) - c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.gene.expression,ld.current.gene.expression[1]) + c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),length = 0.05,angle = 90,code = 3,col = "grey",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(zt0.mean, zt4.mean, zt8.mean, zt12.mean, zt16.mean, zt20.mean, zt0.mean),
+      lwd=3, col="black",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(zt0.mean, zt4.mean, zt8.mean, zt12.mean, zt16.mean, zt20.mean, zt0.mean) - c(zt0.sem, zt4.sem, zt8.sem, zt12.sem, zt16.sem, zt20.sem, zt0.sem),x1 = seq(from=0,to=24,by=4), y1 = c(zt0.mean, zt4.mean, zt8.mean, zt12.mean, zt16.mean, zt20.mean, zt0.mean) + c(zt0.sem, zt4.sem, zt8.sem, zt12.sem, zt16.sem, zt20.sem, zt0.sem),length = 0.05,angle = 90,code = 3,col = "black",lwd=3)
+
+
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+```
+
+
+### **Photosynthesis**
+
+```{r fvfm}
+ld.fvfm.data <- read.table(file = "physiological_data/photosynthesis/Fv_Fm_LD.tsv",sep="\t",as.is=T,header=T)
+
+sd.fvfm.data <- read.table(file = "physiological_data/photosynthesis/Fv_Fm_SD.tsv",sep="\t",as.is=T,header=T)
+
+plot(x = seq(from=0,by=4,length.out=18),ld.fvfm.data$fvfm,type="o",col="blue",lwd=4,ylim=c(0.4,0.65),axes=F,xlab="",ylab="")
+
+axis(side=2,lwd=3,at = seq(from=0.45,to=0.65,by=0.05),labels=c("0.45","0.50","0.55","0.60","0.65"),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="blue",col="blue") 
+polygon(x = c(24,40,40,24),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="blue")
+polygon(x = c(40,48,48,40),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="blue",col="blue") 
+polygon(x = c(48,64,64,48),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="blue")
+polygon(x = c(64,72,72,64),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="blue",col="blue") 
+
+
+plot(x = seq(from=0,by=4,length.out=18),y=sd.fvfm.data$fvfm,type="o",col="red",lwd=4,ylim=c(0.4,0.65),axes=F,xlab="",ylab="")
+
+axis(side=2,lwd=3,at = seq(from=0.45,to=0.65,by=0.05),labels=c("0.45","0.50","0.55","0.60","0.65"),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="red",col="red") 
+polygon(x = c(24,32,32,24),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="red")
+polygon(x = c(32,48,48,32),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="red",col="red") 
+polygon(x = c(48,56,56,48),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="red")
+polygon(x = c(56,72,72,56),y=c(0.425, 0.425, 0.44, 0.44),lwd=2,border="red",col="red") 
+
+#500 430
+```
+
+```{r photosynthesis_violin_plot}
+photosynthesis.gene.table <- read.table(file="physiological_data/photosynthesis/genes_photosynthesis.tsv",sep="\t")
+
+photo.genes <- photosynthesis.gene.table[[3]]
+
+ld.mean.fvfm <- (ld.fvfm.data$fvfm[1:6] + ld.fvfm.data$fvfm[7:12] + ld.fvfm.data$fvfm[13:18])/3
+
+scaled.ld.mean.fvfm <- (ld.mean.fvfm - mean(ld.mean.fvfm))/sd(ld.mean.fvfm)
+
+
+scaled.fvfm.ld.mean.gene.expression <- colMeans(t(scale(t(ld.mean.gene.expression[photo.genes,]))))
+
+scaled.fvfm.ld.mean.protein.abundance <- colMeans(t(scale(t(ld.mean.protein.abundance[intersect(ld.protein.ids,photo.genes),]))))
+
+genes.scaled.profile <- scaled.fvfm.ld.mean.gene.expression
+proteins.scaled.profile <- scaled.fvfm.ld.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.ld.mean.fvfm
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,12),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="lightblue")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="blue")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkblue")
+
+polygon(x = c(0,0,16,16),y=c(-4,-3,-3,-4),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(-4,-3,-3,-4),lwd=2,col="blue",border="blue") #510 420
+
+
+
+
+sd.mean.fvfm <- (sd.fvfm.data$fvfm[1:6] + sd.fvfm.data$fvfm[7:12] + sd.fvfm.data$fvfm[13:18])/3
+
+scaled.sd.mean.fvfm <- (sd.mean.fvfm - mean(sd.mean.fvfm))/sd(sd.mean.fvfm)
+
+
+scaled.fvfm.sd.mean.gene.expression <- colMeans(t(scale(t(sd.mean.gene.expression[photo.genes,]))))
+
+scaled.fvfm.sd.mean.protein.abundance <- colMeans(t(scale(t(sd.mean.protein.abundance[intersect(sd.protein.ids,photo.genes),]))))
+
+genes.scaled.profile <- scaled.fvfm.sd.mean.gene.expression
+proteins.scaled.profile <- scaled.fvfm.sd.mean.protein.abundance
+cell.cycle.scaled.profile <- scaled.sd.mean.fvfm
+
+genes.splines <- spline(x=seq(from=0,to=24,by=4),y=c(genes.scaled.profile,genes.scaled.profile[1]),n = 100)
+proteins.splines <- spline(x=seq(from=0,to=24,by=4),y=c(proteins.scaled.profile,proteins.scaled.profile[1]),n = 100)
+cell.cycle.splines <- spline(x=seq(from=0,to=24,by=4),y=c(cell.cycle.scaled.profile,cell.cycle.scaled.profile[1]),n = 100)
+
+if(min(genes.splines$y) < 0)
+{
+ genes.splines$y <- genes.splines$y - min(genes.splines$y)
+}
+
+if(min(proteins.splines$y) < 0)
+{
+ proteins.splines$y <- proteins.splines$y - min(proteins.splines$y)
+}
+
+if(min(cell.cycle.splines$y) < 0)
+{
+ cell.cycle.splines$y <- cell.cycle.splines$y - min(cell.cycle.splines$y)
+}
+
+
+plot(x = genes.splines$x,y = genes.splines$y,type="l",ylim=c(-4,13),axes=F,ylab="",xlab="",lwd=3)
+lines(x = genes.splines$x, y = -genes.splines$y,lwd=3)
+polygon(x=c(genes.splines$x,rev(genes.splines$x)),y = c(genes.splines$y,rev(-genes.splines$y)),col="salmon")
+
+lines(x = proteins.splines$x,y = 5 + proteins.splines$y,lwd=3)
+lines(x = proteins.splines$x,y = 5 - proteins.splines$y,lwd=3)
+polygon(x=c(proteins.splines$x,rev(proteins.splines$x)),y = c(5 + proteins.splines$y,rev(5 - proteins.splines$y)),col="red")
+
+lines(x = cell.cycle.splines$x,y = 10 + cell.cycle.splines$y,lwd=3)
+lines(x = cell.cycle.splines$x,y = 10 - cell.cycle.splines$y,lwd=3)
+polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycle.splines$y,rev(10 - cell.cycle.splines$y)),col="darkred")
+
+polygon(x = c(0,0,8,8),y=c(-4,-3,-3,-4),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-4,-3,-3,-4),lwd=2,col="red",border="red") #510 420
+```
+
+
+```{r carotenoids}
+ld.carotenoids <- read.table(file = "physiological_data/carotenoids/LD_carotenoids.tsv",header = T,sep = "\t")
+sd.carotenoids <- read.table(file = "physiological_data/carotenoids/SD_carotenoids.tsv",header = T,sep = "\t")
+
+head(ld.carotenoids)
+head(sd.carotenoids)
+
+library(rain)
+
+sorted.zts <- c(paste("ZT0",1:3,sep="_"),paste("ZT4",1:3,sep="_"),paste("ZT8",1:3,sep="_"),paste("ZT12",1:3,sep="_"),paste("ZT16",1:3,sep="_"),paste("ZT20",1:3,sep="_"))
+
+rain.ld.carotenoids <- rain(t(ld.carotenoids[,sorted.zts]), deltat=4, period=24, verbose=FALSE, nr.series=3)
+write.table(x = rain.ld.carotenoids,file = "physiological_data/carotenoids/rain_ld_carotenoids.tsv",quote = F,sep = "\t")
+
+rain.sd.carotenoids <- rain(t(sd.carotenoids[,sorted.zts]), deltat=4, period=24, verbose=FALSE, nr.series=3)
+write.table(x = rain.sd.carotenoids,file = "physiological_data/carotenoids/rain_sd_carotenoids.tsv",quote = F,sep = "\t")
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[1,]),type="o",lwd=3,col="blue",ylim=c(4,12),main=rownames(ld.carotenoids)[1],axes=F,xlab="",ylab="",cex.main=2)
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[1,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2)
+polygon(x =  c(0,0,16,16),y=c(5,4.5,4.5,5),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(5,4.5,4.5,5),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(5,4.5,4.5,5),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(5,4.5,4.5,5),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(5,4.5,4.5,5),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(5,4.5,4.5,5),lwd=2,col="blue",border="blue")
+polygon(x = c(0,0,8,8),y=c(4.25,3.75,3.75,4.25),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(4.25,3.75,3.75,4.25),border="red",col="red",lwd=2)
+polygon(x = c(24,24,32,32),y=c(4.25,3.75,3.75,4.25),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(4.25,3.75,3.75,4.25),border="red",col="red",lwd=2)
+polygon(x = c(48,48,56,56),y=c(4.25,3.75,3.75,4.25),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(4.25,3.75,3.75,4.25),border="red",col="red",lwd=2) #390 360
+
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[2,]),type="o",lwd=3,col="blue",ylim=c(9,18),main=rownames(ld.carotenoids)[2],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[2,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2)
+polygon(x =  c(0,0,16,16),y=c(10,9.5,9.5,10),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(10,9.5,9.5,10),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(10,9.5,9.5,10),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(10,9.5,9.5,10),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(10,9.5,9.5,10),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(10,9.5,9.5,10),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(9.25,8.75,8.75,9.25),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(9.25,8.75,8.75,9.25),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(9.25,8.75,8.75,9.25),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(9.25,8.75,8.75,9.25),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(9.25,8.75,8.75,9.25),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(9.25,8.75,8.75,9.25),lwd=2,col="red",border="red") #390 360
+
+
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[3,]),type="o",lwd=3,col="blue",ylim=c(21,34),main=rownames(ld.carotenoids)[3],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[3,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(23.5,22.5,22.5,23.5),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(23.5,22.5,22.5,23.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(23.5,22.5,22.5,23.5),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(23.5,22.5,22.5,23.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(23.5,22.5,22.5,23.5),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(23.5,22.5,22.5,23.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(22,21,21,22),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(22,21,21,22),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(22,21,21,22),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(22,21,21,22),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(22,21,21,22),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(22,21,21,22),lwd=2,col="red",border="red")
+
+
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[4,]),type="o",lwd=3,col="blue",ylim=c(-2.5,22),main=rownames(ld.carotenoids)[4],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[4,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(1,-0.5,-0.5,1),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(1,-0.5,-0.5,1),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(1,-0.5,-0.5,1),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(1,-0.5,-0.5,1),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(1,-0.5,-0.5,1),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(1,-0.5,-0.5,1),lwd=2,col="blue",border="blue")
+
+polygon(x =  c(0,0,8,8),y=c(-1,-2.5,-2.5,-1),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-1,-2.5,-2.5,-1),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(-1,-2.5,-2.5,-1),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(-1,-2.5,-2.5,-1),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(-1,-2.5,-2.5,-1),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(-1,-2.5,-2.5,-1),lwd=2,col="red",border="red")
+
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[5,]),type="o",lwd=3,col="blue",ylim=c(2,8),main=rownames(ld.carotenoids)[5],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[5,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(3.5,3,3,3.5),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(3.5,3,3,3.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(3.5,3,3,3.5),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(3.5,3,3,3.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(3.5,3,3,3.5),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(3.5,3,3,3.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(2.75,2.25,2.25,2.75),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(2.75,2.25,2.25,2.75),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(2.75,2.25,2.25,2.75),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(2.75,2.25,2.25,2.75),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(2.75,2.25,2.25,2.75),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(2.75,2.25,2.25,2.75),lwd=2,col="red",border="red")
+
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[6,]),type="o",lwd=3,col="blue",ylim=c(-4,22),main=rownames(ld.carotenoids)[6],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[6,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(0,-1.5,-1.5,0),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(0,-1.5,-1.5,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(0,-1.5,-1.5,0),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(0,-1.5,-1.5,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(0,-1.5,-1.5,0),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(0,-1.5,-1.5,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(-2,-3.5,-3.5,-2),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-2,-3.5,-3.5,-2),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(-2,-3.5,-3.5,-2),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(-2,-3.5,-3.5,-2),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(-2,-3.5,-3.5,-2),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(-2,-3.5,-3.5,-2),lwd=2,col="red",border="red")
+
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[7,]),type="o",lwd=3,col="blue",ylim=c(-4,13),main=rownames(ld.carotenoids)[7],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[7,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(0,-1.5,-1.5,0),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(0,-1.5,-1.5,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(0,-1.5,-1.5,0),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(0,-1.5,-1.5,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(0,-1.5,-1.5,0),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(0,-1.5,-1.5,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(-2,-3.5,-3.5,-2),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-2,-3.5,-3.5,-2),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(-2,-3.5,-3.5,-2),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(-2,-3.5,-3.5,-2),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(-2,-3.5,-3.5,-2),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(-2,-3.5,-3.5,-2),lwd=2,col="red",border="red")
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[8,]),type="o",lwd=3,col="blue",ylim=c(-1,15),main=rownames(ld.carotenoids)[8],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[8,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(2,1,1,2),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(2,1,1,2),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(2,1,1,2),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(2,1,1,2),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(2,1,1,2),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(2,1,1,2),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(0.5,-0.5,-0.5,0.5),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(0.5,-0.5,-0.5,0.5),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(0.5,-0.5,-0.5,0.5),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(0.5,-0.5,-0.5,0.5),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(0.5,-0.5,-0.5,0.5),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(0.5,-0.5,-0.5,0.5),lwd=2,col="red",border="red")
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[9,]),type="o",lwd=3,col="blue",ylim=c(-1,3),main=rownames(ld.carotenoids)[9],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[9,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(0,-0.2,-0.2,0),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(0,-0.2,-0.2,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(0,-0.2,-0.2,0),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(0,-0.2,-0.2,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(0,-0.2,-0.2,0),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(0,-0.2,-0.2,0),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(-0.3,-0.5,-0.5,-0.3),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-0.3,-0.5,-0.5,-0.3),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(-0.3,-0.5,-0.5,-0.3),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(-0.3,-0.5,-0.5,-0.3),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(-0.3,-0.5,-0.5,-0.3),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(-0.3,-0.5,-0.5,-0.3),lwd=2,col="red",border="red")
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[10,]),type="o",lwd=3,col="blue",ylim=c(0,12),main=rownames(ld.carotenoids)[10],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[10,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(3,2,2,3),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(3,2,2,3),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(3,2,2,3),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(3,2,2,3),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(3,2,2,3),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(3,2,2,3),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(1.5,0.5,0.5,1.5),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(1.5,0.5,0.5,1.5),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(1.5,0.5,0.5,1.5),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(1.5,0.5,0.5,1.5),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(1.5,0.5,0.5,1.5),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(1.5,0.5,0.5,1.5),lwd=2,col="red",border="red")
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[11,]),type="o",lwd=3,col="blue",main=rownames(ld.carotenoids)[11],ylim=c(0,5))
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[11,]),type="o",lwd=3,col="red")
+
+
+plot(x = seq(from=0,by=4,to=68), unlist(ld.carotenoids[11,]),type="o",lwd=3,col="blue",ylim=c(-3,8),main=rownames(ld.carotenoids)[11],axes=F,xlab="",ylab="")
+lines(x = seq(from=0,by=4,to=68), unlist(sd.carotenoids[11,]),type="o",lwd=3,col="red")
+axis(side = 2,lwd=3,cex.axis=1.2,las=2)
+polygon(x =  c(0,0,16,16),y=c(-0.5,-1,-1,-0.5),border="blue",lwd=2)
+polygon(x = c(16,16,24,24),y=c(-0.5,-1,-1,-0.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(24,24,40,40),y=c(-0.5,-1,-1,-0.5),border="blue",lwd=2)
+polygon(x = c(40,40,48,48),y=c(-0.5,-1,-1,-0.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(48,48,64,64),y=c(-0.5,-1,-1,-0.5),border="blue",lwd=2)
+polygon(x = c(64,64,72,72),y=c(-0.5,-1,-1,-0.5),lwd=2,col="blue",border="blue")
+polygon(x =  c(0,0,8,8),y=c(-1.2,-1.7,-1.7,-1.2),border="red",lwd=2)
+polygon(x = c(8,8,24,24),y=c(-1.2,-1.7,-1.7,-1.2),lwd=2,col="red",border="red")
+polygon(x =  c(24,24,32,32),y=c(-1.2,-1.7,-1.7,-1.2),border="red",lwd=2)
+polygon(x = c(32,32,48,48),y=c(-1.2,-1.7,-1.7,-1.2),lwd=2,col="red",border="red")
+polygon(x =  c(48,48,56,56),y=c(-1.2,-1.7,-1.7,-1.2),border="red",lwd=2)
+polygon(x = c(56,56,72,72),y=c(-1.2,-1.7,-1.7,-1.2),lwd=2,col="red",border="red")
+```
+
+
+```{r vde_zep}
+gene <- "ostta16g00660"
+ld.current.gene.expression <- scale(ld.mean.gene.expression[gene,],center = T,scale = T)[,1]
+ld.current.protein.abundance <- scale(ld.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.current.gene.expression,ld.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="lightblue",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.gene.expression,ld.current.gene.expression[1]) - 
+        c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.gene.expression,ld.current.gene.expression[1]) + 
+        c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+       length = 0.05,angle = 90,code = 3,col = "lightblue",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(ld.current.protein.abundance,ld.current.protein.abundance[1]),
+      lwd=3, col="blue",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.protein.abundance,ld.current.protein.abundance[1]) - 
+        c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.protein.abundance,ld.current.protein.abundance[1]) + 
+        c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "blue",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+
+
+
+gene <- "ostta16g00670"
+ld.current.gene.expression <- scale(ld.mean.gene.expression[gene,],center = T,scale = T)[,1]
+ld.current.protein.abundance <- scale(ld.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.current.gene.expression,ld.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="lightblue",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.gene.expression,ld.current.gene.expression[1]) - 
+        c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.gene.expression,ld.current.gene.expression[1]) + 
+        c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+       length = 0.05,angle = 90,code = 3,col = "lightblue",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(ld.current.protein.abundance,ld.current.protein.abundance[1]),
+      lwd=3, col="blue",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.protein.abundance,ld.current.protein.abundance[1]) - 
+        c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.protein.abundance,ld.current.protein.abundance[1]) + 
+        c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "blue",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+
+
+gene <- "ostta16g00660"
+sd.current.gene.expression <- scale(sd.mean.gene.expression[gene,],center = T,scale = T)[,1]
+sd.current.protein.abundance <- scale(sd.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+
+plot(x = seq(from=0,to=24,by=4),y = c(sd.current.gene.expression,sd.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="salmon",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.gene.expression,sd.current.gene.expression[1]) - 
+        c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.gene.expression,sd.current.gene.expression[1]) + 
+        c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+       length = 0.05,angle = 90,code = 3,col = "salmon",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(sd.current.protein.abundance,sd.current.protein.abundance[1]),
+      lwd=3, col="red",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.protein.abundance,sd.current.protein.abundance[1]) - 
+        c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.protein.abundance,sd.current.protein.abundance[1]) + 
+        c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "red",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+
+
+
+gene <- "ostta16g00670"
+sd.current.gene.expression <- scale(sd.mean.gene.expression[gene,],center = T,scale = T)[,1]
+sd.current.protein.abundance <- scale(sd.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+
+plot(x = seq(from=0,to=24,by=4),y = c(sd.current.gene.expression,sd.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="salmon",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.gene.expression,sd.current.gene.expression[1]) - 
+        c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.gene.expression,sd.current.gene.expression[1]) + 
+        c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+       length = 0.05,angle = 90,code = 3,col = "salmon",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(sd.current.protein.abundance,sd.current.protein.abundance[1]),
+      lwd=3, col="red",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.protein.abundance,sd.current.protein.abundance[1]) - 
+        c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.protein.abundance,sd.current.protein.abundance[1]) + 
+        c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "red",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+```
+
+```{r ld_xantophylls}
+ld.mean.zeaxanthin <- (ld.carotenoids["zeaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"1",sep="_")] +
+                       ld.carotenoids["zeaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"2",sep="_")] +
+                       ld.carotenoids["zeaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"3",sep="_")]) / 3
+ld.mean.zeaxanthin.splines <- spline(x=seq(from=0,to=24,by=4),y=c(ld.mean.zeaxanthin, ld.mean.zeaxanthin[1]),n = 100)
+col_fun_zeaxanthin = colorRamp2(c(min(ld.mean.zeaxanthin.splines$y),max(ld.mean.zeaxanthin.splines$y)), 
+                        c("black", "orangered"))
+cols <- col_fun_zeaxanthin(x = ld.mean.zeaxanthin.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(ld.mean.zeaxanthin.splines$x[i],ld.mean.zeaxanthin.splines$x[i+1],
+               ld.mean.zeaxanthin.splines$x[i+1],ld.mean.zeaxanthin.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+
+
+ld.mean.violaxanthin <- (ld.carotenoids["violaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"1",sep="_")] +
+                        ld.carotenoids["violaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"2",sep="_")] +
+                        ld.carotenoids["violaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"3",sep="_")]) / 3
+ld.mean.violaxanthin.splines <- spline(x=seq(from=0,to=24,by=4),y=c(ld.mean.violaxanthin, ld.mean.violaxanthin[1]),n = 100)
+col_fun_violaxanthin = colorRamp2(c(min(ld.mean.violaxanthin.splines$y),max(ld.mean.violaxanthin.splines$y)), 
+                                c("black", "orange"))
+cols <- col_fun_violaxanthin(x = ld.mean.violaxanthin.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(ld.mean.violaxanthin.splines$x[i],ld.mean.violaxanthin.splines$x[i+1],
+               ld.mean.violaxanthin.splines$x[i+1],ld.mean.violaxanthin.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+
+
+ld.mean.antheraxanthin <- (ld.carotenoids["antheraxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"1",sep="_")] +
+                          ld.carotenoids["antheraxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"2",sep="_")] +
+                          ld.carotenoids["antheraxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"3",sep="_")]) / 3
+ld.mean.antheraxanthin.splines <- spline(x=seq(from=0,to=24,by=4),y=c(ld.mean.antheraxanthin, 
+                                                                      ld.mean.antheraxanthin[1]),n = 100)
+col_fun_antheraxanthin = colorRamp2(c(min(ld.mean.antheraxanthin.splines$y),
+                                      max(ld.mean.antheraxanthin.splines$y)), 
+                                  c("black", "yellow"))
+cols <- col_fun_antheraxanthin(x = ld.mean.antheraxanthin.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(ld.mean.antheraxanthin.splines$x[i],ld.mean.antheraxanthin.splines$x[i+1],
+               ld.mean.antheraxanthin.splines$x[i+1],ld.mean.antheraxanthin.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+```
+
+
+
+```{r sd_xantophylls}
+sd.mean.zeaxanthin <- (sd.carotenoids["zeaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"1",sep="_")] +
+                       sd.carotenoids["zeaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"2",sep="_")] +
+                       sd.carotenoids["zeaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"3",sep="_")]) / 3
+sd.mean.zeaxanthin.splines <- spline(x=seq(from=0,to=24,by=4),y=c(sd.mean.zeaxanthin, sd.mean.zeaxanthin[1]),n = 100)
+col_fun_zeaxanthin = colorRamp2(c(min(sd.mean.zeaxanthin.splines$y),max(sd.mean.zeaxanthin.splines$y)), 
+                        c("black", "orangered"))
+cols <- col_fun_zeaxanthin(x = sd.mean.zeaxanthin.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(sd.mean.zeaxanthin.splines$x[i],sd.mean.zeaxanthin.splines$x[i+1],
+               sd.mean.zeaxanthin.splines$x[i+1],sd.mean.zeaxanthin.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+
+
+sd.mean.violaxanthin <- (sd.carotenoids["violaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"1",sep="_")] +
+                        sd.carotenoids["violaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"2",sep="_")] +
+                        sd.carotenoids["violaxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"3",sep="_")]) / 3
+sd.mean.violaxanthin.splines <- spline(x=seq(from=0,to=24,by=4),y=c(sd.mean.violaxanthin, sd.mean.violaxanthin[1]),n = 100)
+col_fun_violaxanthin = colorRamp2(c(min(sd.mean.violaxanthin.splines$y),max(sd.mean.violaxanthin.splines$y)), 
+                                c("black", "orange"))
+cols <- col_fun_violaxanthin(x = sd.mean.violaxanthin.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(sd.mean.violaxanthin.splines$x[i],sd.mean.violaxanthin.splines$x[i+1],
+               sd.mean.violaxanthin.splines$x[i+1],sd.mean.violaxanthin.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+
+
+sd.mean.antheraxanthin <- (sd.carotenoids["antheraxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"1",sep="_")] +
+                          sd.carotenoids["antheraxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"2",sep="_")] +
+                          sd.carotenoids["antheraxanthin",paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"3",sep="_")]) / 3
+sd.mean.antheraxanthin.splines <- spline(x=seq(from=0,to=24,by=4),y=c(sd.mean.antheraxanthin, 
+                                                                      sd.mean.antheraxanthin[1]),n = 100)
+col_fun_antheraxanthin = colorRamp2(c(min(sd.mean.antheraxanthin.splines$y),
+                                      max(sd.mean.antheraxanthin.splines$y)), 
+                                  c("black", "yellow"))
+cols <- col_fun_antheraxanthin(x = sd.mean.antheraxanthin.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(sd.mean.antheraxanthin.splines$x[i],sd.mean.antheraxanthin.splines$x[i+1],
+               sd.mean.antheraxanthin.splines$x[i+1],sd.mean.antheraxanthin.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+```
+
+
+
+```{r heatmaps_for_carotenoids}
+heatmap.gene.protein <- function(gene.id)
+{
+ current.gene.mean.sd.gene.expression <- (scaled.sd.gene.expression[gene.id,seq(from=1,to=16,by=3)] + scaled.sd.gene.expression[gene.id,seq(from=2,to=17,by=3)] + scaled.sd.gene.expression[gene.id,seq(from=3,to=18,by=3)])/3
+ current.gene.mean.sd.gene.expression <- c(current.gene.mean.sd.gene.expression, current.gene.mean.sd.gene.expression[1])
+ spline.current.gene.mean.sd.gene.expression <- spline(x=seq(from=0,to=24,by=4),y=current.gene.mean.sd.gene.expression,n = 100)
+ col_fun_gene = colorRamp2(c(min(spline.current.gene.mean.sd.gene.expression$y),
+                             (min(spline.current.gene.mean.sd.gene.expression$y) + max(spline.current.gene.mean.sd.gene.expression$y)) /2,
+                             max(spline.current.gene.mean.sd.gene.expression$y)), 
+                           c("black","blue","yellow"))
+ cols.gene <- col_fun_gene(x = spline.current.gene.mean.sd.gene.expression$y)
+ 
+ par(mar=c(0,0,0,0))
+ plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(0,17),axes=F,xlab="",ylab="")
+ 
+ polygon(x = c(0,8,8,0),y=c(2, 2, 0, 0),lwd=2,border="red")
+ polygon(x = c(8,24,24,8),y=c(2, 2, 0, 0),lwd=2,border="red",col="red") #490 460
+ 
+ for(i in 1:99)
+ {
+  polygon(x = c(spline.current.gene.mean.sd.gene.expression$x[i],spline.current.gene.mean.sd.gene.expression$x[i+1],
+                spline.current.gene.mean.sd.gene.expression$x[i+1],spline.current.gene.mean.sd.gene.expression$x[i]),
+          y=c(2.5, 2.5, 5, 5),lwd=2,border=cols.gene[i],col=cols.gene[i]) 
+ }
+ 
+ 
+ if(gene.id %in% rownames(scaled.sd.protein.abundance))
+ {
+  current.protein.mean.sd.abundance <- (scaled.sd.protein.abundance[gene.id,seq(from=1,to=16,by=3)] + scaled.sd.protein.abundance[gene.id,seq(from=2,to=17,by=3)] + scaled.sd.protein.abundance[gene.id,seq(from=3,to=18,by=3)])/3
+  current.protein.mean.sd.abundance <- c(current.protein.mean.sd.abundance, current.protein.mean.sd.abundance[1])
+  spline.current.protein.mean.sd.abundance <- spline(x=seq(from=0,to=24,by=4),y=current.protein.mean.sd.abundance,n = 100)
+  col_fun_protein = colorRamp2(c(min(spline.current.protein.mean.sd.abundance$y),
+                                 (min(spline.current.protein.mean.sd.abundance$y) + max(spline.current.protein.mean.sd.abundance$y)) /2,
+                                 max(spline.current.protein.mean.sd.abundance$y)), 
+                               c("black","blue","yellow"))
+  cols.protein <- col_fun_protein(x = spline.current.protein.mean.sd.abundance$y)
+  
+  for(i in 1:99)
+  {
+   polygon(x = c(spline.current.gene.mean.sd.gene.expression$x[i],spline.current.gene.mean.sd.gene.expression$x[i+1],
+                 spline.current.gene.mean.sd.gene.expression$x[i+1],spline.current.gene.mean.sd.gene.expression$x[i]),
+           y=c(5.25, 5.25, 7.75, 7.75),lwd=2,border=cols.protein[i],col=cols.protein[i]) 
+  }
+ }
+ 
+ current.gene.mean.ld.gene.expression <- (scaled.ld.gene.expression[gene.id,seq(from=1,to=16,by=3)] + scaled.ld.gene.expression[gene.id,seq(from=2,to=17,by=3)] + scaled.ld.gene.expression[gene.id,seq(from=3,to=18,by=3)])/3
+ current.gene.mean.ld.gene.expression <- c(current.gene.mean.ld.gene.expression, current.gene.mean.ld.gene.expression[1])
+ spline.current.gene.mean.ld.gene.expression <- spline(x=seq(from=0,to=24,by=4),y=current.gene.mean.ld.gene.expression,n = 100)
+ col_fun_gene = colorRamp2(c(min(spline.current.gene.mean.ld.gene.expression$y),
+                             (min(spline.current.gene.mean.ld.gene.expression$y) + max(spline.current.gene.mean.ld.gene.expression$y)) /2,
+                             max(spline.current.gene.mean.ld.gene.expression$y)), 
+                           c("black","blue","yellow"))
+ cols.gene <- col_fun_gene(x = spline.current.gene.mean.ld.gene.expression$y)
+ 
+ 
+ polygon(x = c(0,16,16,0),y=c(10.5, 10.5, 8.5, 8.5),lwd=2,border="blue")
+ polygon(x = c(16,24,24,16),y=c(10.5, 10.5, 8.5, 8.5),lwd=2,border="blue",col="blue") #490 460
+ 
+ for(i in 1:99)
+ {
+  polygon(x = c(spline.current.gene.mean.ld.gene.expression$x[i],spline.current.gene.mean.ld.gene.expression$x[i+1],
+                spline.current.gene.mean.ld.gene.expression$x[i+1],spline.current.gene.mean.ld.gene.expression$x[i]),
+          y=c(11, 11, 13.5, 13.5),lwd=2,border=cols.gene[i],col=cols.gene[i]) 
+ }
+ 
+ 
+ if(gene.id %in% rownames(scaled.ld.protein.abundance))
+ {
+  current.protein.mean.ld.abundance <- (scaled.ld.protein.abundance[gene.id,seq(from=1,to=16,by=3)] + scaled.ld.protein.abundance[gene.id,seq(from=2,to=17,by=3)] + scaled.ld.protein.abundance[gene.id,seq(from=3,to=18,by=3)])/3
+  current.protein.mean.ld.abundance <- c(current.protein.mean.ld.abundance, current.protein.mean.ld.abundance[1])
+  spline.current.protein.mean.ld.abundance <- spline(x=seq(from=0,to=24,by=4),y=current.protein.mean.ld.abundance,n = 100)
+  col_fun_protein = colorRamp2(c(min(spline.current.protein.mean.ld.abundance$y),
+                                 (min(spline.current.protein.mean.ld.abundance$y) + max(spline.current.protein.mean.ld.abundance$y)) /2,
+                                 max(spline.current.protein.mean.ld.abundance$y)), 
+                               c("black","blue","yellow"))
+  cols.protein <- col_fun_protein(x = spline.current.protein.mean.ld.abundance$y)
+  
+  for(i in 1:99)
+  {
+   polygon(x = c(spline.current.gene.mean.ld.gene.expression$x[i],spline.current.gene.mean.ld.gene.expression$x[i+1],
+                 spline.current.gene.mean.ld.gene.expression$x[i+1],spline.current.gene.mean.ld.gene.expression$x[i]),
+           y=c(13.75, 13.75, 16.25, 16.25),lwd=2,border=cols.protein[i],col=cols.protein[i]) 
+  }
+ }
+}
+
+heatmap.gene.protein(gene.id = "ostta02g01730") # DXS
+heatmap.gene.protein(gene.id = "ostta04g03270") # DXR
+heatmap.gene.protein(gene.id = "ostta07g03570") # CMS
+heatmap.gene.protein(gene.id = "ostta16g01910") # CMK
+heatmap.gene.protein(gene.id = "ostta11g00050") # MCS
+heatmap.gene.protein(gene.id = "ostta09g00960") # HDS
+heatmap.gene.protein(gene.id = "ostta08g01180") # HDR
+heatmap.gene.protein(gene.id = "ostta04g03170") # GPPS
+heatmap.gene.protein(gene.id = "ostta12g01280") # GGPPS
+
+heatmap.gene.protein(gene.id = "ostta05g03530") # PSY
+heatmap.gene.protein(gene.id = "ostta10g02860") # PDS
+heatmap.gene.protein(gene.id = "ostta16g00590") # ZDS
+heatmap.gene.protein(gene.id = "ostta14g00700") # LCYE/B
+heatmap.gene.protein(gene.id = "ostta13g02440") # BCH
+heatmap.gene.protein(gene.id = "ostta16g00670") # ZEP
+heatmap.gene.protein(gene.id = "ostta16g00660") # VDE
+heatmap.gene.protein(gene.id = "ostta03g05610") # NXS
+heatmap.gene.protein(gene.id = "ostta09g02540") # ECH
+```
+
+```{r heatmap_carotenoids}
+heatmap.carotenoid <- function(carotenoid, carotenoid.abundance)
+{
+ mean.carotenoid <- (carotenoid.abundance[carotenoid,paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"1",sep="_")] +
+                      carotenoid.abundance[carotenoid,paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"2",sep="_")] +
+                      carotenoid.abundance[carotenoid,paste(paste("ZT",seq(from=0,to=20,by=4),sep=""),"3",sep="_")]) / 3
+ 
+ mean.carotenoid.splines <- spline(x=seq(from=0,to=24,by=4),y=c(mean.carotenoid, mean.carotenoid[1]),n = 100)
+ col_fun_carotenoid = colorRamp2(c(min(mean.carotenoid.splines$y),
+                                   (min(mean.carotenoid.splines$y) + max(mean.carotenoid.splines$y))/2,
+                                   max(mean.carotenoid.splines$y)), 
+                                 c("black", "blue", "yellow"))
+ cols <- col_fun_carotenoid(x = mean.carotenoid.splines$y)
+ par(mar=c(0,0,0,0))
+ plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-2,2),axes=F,xlab="",ylab="")
+ for(i in 1:99)
+ {
+  polygon(x = c(mean.carotenoid.splines$x[i],mean.carotenoid.splines$x[i+1],
+                mean.carotenoid.splines$x[i+1],mean.carotenoid.splines$x[i]),
+          y=c(-2, -2, 2, 2),lwd=2,border=cols[i],col=cols[i]) 
+ }
+}
+
+rownames(ld.carotenoids)
+
+heatmap.carotenoid(carotenoid="a-carotene", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="a-carotene", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="lutein", carotenoid.abundance=ld.carotenoids)
+
+heatmap.carotenoid(carotenoid="prasinoxanthin", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="prasinoxanthin", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="dihydrolutein", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="dihydrolutein", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="micromonal", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="micromonal", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="uriolide", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="uriolide", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="b-carotene", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="b-carotene", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="zeaxanthin", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="zeaxanthin", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="antheraxanthin", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="antheraxanthin", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="violaxanthin", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="violaxanthin", carotenoid.abundance=sd.carotenoids)
+
+heatmap.carotenoid(carotenoid="neoxanthin", carotenoid.abundance=ld.carotenoids)
+heatmap.carotenoid(carotenoid="neoxanthin", carotenoid.abundance=sd.carotenoids)
+```
+
+
+```{r heatmaps_for_photosynthesis}
+heatmap.gene.protein(gene.id = "ostta14g00150") #PsbO
+heatmap.gene.protein(gene.id = "ostta14g02630") #PsbP
+heatmap.gene.protein(gene.id = "ostta16g01620") #PsbQ
+heatmap.gene.protein(gene.id = "ostta12g01970") #Psb27B
+heatmap.gene.protein(gene.id = "ostta14g00065") #LHCB5
+heatmap.gene.protein(gene.id = "ostta05g01780") #LHCSR
+
+heatmap.gene.protein(gene.id = "ostta01g06610") #PetC
+heatmap.gene.protein(gene.id = "ostta09g04240") #PetE
+heatmap.gene.protein(gene.id = "ostta17g00310") #PetF
+
+heatmap.gene.protein(gene.id = "ostta15g02670") #PsaD
+heatmap.gene.protein(gene.id = "ostta02g03860") #PsaE
+heatmap.gene.protein(gene.id = "ostta05g00800") #PsaG
+heatmap.gene.protein(gene.id = "ostta02g00580") #PsaL 
+heatmap.gene.protein(gene.id = "ostta15g00990") #PsaH
+heatmap.gene.protein(gene.id = "ostta06g00250") #PsaN
+heatmap.gene.protein(gene.id = "ostta04g01790") #PsaF
+heatmap.gene.protein(gene.id = "ostta17g00310") #Fd
+heatmap.gene.protein(gene.id = "ostta18g01250") #FNR
+
+heatmap.gene.protein(gene.id = "ostta01g03770") #ATPC
+heatmap.gene.protein(gene.id = "ostta07g01350") #ATPD
+heatmap.gene.protein(gene.id = "ostta09g01080") #ATPG
+```
+
+```{r calvin_cycle}
+heatmap.gene.protein(gene.id = "ostta18g01890") #RBCS
+heatmap.gene.protein(gene.id = "ostta06g00700") #PGK
+heatmap.gene.protein(gene.id = "ostta01g01560") #GAPDHA
+heatmap.gene.protein(gene.id = "ostta10g03420") #GAPDHB
+heatmap.gene.protein(gene.id = "ostta09g00120") #TPI
+heatmap.gene.protein(gene.id = "ostta01g03040") #FBA
+heatmap.gene.protein(gene.id = "ostta14g01010") #FBPase
+heatmap.gene.protein(gene.id = "ostta03g05500") #SBPase
+heatmap.gene.protein(gene.id = "ostta05g04130") #RPI
+heatmap.gene.protein(gene.id = "ostta06g01650") #RPE
+heatmap.gene.protein(gene.id = "ostta04g02740") #PRK
+```
+
+
+```{r starch_biosynthesis}
+heatmap.gene.protein(gene.id = "ostta11g02780") # PGI
+heatmap.gene.protein(gene.id = "ostta06g02930") # PGM
+heatmap.gene.protein(gene.id = "ostta07g03440") # APL
+heatmap.gene.protein(gene.id = "ostta07g03070") # APS
+heatmap.gene.protein(gene.id = "ostta06g02940") # GBSS
+heatmap.gene.protein(gene.id = "ostta16g02480") # SSS2
+heatmap.gene.protein(gene.id = "ostta03g00870") # SBE
+heatmap.gene.protein(gene.id = "ostta12g00320") # ISA
+heatmap.gene.protein(gene.id = "ostta10g00260") # AMY
+
+starch.data <- read.table(file="physiological_data/starch/starch.tsv")
+
+sorted.zts <- c(paste("ZT0",1:2,sep="_"),paste("ZT4",1:2,sep="_"),paste("ZT8",1:2,sep="_"),
+                paste("ZT12",1:2,sep="_"),paste("ZT16",1:2,sep="_"),paste("ZT20",1:2,sep="_"))
+
+starch.content.ld <- starch.data$V2[starch.data$V3 == "LD"]
+names(starch.content.ld) <- starch.data$V1[starch.data$V3 == "LD"]
+rain.ld.starch <- rain(starch.content.ld[sorted.zts], deltat=4, period=24, verbose=FALSE, nr.series=2)
+
+starch.content.sd <- starch.data$V2[starch.data$V3 == "SD"]
+names(starch.content.sd) <- starch.data$V1[starch.data$V3 == "SD"]
+rain.sd.starch <- rain(starch.content.sd[sorted.zts], deltat=4, period=24, verbose=FALSE, nr.series=2)
+
+library(circacompare)
+starch.time.points <- seq(from=0,by=4,length.out = 12)
+circacompare.data <- data.frame(time=c(starch.time.points,
+                                       starch.time.points),
+                                measure=c(starch.content.ld,
+                                          starch.content.sd),
+                                group=c(rep("LD",12),rep("SD",12)))
+
+result.starch <- circacompare(x = circacompare.data, 
+                              col_time = "time", 
+                              col_group = "group", 
+                              col_outcome = "measure",
+                              alpha_threshold = 1)
+result.starch.values <- result.starch$summary$value
+names(result.starch.values) <- result.starch$summary$parameter
+
+plot(x = seq(from=0,by=4,length.out=12),starch.content.ld,type="o",col="blue",lwd=4,ylim=c(19,45),axes=F,xlab="",ylab="")
+axis(side=2,lwd=3,at = seq(from=25,to=45,by=5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(22, 22, 24, 24),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(22, 22, 24, 24),lwd=2,border="blue",col="blue") 
+polygon(x = c(24,40,40,24),y=c(22, 22, 24, 24),lwd=2,border="blue")
+polygon(x = c(40,48,48,40),y=c(22, 22, 24, 24),lwd=2,border="blue",col="blue") 
+
+lines(x = seq(from=0,by=4,length.out=12),y=starch.content.sd, type="o",col="red",lwd=4)
+
+polygon(x = c(0,8,8,0),y=c(19, 19, 21, 21),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(19, 19, 21, 21),lwd=2,border="red",col="red") 
+polygon(x = c(24,32,32,24),y=c(19, 19, 21, 21),lwd=2,border="red")
+polygon(x = c(32,48,48,32),y=c(19, 19, 21, 21),lwd=2,border="red",col="red") #380 375
+
+ld.mean.starch <- (starch.content.ld[1:6] + starch.content.ld[7:12])/2
+ld.mean.starch.splines <- spline(x=seq(from=0,to=24,by=4),y=c(ld.mean.starch, ld.mean.starch[1]),n = 100)
+col_fun_ld_starch = colorRamp2(c(min(ld.mean.starch.splines$y),max(ld.mean.starch.splines$y)), 
+                               c("black", "white"))
+cols <- col_fun_ld_starch(x = ld.mean.starch.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(ld.mean.starch.splines$x[i],ld.mean.starch.splines$x[i+1],
+               ld.mean.starch.splines$x[i+1],ld.mean.starch.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+
+
+gene <- "ostta07g03440"
+ld.current.gene.expression <- scale(ld.mean.gene.expression[gene,],center = T,scale = T)[,1]
+ld.current.protein.abundance <- scale(ld.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.current.gene.expression,ld.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="lightblue",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.gene.expression,ld.current.gene.expression[1]) - 
+        c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.gene.expression,ld.current.gene.expression[1]) + 
+        c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+       length = 0.05,angle = 90,code = 3,col = "lightblue",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(ld.current.protein.abundance,ld.current.protein.abundance[1]),
+      lwd=3, col="blue",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.protein.abundance,ld.current.protein.abundance[1]) - 
+        c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.protein.abundance,ld.current.protein.abundance[1]) + 
+        c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "blue",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+
+
+
+sd.mean.starch <- (starch.content.sd[1:6] + starch.content.sd[7:12])/2
+sd.mean.starch.splines <- spline(x=seq(from=0,to=24,by=4),y=c(sd.mean.starch, sd.mean.starch[1]),n = 100)
+col_fun_sd_starch = colorRamp2(c(min(sd.mean.starch.splines$y),max(sd.mean.starch.splines$y)), 
+                               c("black", "white"))
+cols <- col_fun_sd_starch(x = sd.mean.starch.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(sd.mean.starch.splines$x[i],sd.mean.starch.splines$x[i+1],
+               sd.mean.starch.splines$x[i+1],sd.mean.starch.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+
+
+gene <- "ostta07g03440"
+sd.current.gene.expression <- scale(sd.mean.gene.expression[gene,],center = T,scale = T)[,1]
+sd.current.protein.abundance <- scale(sd.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+plot(x = seq(from=0,to=24,by=4),y = c(sd.current.gene.expression,sd.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="salmon",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.gene.expression,sd.current.gene.expression[1]) - 
+        c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.gene.expression,sd.current.gene.expression[1]) + 
+        c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+       length = 0.05,angle = 90,code = 3,col = "salmon",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(sd.current.protein.abundance,sd.current.protein.abundance[1]),
+      lwd=3, col="red",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.protein.abundance,sd.current.protein.abundance[1]) - 
+        c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),
+       x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.protein.abundance,sd.current.protein.abundance[1]) + 
+        c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "red",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
+polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+```
+
+
+Starch content was rhythmic under both LD and SD conditions with p-values of 
+1.2 x 10-4 and 1.4 x 10-4 respectively. 
+
+
+SD starch content was significantly lower than under LD conditions with 
+a p-value of 1.7 x 10-5. SD starch content oscillates around 29.04 % whereas under
+LD conditions 33.45 %. 
+
+A significant phase shift of almost 5 hours is detected as a response to photoperiod
+shortening under SD with respect to LD with a p-value of 7.14 x 10-5. Under LD conditions
+phase or the time of highest starch content was detected at around ZT4 whereas under LD
+condtions it was estimated to be at around ZT9. 
+
+
+```{r nitrate_assimilation}
+heatmap.gene.protein(gene.id = "ostta10g00950") # NRT2
+heatmap.gene.protein(gene.id = "ostta10g00940") # NRT3
+heatmap.gene.protein(gene.id = "ostta10g00920") # NR
+heatmap.gene.protein(gene.id = "ostta10g00930") # NIR
+heatmap.gene.protein(gene.id = "ostta01g05020") # GS
+heatmap.gene.protein(gene.id = "ostta14g01900") # GOGAT
+
+lineplot.ld.gene.protein <- function(gene)
+{
+ ld.current.gene.expression <- scale(ld.mean.gene.expression[gene,],center = T,scale = T)[,1]
+ ld.current.protein.abundance <- scale(ld.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+ 
+ plot(x = seq(from=0,to=24,by=4),y = c(ld.current.gene.expression,ld.current.gene.expression[1]),
+      type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2.2),
+      cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="lightblue",lty=2)
+ 
+ arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.gene.expression,ld.current.gene.expression[1]) - 
+         c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+        x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.gene.expression,ld.current.gene.expression[1]) + 
+         c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),
+        length = 0.05,angle = 90,code = 3,col = "lightblue",lwd=3)
+ 
+ lines(x = seq(from=0,to=24,by=4),y = c(ld.current.protein.abundance,ld.current.protein.abundance[1]),
+       lwd=3, col="blue",type="o",pch=20,cex=1.5)
+ arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.protein.abundance,ld.current.protein.abundance[1]) - 
+         c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),
+        x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.protein.abundance,ld.current.protein.abundance[1]) + 
+         c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "blue",lwd=3)
+ axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+ 
+ polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+ polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+}
+
+lineplot.sd.gene.protein <- function(gene)
+{
+ sd.current.gene.expression <- scale(sd.mean.gene.expression[gene,],center = T,scale = T)[,1]
+ sd.current.protein.abundance <- scale(sd.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+ 
+ plot(x = seq(from=0,to=24,by=4),y = c(sd.current.gene.expression,sd.current.gene.expression[1]),
+      type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2.2),
+      cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="salmon",lty=2)
+ 
+ arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.gene.expression,sd.current.gene.expression[1]) - 
+         c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+        x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.gene.expression,sd.current.gene.expression[1]) + 
+         c(scaled.sem.sd.gene.expression[gene,],scaled.sem.sd.gene.expression[gene,1]),
+        length = 0.05,angle = 90,code = 3,col = "salmon",lwd=3)
+ 
+ lines(x = seq(from=0,to=24,by=4),y = c(sd.current.protein.abundance,sd.current.protein.abundance[1]),
+       lwd=3, col="red",type="o",pch=20,cex=1.5)
+ arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(sd.current.protein.abundance,sd.current.protein.abundance[1]) - 
+         c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),
+        x1 = seq(from=0,to=24,by=4), y1 = c(sd.current.protein.abundance,sd.current.protein.abundance[1]) + 
+         c(scaled.sem.sd.protein.abundance[gene,],scaled.sem.sd.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "red",lwd=3)
+ axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+ 
+ polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
+ polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+}
+
+
+lineplot.ld.gene.protein(gene = "ostta10g00920")
+lineplot.sd.gene.protein(gene = "ostta10g00920")
+
+lineplot.ld.gene.protein(gene = "ostta01g05020")
+lineplot.sd.gene.protein(gene = "ostta01g05020")
+```
 
