@@ -32,7 +32,7 @@ The matrix containing the gene expression data analyzed in this study can be
 downloaded from [**this link from the GEO data base**](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE155535&format=file&file=GSE155535%5Fgene%5Fexpression%2Etsv%2Egz). Make sure to uncompress this file and rename it to **gene_expression.tsv**. 
 First, the gene expression data is loaded and converted into a numeric matrix 
 setting the rownames to gene ids. We also load gene annotation and potential
-Arabidopsis orthologs to Ostreococcus genes. 
+*Arabidopsis* orthologs to *Ostreococcus* genes. 
 
 ```{r load_data}
 gene.expression <- read.table(file ="gene_expression.tsv",sep="\t",header=T,as.is=T)
@@ -54,15 +54,13 @@ The current version of *Ostreococcus tauri* genome available from [**here**](htt
 identifies 7668 genes. In our experiment only 3 genes were never expressed and 
 40, 164 and 260 genes never presented an expression level greater than 1, 5 and 
 10 FPKM respectively. This shows that practically the entire transcriptome of 
-Ostreococcus is expressed under the seasonal and diurnal cycles studied in this 
+*Ostreococcus* is expressed under the seasonal and diurnal cycles studied in this 
 project.
 
 ```{r number_genes}
 ostta.genes <- rownames(gene.expression)
 number.genes <- length(ostta.genes)
 number.genes
-
-dim(gene.expression)
 
 length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) == 0))
 length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) < 1))
@@ -71,11 +69,15 @@ length(which(apply(X = gene.expression,MARGIN = 1,FUN = max) < 10))
 ```
 
 
-We focus on the data generated under long and short days cycles by extracting
-them from the gene expression matrix. The resulting matrix has 7668 rows 
-representing genes and 84 columns. This number of columns correspond to 84 
-different data points, each day is represented by 6 data points and we took 
-samples for a total of 14 days:
+The resulting matrix has 7668 rows representing genes and 84 columns.
+
+```{r number_genes}
+
+dim(gene.expression)
+
+```
+
+This number of columns correspond to 84 different data points, each day is represented by 6 data points and we took  samples for a total of 14 days:
 
 * 3 days under long day (LD) conditions,
 * 2 days under constant light after LD entrainment,
@@ -84,6 +86,7 @@ samples for a total of 14 days:
 * 2 days under constant light after SD entrainment,
 * 2 days under constant darkness after SD entrainment,
 
+We focus on the data generated under long and short days cycles by extracting them from the gene expression matrix. 
 
 ```{r extract_sd_ld}
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -98,12 +101,14 @@ dim(ld.sd.gene.expression)
 
 We perform **Principal Component Analysis** and a **Hierarchical clustering** 
 in order to uncover the underlying structure in our data. We use the packages 
-FactoMineR and factoextra and reformat the data as needed for the function PCA.
+*FactoMineR* and *factoextra* and reformat the data as needed for the function PCA.
 
-```{r pca_ld_sd}
+```{r pca_ld_sd, eval=FALSE}
 library(FactoMineR)
 library(factoextra)
+```
 
+```{r pca_ld_sd, warning=FALSE}
 pca.gene.expression.ld.sd <- data.frame(colnames(ld.sd.gene.expression),t(ld.sd.gene.expression))
 colnames(pca.gene.expression.ld.sd)[1] <- "Time point"
 
@@ -111,7 +116,7 @@ res.pca.ld.sd <- PCA(pca.gene.expression.ld.sd, graph = FALSE,scale.unit = TRUE,
 res.hcpc.ld.sd <- HCPC(res.pca.ld.sd, graph=FALSE)   
 fviz_dend(res.hcpc.ld.sd,k=3,
           cex = 1,                       # Label size
-          palette = "jco",               # Color palette see ?ggpubr::ggpar
+          palette = "jco",               # Color palette
           rect = TRUE, rect_fill = TRUE, # Add rectangle around groups
           rect_border = "jco",           # Rectangle color
           type="rectangle",
@@ -120,10 +125,10 @@ fviz_dend(res.hcpc.ld.sd,k=3,
 ```
 
 
-The transcriptomes corresponding to the same time points during the three different 
-days under both LD and SD conditions tend to cluster together. This indicates a 
-high rhtyhmic synchronization in our cultures. Using hierarchical clustering, the 
-36 transcriptomes under LD and SD conditions assemble together into three different 
+The transcriptomes corresponding to the same time points during the three different days 
+under both LD and SD conditions tend to cluster together. This indicates a high rhythmic 
+synchronization in our cultures. Using hierarchical clustering, the 36 transcriptomes under 
+LD and SD conditions assemble together into three different 
 groups. The first cluster corresponds to **midday**. The transcriptomes at time 
 points ZT4 and ZT8 under LD and ZT4 under SD constitute this cluster. These time 
 points correspond to the moments of maximal incident light irradiance under both 
@@ -141,7 +146,7 @@ night/dawn transcriptomes when compare to the midday ones.
 In order to obtain a more precise understanding of the underlying structure in 
 our data we preform PCA separately for the LD and SD data. 
 
-```{r pca_ld}
+```{r pca_ld, warning=FALSE}
 ld.gene.expression <- gene.expression[,ld.zt.i]
 pca.gene.expression.ld <- data.frame(colnames(ld.gene.expression),t(ld.gene.expression))
 colnames(pca.gene.expression.ld)[1] <- "Time point"
@@ -158,12 +163,12 @@ fviz_pca_ind(res.pca.ld, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT04", "ZT
              show_legend=TRUE,show_guide=TRUE) 
 ```
 
-Under LD conditions, we observed that the transcriptomes corresponding to the 
+Under LD condition, we observed that the transcriptomes corresponding to the 
 same time points in the three different days tightly cluster together globally 
 constituting a circular structure. Next, we analyze the SD data.
 
 
-```{r pca_sd}
+```{r pca_sd, warning=FALSE}
 sd.gene.expression <- gene.expression[,sd.zt.i]
 pca.gene.expression.sd <- data.frame(colnames(sd.gene.expression),t(sd.gene.expression))
 colnames(pca.gene.expression.sd)[1] <- "Time point"
@@ -180,15 +185,15 @@ fviz_pca_ind(res.pca.sd, col.ind = c("ZT00", "ZT00", "ZT00", "ZT04", "ZT04", "ZT
              show_legend=TRUE,show_guide=TRUE) 
 ```
 
-Under SD conditions more variability is observed and the time point transcriptomes 
+Under SD condition more variability is observed and the time point transcriptomes 
 form a structure resembling an ellipse. This could indicate that whereas in LD 
 conditions gene expression in globally cycling precisely with a similar period 
-a more complex behavior is expected under SD conditions. Also, it is remarkable 
+a more complex behavior is expected under SD condition. Also, it is remarkable 
 the high similarity between the transcriptomes corresponding to ZT0 and ZT20 under 
-SD conditions that is not present under LD conditions. This suggests that the 
+SD condition that is not present under LD condition. This suggests that the 
 transcriptomic response at the end of a SD night is already preparing all molecular 
 systems for the incoming light availability at dawn whereas this anticipation is 
-not as clearly observed under LD conditions. In overall, these results support 
+not as clearly observed under LD condition. In overall, these results support 
 that our experimental design grants a high level of synchronization in our data 
 allowing us to proceed to the identification and comparison of genes exhibiting 
 rhythmic expression patterns under LD and SD conditions. 
@@ -196,11 +201,11 @@ rhythmic expression patterns under LD and SD conditions.
 In order to get a more complete representation of different photoperiods and 
 seasonality in our study we included previously published microarrays data 
 generated under neutral day (ND) conditions 12h light : 12h dark. We performed 
-PCA analysis to confirm synchronization in these data. Similar to the LD conditions 
+PCA analysis to confirm synchronization in these data. Similar to the LD condition 
 the transcriptomes corresponding to the same data points from different days 
 cluster together emerging a circular structure unveiling rhythmic gene expression.   
 
-```{r pca_nd}
+```{r pca_nd, warning=FALSE}
 nd.gene.expression <- as.matrix(read.table(file ="nd_gene_expression.tsv",header=T,sep="\t",as.is=T))
 head(nd.gene.expression[,1:7])
 
@@ -222,143 +227,145 @@ fviz_pca_ind(res.pca.nd, col.ind = c("ZT00", "ZT00", "ZT00", "ZT03", "ZT03", "ZT
 
 ```
 
-## **Analysis of the rhythmicity in the transcriptome of Ostreococcus tauri under
-different photoperids**
+## **Analysis of the rhythmicity in the transcriptome of Ostreococcus tauri under different photoperids**
 
-### **Identification of genes exhibiting rhythmic expression patterns under different 
-photoperiods**
+### **Identification of genes exhibiting rhythmic expression patterns under different photoperiods**
 
 Using the bioconductor library **RAIN (Rhythmicity Analysis Incorporating Nonparametric 
 methods)** we identified genes exhibiting periodic or rhythmic expression patterns 
-under the different photoperiods. A p-value of 0.05 was used in all the analysis. 
-Simple rhythmic expression patterns consisting of a single expression peak were 
-identified by searching for patterns with a period of 24 hours. More complex 
-rhythmic gene expression patterns such as genes presenting two or three peaks in 
-a single day were searched by fixing periods of 12 and 8 hours. 
+under the different photoperiods. 
 
-```{r ld_rain}
+```{r ld_rain_12h, eval=FALSE}
+
 library(rain)
 
-results.ld <- rain(t(ld.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=3)
-sum(results.ld$pVal < 0.05)/number.genes
-rhythmic.genes.ld <- rownames(subset(results.ld, pVal < 0.05))
-length(rhythmic.genes.ld)
-
-results.ld.12 <- rain(t(ld.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=3)
-sum(results.ld.12$pVal < 0.05)/number.genes
-rhythmic.genes.ld.12 <- rownames(subset(results.ld.12, pVal < 0.05))
-length(rhythmic.genes.ld.12)
-
-complete.ld.rhythmic.genes <- unique(c(rhythmic.genes.ld,rhythmic.genes.ld.12))
-length(complete.ld.rhythmic.genes)/number.genes
-
-non.rhythmic.ld.genes <- setdiff(ostta.genes,complete.ld.rhythmic.genes)
-length(non.rhythmic.ld.genes)
-length(non.rhythmic.ld.genes)/number.genes
-
-length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12))
-length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12))/number.genes
-
-results.ld.8 <- rain(t(ld.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
-sum(results.ld.8$pVal < 0.05)/number.genes
-
-write.table(x = subset(gene.annotation, geneID %in% complete.ld.rhythmic.genes),file="gene_sets/LD_rhythmic_genes.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.ld.genes),file="gene_sets/LD_non_rhythmic_genes.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12)),file="gene_sets/LD_rhythmic_genes_1_peak.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.ld.12),file="gene_sets/LD_rhythmic_genes_2_peaks.tsv",row.names = F)
 ```
 
-Under LD conditions we found that 6201 genes constituting 80.87% of the *Ostreococcus 
-tauri* genome exhibit diurnal rhythmic expression patterns. Most of these genes, 
-5825 genes covering 75.97% of the entire genome presented a simple rhythmic expression 
+A p-value of 0.05 was used in all the analysis. Simple rhythmic expression patterns consisting of a single expression peak were identified by searching for patterns with a period of 24 hours. 
+
+```{r ld_rain}
+
+results.ld <- rain(t(ld.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 24h rhythmic profile under LD condition")
+sum(results.ld$pVal < 0.05)/number.genes
+
+rhythmic.genes.ld <- rownames(subset(results.ld, pVal < 0.05))
+print("Number of genes presenting a 24h rhythmic profile under LD condition")
+length(rhythmic.genes.ld)
+
+```
+
+More complex rhythmic gene expression patterns such as genes presenting two or three peaks in 
+a single day were searched by fixing periods of 12 and 8 hours. 
+
+```{r ld_rain_12h}
+
+results.ld.12 <- rain(t(ld.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 12h rhythmic profile LD condition")
+sum(results.ld.12$pVal < 0.05)/number.genes
+rhythmic.genes.ld.12 <- rownames(subset(results.ld.12, pVal < 0.05))
+print("Number of genes presenting a 12h rhythmic profile LD condition")
+length(rhythmic.genes.ld.12)
+
+results.ld.8 <- rain(t(ld.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 8h rhythmic profile LD condition")
+sum(results.ld.8$pVal < 0.05)/number.genes
+rhythmic.genes.ld.8 <- rownames(subset(results.ld.8, pVal < 0.05))
+print("Number of genes presenting a 8h rhythmic profile LD condition")
+length(rhythmic.genes.ld.8)
+
+```
+
+Under LD condition we found that 6201 genes constituting 80.87% of the *Ostreococcus 
+tauri* genome exhibit diurnal rhythmic expression patterns. 
+
+```{r ld_rain}
+
+complete.ld.rhythmic.genes <- unique(c(rhythmic.genes.ld,rhythmic.genes.ld.12))
+print("Total percentage of genes presenting a rhythmic profile under LD condition, including 12h and 24h period profiles")
+length(complete.ld.rhythmic.genes)/number.genes
+print("Total number of genes presenting a rhythmic profile under LD condition, including 12h and 24h period profiles")
+length(complete.ld.rhythmic.genes)
+
+
+non.rhythmic.ld.genes <- setdiff(ostta.genes,complete.ld.rhythmic.genes)
+print("Percentage of genes that do not present a rhythmic expression profile under LD condition")
+length(non.rhythmic.ld.genes)/number.genes
+print("Number of genes that do not present a rhythmic expression profile under LD condition")
+length(non.rhythmic.ld.genes)
+
+
+```
+
+Most of these genes, 5825 genes covering 75.97% of the entire genome presented a simple rhythmic expression 
 pattern with a 24 hours period and a single expression peak. Only 376 genes presented 
 a more complex rhythmic expression pattern presenting two expression peaks with 
 an apparent period of 12 hours in a single day. The number of genes with expression 
 patterns presenting three peaks in a single day with an apparent period of 8 hours 
 was negligible, 81 genes representing less than 1% of the genome. We also identified 
 1467 genes comprising 19.13% of genome that did not present a detectable rhythmic 
-expression pattern.      
+expression pattern.   
+We saved in *tsv* files the different set of genes obtained.
 
-```{r nd_rain}
-results.nd <- rain(t(nd.gene.expression), deltat=3, period=24, verbose=FALSE, nr.series=3)
-sum(results.nd$pVal < 0.05)/number.genes
-rhythmic.genes.nd <- intersect(rownames(subset(results.nd, pVal < 0.05)),ostta.genes)
-length(rhythmic.genes.nd)
+```{r ld_rain, eval=FALSE}
 
-results.nd.12 <- rain(t(nd.gene.expression), deltat=3, period=12, verbose=FALSE, nr.series=3)
-sum(results.nd.12$pVal < 0.05)/number.genes
-rhythmic.genes.nd.12 <- rownames(subset(results.nd.12, pVal < 0.05))
-length(rhythmic.genes.nd.12)
+#write.table(x = subset(gene.annotation, geneID %in% complete.ld.rhythmic.genes),file="gene_sets/LD_rhythmic_genes.tsv",row.names = F)
 
-complete.nd.rhythmic.genes <- unique(c(rhythmic.genes.nd,rhythmic.genes.nd.12))
-length(complete.nd.rhythmic.genes)
-length(complete.nd.rhythmic.genes)/number.genes
+#write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.ld.genes),file="gene_sets/LD_non_rhythmic_genes.tsv",row.names = F)
 
-non.rhythmic.nd.genes <- setdiff(ostta.genes,complete.nd.rhythmic.genes)
-length(non.rhythmic.nd.genes)
+#write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12)),file="gene_sets/LD_rhythmic_genes_1_peak.tsv",row.names = F)
 
-length(setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12))
-length(setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12))/number.genes
+#write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.ld.12),file="gene_sets/LD_rhythmic_genes_2_peaks.tsv",row.names = F)
 
-results.nd.8 <- rain(t(nd.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
-sum(results.nd.8$pVal < 0.05)/number.genes
-
-write.table(x = subset(gene.annotation, geneID %in% complete.nd.rhythmic.genes),file="gene_sets/ND_rhythmic_genes.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.nd.genes),file="gene_sets/ND_non_rhythmic_genes.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12)),file="gene_sets/ND_rhythmic_genes_1_peak.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.nd.12),file="gene_sets/ND_rhythmic_genes_2_peaks.tsv",row.names = F)
 ```
 
-Under ND conditions we found that 6372 genes constituting 83.1% of the *Ostreococcus
-tauri* genome exhibit diurnal rhythmic expression patterns. Most of these genes, 
-5201 genes covering 67.82%% of the entire genome presented a simple rhythmic 
-expression pattern with a 24 hours period and a single expression peak. An increasing 
-number of genes, namely 1171 genes, presented a more complex rhythmic expression 
-pattern cycling twice in a day presenting two expression peaks with an apparent 
-period of 12 hours. The number of genes with expression patterns cycling three 
-times in a day with an apparent period of 8 hours was negligible, 61 genes 
-representing less than 1% of the genome. We also identified 1274 genes comprising 
-16.61% of genome that did not present a detectable rhythmic expression pattern.
+
+The same rhythmicity analysis is repeated with the transcriptomic data corresponding to SD condition.
 
 ```{r sd_rain}
 results.sd <- rain(t(sd.gene.expression), deltat=4, period=24, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 24h rhythmic profile under SD condition")
 sum(results.sd$pVal < 0.05)/number.genes
 rhythmic.genes.sd <- rownames(subset(results.sd, pVal < 0.05))
+print("Number of genes presenting a 24h rhythmic profile under SD condition")
 length(rhythmic.genes.sd)
 
 results.sd.12 <- rain(t(sd.gene.expression), deltat=4, period=12, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 12h rhythmic profile under SD condition")
 sum(results.sd.12$pVal < 0.05)/number.genes
 rhythmic.genes.sd.12 <- rownames(subset(results.sd.12, pVal < 0.05))
+print("Number of genes presenting a 12h rhythmic profile under SD condition")
 length(rhythmic.genes.sd.12)
 
-complete.sd.rhythmic.genes <- unique(c(rhythmic.genes.sd,rhythmic.genes.sd.12))
-length(complete.sd.rhythmic.genes)
-length(complete.sd.rhythmic.genes)/number.genes
-
-non.rhythmic.sd.genes <- setdiff(ostta.genes,complete.sd.rhythmic.genes)
-length(non.rhythmic.sd.genes)
-length(non.rhythmic.sd.genes)/number.genes
-
 results.sd.8 <- rain(t(sd.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
+print("Number of genes presenting a 8h rhythmic profile under SD condition")
 sum(results.sd.8$pVal < 0.05)
+print("Percentage of genes presenting a 8h rhythmic profile under SD condition")
 sum(results.sd.8$pVal < 0.05)/number.genes
 
-write.table(x = subset(gene.annotation, geneID %in% complete.sd.rhythmic.genes),file="gene_sets/SD_rhythmic_genes.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.sd.genes),file="gene_sets/SD_non_rhythmic_genes.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.sd,rhythmic.genes.sd.12)),file="gene_sets/SD_rhythmic_genes_1_peak.tsv",row.names = F)
-
-write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.sd.12),file="gene_sets/SD_rhythmic_genes_2_peaks.tsv",row.names = F)
 ```
 
-Under SD conditions we found that 6104 genes constituting 79.6% of the *Ostreococcus 
+The complete set of genes presenting rhythmic expression profiles under SD condition is obtained by the unification of 
+24h and 12h period profiles, as it was achieved in LD analysis.
+
+```{r }
+
+complete.sd.rhythmic.genes <- unique(c(rhythmic.genes.sd,rhythmic.genes.sd.12))
+print("Total percentage of genes presenting a rhythmic profile under SD condition, including 12h and 24h period profiles")
+length(complete.sd.rhythmic.genes)/number.genes
+print("Total number of genes presenting a rhythmic profile under SD condition, including 12h and 24h period profiles")
+length(complete.sd.rhythmic.genes)
+
+
+non.rhythmic.sd.genes <- setdiff(ostta.genes,complete.sd.rhythmic.genes)
+print("Percentage of genes that do not present a rhythmic expression profile under SD condition")
+length(non.rhythmic.sd.genes)/number.genes
+print("Number of genes that do not present a rhythmic expression profile under SD condition")
+length(non.rhythmic.sd.genes)
+
+```
+
+Under SD condition we found that 6104 genes constituting 79.6% of the *Ostreococcus 
 tauri* genome exhibit diurnal cycling expression patterns. A substantially reduced 
 number of these genes, 4249 genes covering 55.41%% of the entire genome presented 
 a simple rhythmic expression pattern with a 24 hours period and a single expression 
@@ -370,6 +377,88 @@ cycling three times in a day with an apparent period of 8 hours was negligible,
 comprising 20.41% of genome that did not present a detectable rhythmic expression 
 pattern.
 
+The different set of genes obtained are saved in *tsv* files.
+
+```{r, eval=FALSE}
+
+# write.table(x = subset(gene.annotation, geneID %in% complete.sd.rhythmic.genes),file="gene_sets/SD_rhythmic_genes.tsv",row.names = F)
+# 
+# write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.sd.genes),file="gene_sets/SD_non_rhythmic_genes.tsv",row.names = F)
+# 
+# write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.sd,rhythmic.genes.sd.12)),file="gene_sets/SD_rhythmic_genes_1_peak.tsv",row.names = F)
+# 
+# write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.sd.12),file="gene_sets/SD_rhythmic_genes_2_peaks.tsv",row.names = F)
+
+```
+
+
+In order to get a more complete interpretation of different photoperiods and 
+seasonality in our study we achive the same rhythmicity analysis with previously published microarrays data 
+generated under neutral day (ND) conditions 12h light : 12h dark.
+
+```{r nd_rain}
+results.nd <- rain(t(nd.gene.expression), deltat=3, period=24, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 24h rhythmic profile under ND conditions")
+sum(results.nd$pVal < 0.05)/number.genes
+rhythmic.genes.nd <- intersect(rownames(subset(results.nd, pVal < 0.05)),ostta.genes)
+print("Number of genes presenting a 24h rhythmic profile under ND conditions")
+length(rhythmic.genes.nd)
+
+results.nd.12 <- rain(t(nd.gene.expression), deltat=3, period=12, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 12h rhythmic profile under ND conditions")
+sum(results.nd.12$pVal < 0.05)/number.genes
+rhythmic.genes.nd.12 <- rownames(subset(results.nd.12, pVal < 0.05))
+print("Number of genes presenting a 12h rhythmic profile under ND conditions")
+length(rhythmic.genes.nd.12)
+
+results.nd.8 <- rain(t(nd.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
+print("Percentage of genes presenting a 8h rhythmic profile under ND conditions")
+sum(results.nd.8$pVal < 0.05)/number.genes
+rhythmic.genes.nd.8 <- rownames(subset(results.nd.8, pVal < 0.05))
+print("Number of genes presenting a 8h rhythmic profile under ND conditions")
+length(rhythmic.genes.nd.8)
+
+complete.nd.rhythmic.genes <- unique(c(rhythmic.genes.nd,rhythmic.genes.nd.12))
+print("Total number of genes presenting a rhythmic profile under ND conditions, including 12h and 24h period profiles")
+length(complete.nd.rhythmic.genes)
+print("Total percentage of genes presenting a rhythmic profile under ND conditions, including 12h and 24h period profiles")
+length(complete.nd.rhythmic.genes)/number.genes
+
+non.rhythmic.nd.genes <- setdiff(ostta.genes,complete.nd.rhythmic.genes)
+print("Number of genes that do not present a rhythmic expression profile under ND condition")
+length(non.rhythmic.nd.genes)
+print("Percentage of genes that do not present a rhythmic expression profile under ND condition")
+length(non.rhythmic.nd.genes)/number.genes
+
+```
+
+Under ND condition we found that 6372 genes constituting 83.1% of the *Ostreococcus
+tauri* genome exhibit diurnal rhythmic expression patterns. Most of these genes, 
+5201 genes covering 67.82%% of the entire genome presented a simple rhythmic 
+expression pattern with a 24 hours period and a single expression peak. There were 1171 genes
+presenting a more complex rhythmic expression pattern cycling twice in a day presenting two expression peaks with an apparent period of 12 hours under ND condition, which is in between the number obtained in LD and SD.
+The number of genes with expression patterns cycling three times in a day with an apparent period of 8 hours was negligible, 61 genes representing less than 1% of the genome. We also identified 1274 genes comprising 
+16.61% of genome that did not present a detectable rhythmic expression pattern.
+
+The different set of genes obtained are saved in *tsv* files.
+
+```{r, eval=F}
+# write.table(x = subset(gene.annotation, geneID %in% complete.nd.rhythmic.genes),file="gene_sets/ND_rhythmic_genes.tsv",row.names = F)
+# 
+# write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.nd.genes),file="gene_sets/ND_non_rhythmic_genes.tsv",row.names = F)
+# 
+# write.table(x = subset(gene.annotation, geneID %in% setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12)),file="gene_sets/ND_rhythmic_genes_1_peak.tsv",row.names = F)
+# 
+# write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.nd.12),file="gene_sets/ND_rhythmic_genes_2_peaks.tsv",row.names = F)
+```
+
+
+In order to probe that the existence of genes exhibiting complex rhythmic expression patterns consisting 
+of two peaks over a complete day is present in the transcriptome of other microalgae 
+not being restricted only to *Ostreococcus*. We reanalyzed previously published 
+RNA-seq data generated in *Chlamydomonas* under ND condition and found that 2190 
+genes comprising 14.02% of the entire genome exhibit two expression peaks per day 
+with an apparent period of 12 hours.
 
 ```{r creinhardtii_two_peaks}
 expression.level <- read.table(file = "creinhardtii_expression_level.txt",header=T,as.is=T)
@@ -378,17 +467,15 @@ cre.expression <- as.matrix(expression.level[,2:ncol(expression.level)])
 rownames(cre.expression) <- expression.level$gene
 
 results.cre <- rain(t(cre.expression), deltat=3, period=12, verbose=FALSE, nr.series=2)
+print("Percentage of genes presenting a 12h rhythmic profile under ND condition in Chalmydomonas")
 sum(results.cre$pVal < 0.05)/nrow(cre.expression)
 rhythmic.genes.cre.12 <- rownames(subset(results.cre, pVal < 0.05))
+print("Number of genes presenting a 12h rhythmic profile under ND condition in Chlamydomonas")
 length(rhythmic.genes.cre.12)
 ```
 
-The existence of genes exhibiting complex rhythmic expression patterns consisting 
-of two peaks over a complete day is present in the transcriptome of other microalgae 
-not being restricted only to Ostreococcus. We reanalyzed previously published 
-RNA-seq data generated in Chlamydomonas under ND conditions and found that 2190 
-genes comprising 14.02% of the entire genome exhibit two expression peaks per day 
-with an apparent period of 12 hours.
+The differences between the different photoperiods analyzed can be observed clearly in a barplot
+that summarizes our results.
 
 ```{r rhythmic_barplot}
 data <- matrix(c(length(rhythmic.genes.ld.12),length(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12)),length(non.rhythmic.ld.genes),
@@ -400,7 +487,8 @@ barplot(data, lwd=2, names.arg = c("LD","ND","SD"),cex.names = 2,cex.axis = 1.5,
         border="black", 
         space=0.25, 
         font.axis=2, 
-        xlab="",ylim=c(0,8000))
+        xlab="",ylim=c(0,15000))
+legend("topright",legend = c("Non-rhythmic", "24h period", "12h period"), col= colors()[c(12,89,23)], pch=15)
 ```
 
 We observed that practically the same number of genes are identified as rhythmic 
@@ -411,24 +499,36 @@ a day increases as the photoperiod shortens whereas the number of genes with a
 single peak in a day decreases. Furthermore, the number of genes that did not exhibit 
 a diurnal rhythmic pattern was similar under the three different photoperiods. 
 
+A Venn diagram was used to compare rhythmically expressed genes under LD, ND and SD conditions.
+In order to generate the Venn diagram, the *VennDiagram* package must be loaded. 
 
-```{r ld_nd_sd_rhythmic_genes}
+```{r, eval=FALSE}
 library(VennDiagram)
+```
+
+Then, the function *draw.triple.venn* is used, since three different set of genes are represented.
+
+```{r ld_nd_sd_rhythmic_genes, warning=FALSE}
 grid.newpage()
 draw.triple.venn(area1 = length(complete.ld.rhythmic.genes),area2 = length(complete.sd.rhythmic.genes),area3 = length(complete.nd.rhythmic.genes),n12 = length(intersect(complete.ld.rhythmic.genes,complete.sd.rhythmic.genes)),n23 = length(intersect(complete.sd.rhythmic.genes,complete.nd.rhythmic.genes)), n13 = length(intersect(complete.ld.rhythmic.genes,complete.nd.rhythmic.genes)), n123 = length(intersect(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes),complete.nd.rhythmic.genes)),lwd = 3,category = c("LD","SD","ND"),euler.d = T,col = c("blue","red","darkgrey"),fill = c(" blue","red","darkgrey"),alpha = 0.3,cex = 2,cat.cex = 2)
-
-length(intersect(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes),complete.nd.rhythmic.genes))
-
-length(intersect(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes),complete.nd.rhythmic.genes))/number.genes
 ```
 
 When comparing rhythmically expressed genes under LD, ND and SD conditions we found 
 that 4589 genes comprising 59.84% of the genome exhibit rhythmic expression patterns. 
 Whereas only a few hundreds genes only presented a cycling expression pattern under 
-a specific photoperiod. In order to further explore the differences between rhythmic 
-and non rhythmic genes we compared their expression level under LD and SD conditions. 
-We restrict our analysis to these two conditions since here expression levels are 
-estimated using the same technology namely RNA-seq whereas for ND microarrays were used. 
+a specific photoperiod. 
+
+```{r}
+print("Percentage of genes presenting a rhythmic profile under LD, SD and ND condition")
+length(intersect(intersect(complete.sd.rhythmic.genes,complete.ld.rhythmic.genes),
+                 complete.nd.rhythmic.genes))/number.genes
+print("Number of genes presenting a rhythmic profile under LD, SD and ND condition")
+length(intersect(intersect(complete.sd.rhythmic.genes, complete.ld.rhythmic.genes),complete.nd.rhythmic.genes))
+```
+
+In order to further explore the differences between rhythmic 
+and non rhythmic genes, their expression level must be compared. Consequently, the methodology used to estimate the expression level is relevant from this point. Since our SD and LD analysis are estimated using the same technology, we restricted our following analysis to these two conditions.
+
 
 ```{r ld_sd_rhythmic_genes}
 grid.newpage()
@@ -523,12 +623,12 @@ length(setdiff(complete.ld.rhythmic.genes,complete.ld.ll.rhythmic.genes))
 write.table(x = subset(gene.annotation, geneID %in% complete.ld.ll.rhythmic.genes),file="gene_sets/LD_LL_rhythmic_genes.tsv",row.names = F)
 ```
 
-We found that 45.22% of the genes identified previously as rhythmic under LD conditions 
+We found that 45.22% of the genes identified previously as rhythmic under LD condition 
 still presented cycling expression patterns when transferred to free running 
 conditions consisting of constant light (LL). Specifically, we identified 2804 genes 
 comprising 36.57% of the entire genome that maintain rhythmicity under constant 
-light after entrainment in LD conditions. The 3397 remaining genes cycling under 
-LD conditions presented either a flat or noisy expression profile under LL conditions.      
+light after entrainment in LD condition. The 3397 remaining genes cycling under 
+LD condition presented either a flat or noisy expression profile under LL conditions.      
 
 ```{r ld_dd_rain}
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -574,7 +674,7 @@ length(rhythmic.genes.ld.12)
 write.table(x = subset(gene.annotation, geneID %in% complete.ld.dd.rhythmic.genes),file="gene_sets/LD_DD_rhythmic_genes.tsv",row.names = F)
 ```
 
-We found that 53.39% of the genes identified previously as rhythmic under LD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 3311 genes under DD conditions comprising 53.39% of the entire genome that maintain rhythmicity under constant darkness after entrainment in LD conditions. The 2890 remaining genes cycling under LD conditions presented either a flat or noisy expression profile under DD conditions.      
+We found that 53.39% of the genes identified previously as rhythmic under LD condition still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 3311 genes under DD conditions comprising 53.39% of the entire genome that maintain rhythmicity under constant darkness after entrainment in LD condition. The 2890 remaining genes cycling under LD condition presented either a flat or noisy expression profile under DD conditions.      
 
 
 ```{r ld_rhytmic_ll_dd}
@@ -719,7 +819,7 @@ barplot(data.ld.ll.dd, lwd=2, names.arg = "",cex.names = 2,cex.axis = 1.5,
 
 ```
 
-Unlike the analysis for LD conditions, we found that only 25% of the genes identified previously as rhythmic under SD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant light. Specifically, we only identified 1526 circadian genes under SD conditions comprising 19.9% of the entire genome. When comparing circadian genes under LD and SD conditions we found that most circadian genes in SD conditions are also circadian under LD conditions. Nonetheless, 2129 circadian genes were specific under LD conditions. This suggests that rhythmic expression under SD conditions is very dependent on the presence of a long period of dark whereas rhythmic expression under LD conditions due to the presence of a short period of dark is better maintained under continuous light.        
+Unlike the analysis for LD condition, we found that only 25% of the genes identified previously as rhythmic under SD condition still presented cycling expression patterns when transferred to free running conditions consisting of constant light. Specifically, we only identified 1526 circadian genes under SD condition comprising 19.9% of the entire genome. When comparing circadian genes under LD and SD conditions we found that most circadian genes in SD condition are also circadian under LD condition. Nonetheless, 2129 circadian genes were specific under LD condition. This suggests that rhythmic expression under SD condition is very dependent on the presence of a long period of dark whereas rhythmic expression under LD condition due to the presence of a short period of dark is better maintained under continuous light.        
 
 
 ```{r sd_dd_rain}
@@ -765,7 +865,7 @@ length(setdiff(complete.sd.rhythmic.genes,complete.sd.dd.rhythmic.genes))
 non.rhythmic.sd.dd.genes <- setdiff(complete.sd.rhythmic.genes, complete.sd.dd.rhythmic.genes)
 ```
 
-We found that 65.63% of the genes identified previously as rhythmic under SD conditions still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 4006 circadian genes under SD conditions comprising 52.24% of the entire genome. The 2098 remaining genes cycling under SD conditions presented either a flat or noisy expression profile under DD conditions.   
+We found that 65.63% of the genes identified previously as rhythmic under SD condition still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 4006 circadian genes under SD condition comprising 52.24% of the entire genome. The 2098 remaining genes cycling under SD condition presented either a flat or noisy expression profile under DD conditions.   
 
 ```{r sd_rhytmic_ll_dd}
 rhythmic.sd.ll.dd <- intersect(complete.sd.dd.rhythmic.genes,complete.sd.ll.rhythmic.genes)
@@ -1005,7 +1105,7 @@ sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)
 sum(circacompare.ld.ll[,"P-value for difference in phase" ] < 0.05)/length(complete.ld.ll.rhythmic.genes)
 ```
 
-Most circadian genes under LD conditions, 97.68%, presented a sharp decrease in amplitude when transferred to LL, being significant in more than half of them with p-value < 0.05. We also observed an increase in phase in 76.28% of the genes being significant in 14.98% of the genes exhibiting rhythmicity under constant light. Nevertheless, no clear effect was observed over the mesor that remained in LL similar to the values in LD. 
+Most circadian genes under LD condition, 97.68%, presented a sharp decrease in amplitude when transferred to LL, being significant in more than half of them with p-value < 0.05. We also observed an increase in phase in 76.28% of the genes being significant in 14.98% of the genes exhibiting rhythmicity under constant light. Nevertheless, no clear effect was observed over the mesor that remained in LL similar to the values in LD. 
 
 ```{r ld_dd_amplitude_mesor_phase}
 ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -1052,7 +1152,7 @@ sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)
 sum(circacompare.ld.dd[,"P-value for difference in phase" ] < 0.05)/length(complete.ld.dd.rhythmic.genes)
 ```
 
-Most circadian genes under LD conditions, 79.43%, presented a sharp decrease in amplitude when transferred to DD, being significant in 31.62% of the genes exhibiting rythmicity under DD with p-value < 0.05. In contrast to the case under constant light we observed a decrease in phase under constant darkness. Specifically, 87.32% of the rhythmic genes under DD presented an anticipation in phase that was significant in 34.16% of them. No clear effect was observed over the mesor of gene expression profiles that remained in DD similar to the values in LD. 
+Most circadian genes under LD condition, 79.43%, presented a sharp decrease in amplitude when transferred to DD, being significant in 31.62% of the genes exhibiting rythmicity under DD with p-value < 0.05. In contrast to the case under constant light we observed a decrease in phase under constant darkness. Specifically, 87.32% of the rhythmic genes under DD presented an anticipation in phase that was significant in 34.16% of them. No clear effect was observed over the mesor of gene expression profiles that remained in DD similar to the values in LD. 
 
 ```{r boxplots_ld_ll_dd_amplitude_mesor}
 par(lwd=3)
@@ -1083,7 +1183,7 @@ This suggests a larger lost of synchrony under LL when compared to DD.
 In contrast no largely significant change was observed in the mesor of the rhythmic
 gene expression patterns under LD, LL and DD. 
 
-Next we perform the analysis of the effect over the rhythmic genes under SD conditions when transferred to constant ligth. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
+Next we perform the analysis of the effect over the rhythmic genes under SD condition when transferred to constant ligth. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
 
 ```{r sd_ll_amplitude_mesor_phase}
 sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -1200,7 +1300,7 @@ The drastic global reduction in amplitude under LL when compared to SD is signif
 with a p-value 5.951216e-65. In contrast to what was observed after LD entrainment
 a slight but significant increase in amplitude under DD was detected when compared to
 SD with a p-value of 2.502664e-08. This suggests a slight increase in synchrony under DD
-in cultures entrained in SD conditions. 
+in cultures entrained in SD condition. 
 
 Although no significant change was observed between the mesor of the rhythmic gene 
 expression patterns under SD and LL a slight yet significan decrease was observed 
@@ -2238,7 +2338,7 @@ length(non.rhythmic.sd.genes)
 In order to explore the effect of the transition to continuous light on rhythmic gene expression patterns we compared three rhythmic characteristics of the expression profiles under LD or SD to the corresponding ones under LL. Specifically we compared amplitude or half of the difference between the peak and trough of the expression profile; mesor or mean expression level around which the expression profile oscillates and phase or time at which the expression profile peaks. This was carried out using the R package circacompare that performs a fitting to the data as cosinusoidal curve with a particular parametrization that is used to test for statistical significant differences between the two circadian patterns under comparison. 
 
 
-Next we perform the analysis for circadian genes under SD conditions. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
+Next we perform the analysis for circadian genes under SD condition. It is important to notice that the results of circacompare sorts the samples in alphabetical order. Specifically, the LL conditions is first and SD condition is second. Therefore, to check for a decrease in amplitude in LL with respect to SD we have to check for positive values.
 
 ```{r sd_ll_amplitude_mesor_phase}
 sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -2279,7 +2379,7 @@ sum(circacompare.sd.ll[,"P-value for mesor difference" ] < 0.05)/length(complete
 
 sum(circacompare.sd.ll[,"P-value for difference in phase" ] < 0.05)
 ```
-Similar to the results under LD conditons, we observed that most circadian genes under SD conditions, 93.11%, presented a sharp decrease in amplitude when transferred to LL, being significant in almost half of them with p-value < 0.05. Nevertheless, no clear effect was observed over the mesor or phase of gene expression profiles that remained in LL similar to the values in SD. 
+Similar to the results under LD conditons, we observed that most circadian genes under SD condition, 93.11%, presented a sharp decrease in amplitude when transferred to LL, being significant in almost half of them with p-value < 0.05. Nevertheless, no clear effect was observed over the mesor or phase of gene expression profiles that remained in LL similar to the values in SD. 
 
 The observed drastic reduction in amplitude together with the conservation in mesor and phase of the rhythmic gene expression profiles when transferred from LD or SD to LL conditions could be explained by two different scenarios. Under LD and SD conditions the entire cell culture is highly synchronous with most cells presenting coordinated rhythmic gene expression profiles. The transition to continuous light could produce the cell culture to become asynchronous. Individual cells would still be presenting an almost completely rhythmic transcriptome with a conservation in amplitude and mesor but out of phase with respect to the other cells in the culture. Since our data only capture the average transcriptomic state of the entire culture we observe a decrease in amplitude but a conservation in mesor and phase. In the other plausible scenario the entire cell culture would remain synchronous and the continuous light condition would produce an actual reduction in amplitude reflecting a deterioration in individual cell rhythmic transcriptomes. In a third possible scenario a combination of the two previous scenarios would take place. In order to discriminate between these possible scenarios for each individual gene single cell RNA-seq data would be required.    
 
@@ -8037,12 +8137,12 @@ Starch content was rhythmic under both LD and SD conditions with p-values of
 1.2 x 10-4 and 1.4 x 10-4 respectively. 
 
 
-SD starch content was significantly lower than under LD conditions with 
+SD starch content was significantly lower than under LD condition with 
 a p-value of 1.7 x 10-5. SD starch content oscillates around 29.04 % whereas under
-LD conditions 33.45 %. 
+LD condition 33.45 %. 
 
 A significant phase shift of almost 5 hours is detected as a response to photoperiod
-shortening under SD with respect to LD with a p-value of 7.14 x 10-5. Under LD conditions
+shortening under SD with respect to LD with a p-value of 7.14 x 10-5. Under LD condition
 phase or the time of highest starch content was detected at around ZT4 whereas under LD
 condtions it was estimated to be at around ZT9. 
 
