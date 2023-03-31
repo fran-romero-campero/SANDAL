@@ -672,6 +672,9 @@ length(rhythmic.genes.ld.dd.12)
 length(rhythmic.genes.ld.12)
 
 write.table(x = subset(gene.annotation, geneID %in% complete.ld.dd.rhythmic.genes),file="gene_sets/LD_DD_rhythmic_genes.tsv",row.names = F)
+
+
+
 ```
 
 We found that 53.39% of the genes identified previously as rhythmic under LD condition still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 3311 genes under DD conditions comprising 53.39% of the entire genome that maintain rhythmicity under constant darkness after entrainment in LD condition. The 2890 remaining genes cycling under LD condition presented either a flat or noisy expression profile under DD conditions.      
@@ -701,17 +704,17 @@ write.table(x = subset(gene.annotation, geneID %in% rhythmic.only.ll.or.dd),file
 
 ld.rhythmic.only.ll <- setdiff(complete.ld.ll.rhythmic.genes,rhythmic.ld.ll.dd)
 length(ld.rhythmic.only.ll)
-write.table(x = ld.rhythmic.only.ll, file="gene_sets/LD_and_LL_rhythmic_genes.tsv",row.names = F)
+write.table(x = subset(gene.annotation, geneID %in% ld.rhythmic.only.ll), file="gene_sets/LD_and_LL_rhythmic_genes.tsv",row.names = F)
 
 ld.rhythmic.only.dd <- setdiff(complete.ld.dd.rhythmic.genes,rhythmic.ld.ll.dd)
 length(ld.rhythmic.only.dd)
-write.table(x = ld.rhythmic.only.dd, file="gene_sets/LD_and_DD_rhythmic_genes.tsv",row.names = F)
+write.table(x = subset(gene.annotation, geneID %in% ld.rhythmic.only.dd), file="gene_sets/LD_and_DD_rhythmic_genes.tsv",row.names = F)
 
 
 length(intersect(non.rhythmic.ld.ll.genes, non.rhythmic.ld.dd.genes))
 non.rhythmic.ld.ll.dd.genes <- intersect(non.rhythmic.ld.ll.genes, non.rhythmic.ld.dd.genes)
 length(non.rhythmic.ld.ll.dd.genes)/number.genes
-write.table(x = non.rhythmic.ld.ll.dd.genes, file="gene_sets/LD_LL_and_DD_non_rhythmic_genes.tsv",row.names = F)
+write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.ld.ll.dd.genes), file="gene_sets/only_LD_rhythmic_genes.tsv",row.names = F)
 ```
 
 Integrating the results from the two free running conditions analysed in this study, namely, constant light and constant dark we identified 1647 genes whose rhythmicity is independent from the alternating light/dark cycles after LD entrainment. These genes can be referred to as bona fide circadian genes after LD entrainment.
@@ -892,15 +895,15 @@ write.table(x = subset(gene.annotation, geneID %in% rhythmic.only.ll.or.dd),file
 
 sd.rhythmic.only.ll <- setdiff(complete.sd.ll.rhythmic.genes,rhythmic.sd.ll.dd)
 length(sd.rhythmic.only.ll)
-write.table(x = sd.rhythmic.only.ll, file="gene_sets/SD_and_LL_rhythmic_genes.tsv",row.names = F)
+write.table(x = subset(gene.annotation, geneID %in% sd.rhythmic.only.ll), file="gene_sets/SD_and_LL_rhythmic_genes.tsv",row.names = F)
 
 sd.rhythmic.only.dd <- setdiff(complete.sd.dd.rhythmic.genes,rhythmic.sd.ll.dd)
 length(sd.rhythmic.only.dd)
-write.table(x = sd.rhythmic.only.dd, file="gene_sets/SD_and_DD_rhythmic_genes.tsv",row.names = F)
+write.table(x = subset(gene.annotation, geneID %in% sd.rhythmic.only.dd), file="gene_sets/SD_and_DD_rhythmic_genes.tsv",row.names = F)
 
 length(intersect(non.rhythmic.sd.ll.genes, non.rhythmic.sd.dd.genes))
 non.rhythmic.sd.ll.dd.genes <- intersect(non.rhythmic.sd.ll.genes, non.rhythmic.sd.dd.genes)
-write.table(x = non.rhythmic.sd.ll.dd.genes, file="gene_sets/SD_LL_and_DD_non_rhythmic_genes.tsv",row.names = F)
+write.table(x = subset(gene.annotation, geneID %in% non.rhythmic.sd.ll.dd.genes), file="gene_sets/only_SD_rhythmic_genes.tsv",row.names = F)
 
 ```
 
