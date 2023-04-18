@@ -3049,8 +3049,11 @@ for(i in 1:length(genes))
 }
 
 circa.rhythmic.ld <- genes[circacompare.ld.ll[,1] < 0.05]
-circa.rhythmic.ld.ll <- intersect(rhythmic.ld, genes[circacompare.ld.ll[,2] < 0.05])
 length(circa.rhythmic.ld)
+circa.non.rhythmic.ld <- setdiff(genes,circa.rhythmic.ld)
+
+
+circa.rhythmic.ld.ll <- intersect(circa.rhythmic.ld, genes[circacompare.ld.ll[,2] < 0.05])
 length(circa.rhythmic.ld.ll)
 
 ## LD DD
@@ -3084,6 +3087,63 @@ circa.rhythmic.ld <- genes[circacompare.ld.dd[,2] < 0.05]
 circa.rhythmic.ld.dd <- intersect(circa.rhythmic.ld, genes[circacompare.ld.dd[,1] < 0.05])
 length(circa.rhythmic.ld)
 length(circa.rhythmic.ld.dd)
+
+circa.rhythmic.only.ld <- setdiff(circa.rhythmic.ld, unique(c(circa.rhythmic.ld.ll,circa.rhythmic.ld.dd)))
+length(circa.rhythmic.only.ld)
+circa.rhythmic.ld.only.ll <- setdiff(circa.rhythmic.ld.ll,circa.rhythmic.ld.dd)
+length(circa.rhythmic.ld.only.ll)
+circa.rhythmic.ld.only.dd <- setdiff(circa.rhythmic.ld.dd,circa.rhythmic.ld.ll)
+length(circa.rhythmic.ld.only.dd)
+circa.rhythmic.ld.ll.dd <- setdiff(circa.rhythmic.ld.ll,circa.rhythmic.ld.dd)
+length(circa.rhythmic.ld.ll.dd)
+
+
+rain.non.rhythmic.ld <- read.table(file = "gene_sets/LD_non_rhythmic_genes.tsv",header = T,as.is=T)[[1]]
+length(rain.non.rhythmic.ld)
+grid.newpage()
+draw.pairwise.venn(area1 = length(rain.rhythmic.only.ld),
+                   area2 = length(circa.rhythmic.only.ld),cross.area =  length(intersect(rain.rhythmic.only.ld,circa.rhythmic.only.ld)),lwd = 3,category = c("RAIN","CIRCA"),euler.d = T,col = c("orange","yellow"),fill = c("orange","yellow"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+rain.rhythmic.ld <- read.table(file = "gene_sets/LD_rhythmic_genes.tsv",header = T,as.is=T)[[1]]
+length(rain.rhythmic.ld)
+grid.newpage()
+draw.pairwise.venn(area1 = length(rain.rhythmic.ld),
+                   area2 = length(circa.rhythmic.ld),cross.area =  length(intersect(rain.rhythmic.ld,circa.rhythmic.ld)),lwd = 3,category = c("RAIN","CIRCA"),euler.d = T,col = c("orange","yellow"),fill = c("orange","yellow"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+
+rain.rhythmic.only.ld <- read.table(file = "gene_sets/only_LD_rhythmic_genes.tsv",header = T,as.is=T)[[1]]
+length(rain.rhythmic.only.ld)
+grid.newpage()
+draw.pairwise.venn(area1 = length(rain.non.rhythmic.ld),
+                   area2 = length(circa.non.rhythmic.ld),cross.area =  length(intersect(rain.non.rhythmic.ld,circa.non.rhythmic.ld)),lwd = 3,category = c("RAIN","CIRCA"),euler.d = T,col = c("orange","yellow"),fill = c("orange","yellow"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+
+rain.rhythmic.ld.only.ll <- read.table(file = "gene_sets/LD_and_LL_rhythmic_genes.tsv",header = T,as.is=T)[[1]]
+length(rain.rhythmic.ld.only.ll)
+grid.newpage()
+draw.pairwise.venn(area1 = length(rain.rhythmic.ld.only.ll),
+                   area2 = length(circa.rhythmic.ld.only.ll),cross.area =  length(intersect(rain.rhythmic.ld.only.ll,circa.rhythmic.ld.only.ll)),lwd = 3,category = c("RAIN","CIRCA"),euler.d = T,col = c("orange","yellow"),fill = c("orange","yellow"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+
+rain.rhythmic.ld.only.dd <- read.table(file = "gene_sets/LD_and_DD_rhythmic_genes.tsv",header = T,as.is=T)[[1]]
+length(rain.rhythmic.ld.only.dd)
+grid.newpage()
+draw.pairwise.venn(area1 = length(rain.rhythmic.ld.only.dd),
+                   area2 = length(circa.rhythmic.ld.only.dd),cross.area =  length(intersect(rain.rhythmic.ld.only.dd,circa.rhythmic.ld.only.dd)),lwd = 3,category = c("RAIN","CIRCA"),euler.d = T,col = c("orange","yellow"),fill = c("orange","yellow"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+como <- read.table(file="circa_gene_sets/circa_LD_and_DD_rhythmic_genes.tsv",header=T)[[1]]
+length(como)
+
+grid.newpage()
+draw.pairwise.venn(area1 = length(rain.rhythmic.ld.only.dd),
+                   area2 = length(como),cross.area =  length(intersect(rain.rhythmic.ld.only.dd,como)),lwd = 3,category = c("RAIN","CIRCA"),euler.d = T,col = c("orange","yellow"),fill = c("orange","yellow"),alpha = 0.3,cex = 2,cat.cex = 2)
+
+
+
+
+
+
+
 
 circa.rhythmic.ld.ll.dd <- intersect(circa.rhythmic.ld.ll, circa.rhythmic.ld.dd)
 length(circa.rhythmic.ld.ll.dd)
@@ -3201,7 +3261,6 @@ write.table(x = subset(gene.annotation, geneID %in% circa.ld.rhythmic.only.dd), 
 
 write.table(x = subset(gene.annotation, geneID %in% circa.rhythmic.sd.ll.dd),file="circa_gene_sets/circa_SD_LL_DD_rhythmic_genes.tsv",row.names = F)
 
-
 ```
 
 ## **Diurnal transcriptonal program under different seasonal photoperiodic conditions**
@@ -3316,6 +3375,47 @@ plot.sd <- function(gene.id, gene.name, gene.expression)
 ```
 
 600 x 300
+
+```{r ld_clustering}
+cluster.circadian.genes <- vector(mode="character", length=length(complete.ld.sd.rhythmic.genes))
+
+classify.genes <- function(rain.results, gene.set)
+{
+  circadian.rain.results <- rain.results[gene.set,]
+  
+  gene.peaks <- circadian.rain.results$phase - 4
+  gene.troughs <- (gene.peaks + circadian.rain.results$peak.shape) %% 24
+  
+  return(data.frame(gene=gene.set,peak=gene.peaks,trough=gene.troughs,stringsAsFactors = F))
+}
+
+ld.gene.classification <- classify.genes(rain.results = results.ld, gene.set = complete.ld.rhythmic.genes)
+
+zt0.ld <- subset(ld.gene.classification, peak == 0)$gene
+length(zt0.ld)
+write.table(x = subset(gene.annotation, geneID %in% zt0.ld),file="zt_clusters/ld_clusters/ld_zt0.tsv",row.names = F)
+
+zt4.ld <- subset(ld.gene.classification, peak == 4)$gene
+length(zt4.ld)
+write.table(x = subset(gene.annotation, geneID %in% zt4.ld),file="zt_clusters/ld_clusters/ld_zt4.tsv",row.names = F)
+
+zt8.ld <- subset(ld.gene.classification, peak == 8)$gene
+length(zt8.ld)
+write.table(x = subset(gene.annotation, geneID %in% zt8.ld),file="zt_clusters/ld_clusters/ld_zt8.tsv",row.names = F)
+
+zt12.ld <- subset(ld.gene.classification, peak == 12)$gene
+length(zt12.ld)
+write.table(x = subset(gene.annotation, geneID %in% zt12.ld),file="zt_clusters/ld_clusters/ld_zt12.tsv",row.names = F)
+
+zt16.ld <- subset(ld.gene.classification, peak == 16)$gene
+length(zt16.ld)
+write.table(x = subset(gene.annotation, geneID %in% zt16.ld),file="zt_clusters/ld_clusters/ld_zt16.tsv",row.names = F)
+
+zt20.ld <- subset(ld.gene.classification, peak == 20)$gene
+length(zt20.ld)
+write.table(x = subset(gene.annotation, geneID %in% zt20.ld),file="zt_clusters/ld_clusters/ld_zt20.tsv",row.names = F)
+```
+
 
 ```{r enrich_ld_zt0}
 revigo.names <- c("term_ID","description","frequency","value","uniqueness","dispensability","representative");
@@ -3685,6 +3785,35 @@ plot.ld(gene.id="ostta06g03270", gene.name="DAHP", gene.expression)
 plot.ld(gene.id="ostta16g01780", gene.name="pyrH", gene.expression)
 plot.ld(gene.id="ostta11g00540", gene.name="ALS", gene.expression)
 plot.ld(gene.id="ostta18g01010", gene.name="ADC", gene.expression)
+```
+
+
+```{r sd_clustering}
+sd.gene.classification <- classify.genes(rain.results = results.sd, gene.set = complete.sd.rhythmic.genes)
+
+zt0.sd <- subset(sd.gene.classification, peak == 0)$gene
+length(zt0.sd)
+write.table(x = subset(gene.annotation, geneID %in% zt0.sd),file="zt_clusters/sd_clusters/sd_zt0.tsv",row.names = F)
+
+zt4.sd <- subset(sd.gene.classification, peak == 4)$gene
+length(zt4.sd)
+write.table(x = subset(gene.annotation, geneID %in% zt4.sd),file="zt_clusters/sd_clusters/sd_zt4.tsv",row.names = F)
+
+zt8.sd <- subset(sd.gene.classification, peak == 8)$gene
+length(zt8.sd)
+write.table(x = subset(gene.annotation, geneID %in% zt8.sd),file="zt_clusters/sd_clusters/sd_zt8.tsv",row.names = F)
+
+zt12.sd <- subset(sd.gene.classification, peak == 12)$gene
+length(zt12.sd)
+write.table(x = subset(gene.annotation, geneID %in% zt12.sd),file="zt_clusters/sd_clusters/sd_zt12.tsv",row.names = F)
+
+zt16.sd <- subset(sd.gene.classification, peak == 16)$gene
+length(zt16.sd)
+write.table(x = subset(gene.annotation, geneID %in% zt16.sd),file="zt_clusters/sd_clusters/sd_zt16.tsv",row.names = F)
+
+zt20.sd <- subset(sd.gene.classification, peak == 20)$gene
+length(zt20.sd)
+write.table(x = subset(gene.annotation, geneID %in% zt20.sd),file="zt_clusters/sd_clusters/sd_zt20.tsv",row.names = F)
 ```
 
 
