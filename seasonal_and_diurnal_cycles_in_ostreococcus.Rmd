@@ -2705,6 +2705,267 @@ plot.ld.sd(gene.id="ostta01g06150", gene.name="CYCB", gene.expression)
 plot.ld.sd(gene.id="ostta01g00790", gene.name="ADS1", gene.expression)
 ```
 
+
+```{r linear_interpolation_model}
+library(circacompare)
+
+rhythmic.ld.nd.sd.single.peak <- intersect(intersect(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12),
+                    setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12)),
+          setdiff(rhythmic.genes.sd,rhythmic.genes.sd.12))
+length(rhythmic.ld.nd.sd.single.peak)
+
+time.points <- seq(from=0,by=4,length.out = 18)
+nd.time.points <- seq(from=0,to=69,by=3)
+
+ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+nd.zt <- paste0("ZT",seq(from=0,to=21,by=3))
+sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+
+model.deviations <- vector(mode = "numeric",length = length(rhythmic.ld.nd.sd.single.peak))
+for(i in 1:length(rhythmic.ld.nd.sd.single.peak))
+{
+# print(i)
+ gene.id <- rhythmic.ld.nd.sd.single.peak[i]
+ 
+ current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+ current.gene.expression.nd <- nd.gene.expression[gene.id,c(paste(nd.zt,1,sep="_"),paste(nd.zt,2,sep="_"),paste(nd.zt,3,sep="_"))]
+ current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+ 
+ ld.sd.df <- data.frame(time=c(time.points,time.points),
+                        measure=c(unlist(current.gene.expression.ld), 
+                                  unlist(current.gene.expression.sd)),
+                        group=c(rep("ld",18),rep("sd",18)))
+ out.ld.sd <- circacompare(x = ld.sd.df, col_time = "time", 
+                           col_group = "group", col_outcome = "measure",
+                           alpha_threshold = 1)
+ circa.values <- out.ld.sd$summary$value
+ names(circa.values) <- out.ld.sd$summary$parameter
+ 
+ phase.ld <- circa.values["ld peak time hours"]
+ phase.sd <- circa.values["sd peak time hours"]
+ 
+ 
+ ld.nd.df <- data.frame(time=c(time.points,nd.time.points),
+                        measure=c(unlist(current.gene.expression.ld),
+                                  unlist(current.gene.expression.nd)),
+                        group=c(rep("ld",18),rep("nd",24)))
+ out.ld.nd <- circacompare(x = ld.nd.df, col_time = "time", 
+                           col_group = "group", col_outcome = "measure",
+                           alpha_threshold = 1)
+ 
+ circa.values <- out.ld.nd$summary$value
+ names(circa.values) <- out.ld.nd$summary$parameter
+ 
+ phase.nd <- circa.values["nd peak time hours"]
+ 
+ distancia.ld.sd <- abs(phase.ld - phase.sd)
+
+ if(distancia.ld.sd > 12)
+ {
+  distancia.ld.sd <- 24 - distancia.ld.sd
+ }
+ 
+ if(phase.ld > phase.sd)
+ {
+  predicted.phase.nd <- phase.sd + distancia.ld.sd/2
+ } else
+ {
+  predicted.phase.nd <- phase.ld + distancia.ld.sd/2
+ }
+ 
+ if (predicted.phase.nd > 24)
+ {
+  predicted.phase.nd <- predicted.phase.nd - 24
+ }
+ 
+ model.deviations[i] <- abs(phase.nd - predicted.phase.nd)
+}
+
+model.deviations[model.deviations > 12] <- 24 - model.deviations[model.deviations > 12]
+
+hist(model.deviations,breaks=0:12,main="",xlab="Model deviation (h)",ylab="Number of Genes",cex.lab=1.5,cex.axis=1.3)
+
+sum(model.deviations < 1)/length(model.deviations)
+sum(model.deviations < 2)/length(model.deviations)
+sum(model.deviations < 3)/length(model.deviations)
+sum(model.deviations < 4)/length(model.deviations)
+sum(model.deviations < 5)/length(model.deviations)
+```
+
+
+```{r dynamic_consinusoidal_model}
+library(magick)
+
+wave <- function(k, alpha, phi, x)
+{
+ res <- (k  + alpha * cos((2*pi/24) * (x - phi))) 
+ res[res < 0] <- 0
+ return(res)
+}
+
+
+dynamic.transition.sd.ld <- function(gene.id, gene.name)
+{
+ ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+
+ sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+
+ max.expr <- ceiling(max(c(unlist(current.gene.expression.ld), unlist(current.gene.expression.sd))))
+ min.expr <- floor(min(c(unlist(current.gene.expression.ld), unlist(current.gene.expression.sd))))
+ range.expr <- max.expr - min.expr
+
+ width.rectangule <- floor(range.expr / 10)
+
+ time.points <- seq(from=0,by=4,length.out = 18)
+
+ ld.sd.df <- data.frame(time=c(time.points,time.points),
+                        measure=c(unlist(current.gene.expression.ld), 
+                                  unlist(current.gene.expression.sd)),
+                        group=c(rep("ld",18),rep("sd",18)))
+
+ out.i <- circacompare(x = ld.sd.df, col_time = "time", 
+                       col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+
+ circa.values <- out.i$summary$value
+ names(circa.values) <- out.i$summary$parameter
+
+ mesor.ld <- circa.values["ld mesor estimate"]
+ mesor.sd <- circa.values["sd mesor estimate"]
+
+ amplitude.ld <- circa.values["ld amplitude estimate"]
+ amplitude.sd <- circa.values["sd amplitude estimate"]
+  
+ phase.ld <- circa.values["ld peak time hours"]
+ phase.sd <- circa.values["sd peak time hours"]
+
+ transitions.sd.ld <- matrix(nrow = 48,ncol=18)
+ mesors <- seq(from=mesor.sd,to=mesor.ld,length.out = 48)
+ amplitudes <- seq(from=amplitude.sd,to=amplitude.ld,length.out = 48)
+
+ if(phase.sd <= phase.ld)
+ {
+   phases <- seq(from=phase.sd,to=phase.ld,length.out = 48)
+ } else
+ {
+   until.dawn <- 24 - phase.sd
+   phases <- seq(from=0,to=phase.ld+until.dawn,length.out = 48)-until.dawn
+   phases[phases < 0] <- phases[phases < 0] + 24
+ }
+
+ for(i in 1:48)
+ {
+   transitions.sd.ld[i,] <- wave(k = mesors[i], alpha = amplitudes[i], 
+                                 phi = phases[i],x = time.points)   
+ }
+
+ months <- c("January", "February", "March", "April","May", "June", "July", 
+             "August", "September", "October", "November", "December")
+
+ months <- rep(months,each=8)
+ colors <- colorRampPalette(c("red","blue"))(48)
+ dusk <- seq(from=8,to=16,length.out = 48)
+ k <- 1
+ image.number <- 1
+ image.dir <- paste0("gif_images/",gene.id)
+ dir.create(path = image.dir)
+
+  for(i in 1:48)
+   {
+     png(filename = paste0(image.dir,"/",paste0(paste(gene.id,sprintf(fmt = "%03d",image.number),sep="_"),".png")))
+     plot(time.points,current.gene.expression.ld,type="o",col="blue",lwd=0.25,pch=19,cex=0.5,
+         main=paste(c(months[k], " (Day ",floor(dusk[i]), " hours : Night ",
+                      24-floor(dusk[i]), " hours)"),collapse=""),
+         ylim=c(min.expr - 2 * width.rectangule,max.expr),axes=F,xlab="",ylab="")
+     lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
+
+     for(l in 0:2)
+     {
+       polygon(x = c(24*l, 24*l+dusk[i], 24*l+dusk[i], 24*l),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i])
+       polygon(x = c(24*l+dusk[i],24*(l+1),24*(l+1),24*l+dusk[i]),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i],col=colors[i])
+     }
+    
+     lines(time.points,transitions.sd.ld[i,],type="l",col=colors[i],lwd=2)
+     text(x = 32,y=min.expr-2.2*width.rectangule,labels=paste(gene.id,gene.name,sep=" - "),cex=1.2,adj=0.5)
+     dev.off()
+     image.number <- image.number + 1
+     k <- k + 1
+ #    Sys.sleep(0.25)
+ #    print(k)
+   }
+  
+   for(i in 48:1)
+   {     
+     png(filename = paste0(image.dir,"/",paste0(paste(gene.id,sprintf(fmt = "%03d",image.number),sep="_"),".png")))
+     plot(time.points,current.gene.expression.ld,type="o",col="blue",lwd=0.25,pch=19,cex=0.5,
+         main=paste(c(months[k], " (Day ",floor(dusk[i]), " hours : Night ",
+                      24-floor(dusk[i]), " hours)"),collapse=""),
+         ylim=c(min.expr - 2 * width.rectangule,max.expr),axes=F,xlab="",ylab="")
+     lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
+
+     for(l in 0:2)
+     {
+      polygon(x = c(24*l, 24*l+dusk[i], 24*l+dusk[i], 24*l),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i])
+      polygon(x = c(24*l+dusk[i],24*(l+1),24*(l+1),24*l+dusk[i]),
+              y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+                  min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+              lwd=2,border=colors[i],col=colors[i])
+     }
+    
+     lines(time.points,transitions.sd.ld[i,],type="l",col=colors[i],lwd=2)
+     text(x = 32,y=min.expr-2.2*width.rectangule,labels=paste(gene.id,gene.name,sep=" - "),cex=1.2,adj=0.5)
+     dev.off()
+     image.number <- image.number + 1
+     k <- k + 1
+#     Sys.sleep(0.25)
+#     print(k)
+   }
+   k <- 1
+
+ imgs <- list.files(image.dir, full.names = TRUE)
+ img.list <- lapply(imgs, image_read)
+ img.joined <- image_join(img.list)
+ img.animated <- image_animate(img.joined, fps = 5)
+ image_write(image = img.animated,
+             path = paste0(c("gif_images/",paste(gene.id,gene.name,sep="_"),".gif"),collapse=""))
+ unlink(x = image.dir,recursive = TRUE)
+}
+
+dynamic.transition.sd.ld(gene.id = "ostta08g03680",gene.name = "POLAB")
+dynamic.transition.sd.ld(gene.id = "ostta01g02580",gene.name = "MCM6")
+dynamic.transition.sd.ld(gene.id = "ostta06g02890",gene.name = "PCNA")
+
+
+dynamic.transition.sd.ld(gene.id = "ostta01g03170",gene.name = "PsbP")
+dynamic.transition.sd.ld(gene.id = "ostta05g04560",gene.name = "PsbR")
+
+
+
+dynamic.transition.sd.ld(gene.id = "ostta06g02940",gene.name = "GBSSI")
+
+
+
+``` 
+
+
+
+
+
+
+
+
+
+
 ```{r profile_function, eval= FALSE}
 plot.ld.nd.sd <- function(gene.id, gene.name, ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=T,scale=T)
 {

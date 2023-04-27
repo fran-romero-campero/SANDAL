@@ -3708,7 +3708,106 @@ i <- 11
 
 which(genes.two.peaks.sd.one.peak.ll.dd == "ostta05g01730")
 
+## Dyname change from LD to SD evaluated with ND
+wave <- function(k, alpha, phi, x)
+{
+ res <- (k  + alpha * cos((2*pi/24) * (x - phi))) 
+ res[res < 0] <- 0
+ return(res)
+}
 
+gene.id <- "ostta08g00710"
+
+rhythmic.ld.nd.sd.single.peak <- intersect(intersect(setdiff(rhythmic.genes.ld,rhythmic.genes.ld.12),
+                    setdiff(rhythmic.genes.nd,rhythmic.genes.nd.12)),
+          setdiff(rhythmic.genes.sd,rhythmic.genes.sd.12))
+
+rhythmic.ld.nd.sd.single.peak <- intersect(intersect(rhythmic.genes.sd,rhythmic.genes.ld),rhythmic.genes.nd)
+
+length(rhythmic.ld.nd.sd.single.peak)
+
+model.deviations <- vector(mode = "numeric",length = length(rhythmic.ld.nd.sd.single.peak))
+i <- 2
+for(i in 1:length(rhythmic.ld.nd.sd.single.peak))
+{
+ print(i)
+ gene.id <- rhythmic.ld.nd.sd.single.peak[i]
+ 
+ ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+ 
+ nd.zt <- paste0("ZT",seq(from=0,to=21,by=3))
+ current.gene.expression.nd <- nd.gene.expression[gene.id,c(paste(nd.zt,1,sep="_"),paste(nd.zt,2,sep="_"),paste(nd.zt,3,sep="_"))]
+ 
+ sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+ 
+ 
+ nd.time.points <- seq(from=0,to=69,by=3)
+ 
+ ld.sd.df <- data.frame(time=c(time.points,time.points),
+                        measure=c(unlist(current.gene.expression.ld), 
+                                  unlist(current.gene.expression.sd)),
+                        group=c(rep("ld",18),rep("sd",18)))
+ out.ld.sd <- circacompare(x = ld.sd.df, col_time = "time", 
+                           col_group = "group", col_outcome = "measure",
+                           alpha_threshold = 1)
+ circa.values <- out.ld.sd$summary$value
+ names(circa.values) <- out.ld.sd$summary$parameter
+ 
+ phase.ld <- circa.values["ld peak time hours"]
+ phase.sd <- circa.values["sd peak time hours"]
+ 
+ 
+ ld.nd.df <- data.frame(time=c(time.points,nd.time.points),
+                        measure=c(unlist(current.gene.expression.ld),
+                                  unlist(current.gene.expression.nd)),
+                        group=c(rep("ld",18),rep("nd",24)))
+ out.ld.nd <- circacompare(x = ld.nd.df, col_time = "time", 
+                           col_group = "group", col_outcome = "measure",
+                           alpha_threshold = 1)
+ 
+ circa.values <- out.ld.nd$summary$value
+ names(circa.values) <- out.ld.nd$summary$parameter
+ 
+ phase.nd <- circa.values["nd peak time hours"]
+ 
+ distancia.ld.sd <- abs(phase.ld - phase.sd)
+
+ if(distancia.ld.sd > 12)
+ {
+  distancia.ld.sd <- 24 - distancia.ld.sd
+ }
+ 
+ if(phase.ld > phase.sd)
+ {
+  predicted.phase.nd <- phase.sd + distancia.ld.sd/2
+ } else
+ {
+  predicted.phase.nd <- phase.ld + distancia.ld.sd/2
+ }
+ 
+ if (predicted.phase.nd > 24)
+ {
+  predicted.phase.nd <- predicted.phase.nd - 24
+ }
+ 
+ model.deviations[i] <- abs(phase.nd - predicted.phase.nd)
+}
+
+hist(model.deviations,breaks=0:24)
+hist(model.deviations,breaks=seq(from=0,to=24,by=3))
+
+sum(model.deviations < 1)/length(model.deviations)
+sum(model.deviations < 2)/length(model.deviations)
+sum(model.deviations < 3)/length(model.deviations)
+sum(model.deviations < 4)/length(model.deviations)
+sum(model.deviations < 5)/length(model.deviations)
+
+
+
+nd.gene.expression
+colnames(nd.gene.expression)
 ## Dynamic change from LD to SD
 wave <- function(k, alpha, phi, x)
 {
@@ -3797,6 +3896,10 @@ for(j in 1:3)
          ylim=c(min.expr - 2 * width.rectangule,max.expr),axes=F,xlab="",ylab="")
     lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
     
+    
+    #lines(nd.time.points,current.gene.expression.nd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)   
+    
+     
     for(l in 0:2)
     {
       polygon(x = c(24*l, 24*l+dusk[i], 24*l+dusk[i], 24*l),
