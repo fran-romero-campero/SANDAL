@@ -1,0 +1,929 @@
+ProteinID	ProteinPhase	TranscriptPhase	Annotation
+ostta01g00010	0.2	13.5	 unnamed product
+ostta01g00040	7.3	19.3	 6-phosphofructo-2-kinase
+ostta01g00070	5.7	4.2	 Malic enzyme, NAD-binding
+ostta01g00090	19.8	13.7	 Voltage-dependent potassium channel
+ostta01g00120	17.7	3.4	 Ribonucleotide reductase R1 subunit, N-terminal
+ostta01g00130	4.2	4.7	 Protein of unknown function DUF4336
+ostta01g00190	9.1	22.8	 Thioredoxin-like fold
+ostta01g00250	19.9	20	 Histidine kinase-like ATPase, ATP-binding domain
+ostta01g00300	14.3	21.7	 Inositol polyphosphate kinase
+ostta01g00320	1.4	23.7	 unnamed product
+ostta01g00800	5.3	14	 Acyl-CoA dehydrogenase/oxidase, N-terminal
+ostta01g00970	1.2	12.2	 Short-chain dehydrogenase/reductase SDR
+ostta01g00980	10	5.8	 Pseudouridine synthase/archaeosine transglycosylase
+ostta01g01050	16.3	12.9	 Pyrophosphate-energised proton pump
+ostta01g01220	0.4	22	 Non-structural maintenance of chromosome element 4, C-terminal
+ostta01g01640	16.9	17.8	 Nicotinamide N-methyltransferase-like
+ostta01g01780	2	20.2	 unnamed product
+ostta01g02090	20.1	20.2	 unnamed product
+ostta01g02350	22.8	19.7	 Ovarian tumour, otubain
+ostta01g02380	1.7	13.5	 RmlC-like jelly roll fold
+ostta01g02650	20.5	3.5	 unnamed product
+ostta01g02770	15.2	16.1	 Clathrin, heavy chain/VPS, 7-fold repeat
+ostta01g02830	4.5	19.9	 Transcription elongation factor 1
+ostta01g03050	13.7	11.6	 Acyl-CoA dehydrogenase/oxidase C-terminal
+ostta01g03120	22.4	21.9	 Carbohydrate binding module family 20
+ostta01g03150	12.8	20.9	 Isochorismatase-like
+ostta01g03160	20.2	19.4	 E3 UFM1-protein ligase 1
+ostta01g03250	22.3	13.8	 Alpha-1,6-glucosidases, pullulanase-type, C-terminal
+ostta01g03340	14.1	21.4	 Nicotinate phosphoribosyltransferase-like
+ostta01g03380	1.9	20.9	 S15/NS1, RNA-binding
+ostta01g03640	1.3	5.4	 Spindle assembly checkpoint component Mad1
+ostta01g03720	11.3	19.5	 EF-Hand 1, calcium-binding site
+ostta01g03790	18.2	18	 PCI/PINT associated module
+ostta01g03910	21	14.3	 RNA polymerase III Rpc4
+ostta01g03920	6.6	4.8	 Haem peroxidase, plant/fungal/bacterial
+ostta01g04100	4	1.2	 DNA cytosine-5-methyltransferase 1, replication foci domain
+ostta01g04210	12.1	14.4	 P-loop containing nucleoside triphosphate hydrolase
+ostta01g04410	7.5	21.1	 EF-Hand 1, calcium-binding site
+ostta01g04430	22	22	 unnamed product
+ostta01g04440	0.3	16	 Protein translocase subunit SecA
+ostta01g04480	11.9	8.6	 von Willebrand factor, type A
+ostta01g04585	17.7	6	 GOLD
+ostta01g04600	23.5	20	 Ribosomal protein L21
+ostta01g04660	0.1	21.6	 von Hippel-Lindau disease tumour suppressor, beta/alpha domain
+ostta01g04790	15.3	14.1	 Clathrin light chain
+ostta01g04800	18.4	16.2	 Carotenoid oxygenase
+ostta01g04850	11.3	15.1	 hypothetical protein
+ostta01g04950	0.6	16.5	 ABC transporter, conserved site
+ostta01g05155	3.3	15.4	 Cation-transporting P-type ATPase, C-terminal
+ostta01g05340	22.6	17	 STAG
+ostta01g05440	16.2	13.8	 unnamed product
+ostta01g05470	5.5	21.6	 RNA polymerase II-associated, Paf1
+ostta01g05590	16.4	6.7	 26S proteasome subunit P45
+ostta01g05640	2.7	22.1	 Pyruvate/Phosphoenolpyruvate kinase-like domain
+ostta01g05720	20.8	19.5	 Phosphatidylinositol 3/4-kinase, conserved site
+ostta01g05740	4.9	16.2	 P-loop containing nucleoside triphosphate hydrolase
+ostta01g05920	19.8	14.5	 Arf GTPase activating protein
+ostta01g05950	0.6	20.6	 Armadillo-type fold
+ostta01g06120	3.1	21.3	 Protein of unknown function DUF284, transmembrane eukaryotic
+ostta01g06160	23.4	17.4	 WD40/YVTN repeat-like-containing domain
+ostta01g06430	3.2	3.1	 Na+/H+ exchanger, isoforms 7/8
+ostta01g06510	23.1	14.7	 Tetratricopeptide repeat
+ostta02g00490	6.8	17.8	 unnamed product
+ostta02g00500	23.6	23.4	 unnamed product
+ostta02g00555	15.7	18.7	 N-terminal acetyltransferase A, auxiliary subunit
+ostta02g00880	22.4	16.4	 Thymidylate synthase
+ostta02g00900	0.7	21.9	 NADP-binding domain
+ostta02g01030	1.6	22.4	 RNA polymerase, beta subunit, conserved site
+ostta02g01130	6.3	21	 Nucleoporin Nup85-like
+ostta02g01160	21.3	21.3	 Crotonase superfamily
+ostta02g01190	4.8	23.4	 Uncharacterised protein family UPF0246
+ostta02g01245	16.2	15.9	 GINS complex, subunit Psf2
+ostta02g01360	1.4	21.1	 P-loop containing nucleoside triphosphate hydrolase
+ostta02g01480	23.8	19.7	 P-loop containing nucleoside triphosphate hydrolase n/a  P-loop containing nuclhate hydrolase
+ostta02g01530	14	18	 DNA-directed RNA polymerase, 30-40kDa subunit, conserved site
+ostta02g01860	19.9	12.2	 Glutamyl-tRNAGln amidotransferase A subunit n/a  Glutamyl-tRNAGln amidotransfer
+ostta02g01970	2.4	22.7	 Aspartyl/Glutamyl-tRNAGln amidotransferase, subunit B/E, catalytic
+ostta02g02330	21.7	15.9	 Ribosomal protein L35
+ostta02g02420	22.8	19.5	 Armadillo-type fold
+ostta02g02550	2.5	19.8	 SNF2-related
+ostta02g02680	22.2	23.3	 SKI-interacting protein SKIP, SNW domain
+ostta02g02830	11.8	12.9	 Glutamate--cysteine ligase, plant
+ostta02g02860	19.7	20.1	 Transposase, Tc1-like
+ostta02g02940	9.1	18.9	 P-loop containing nucleoside triphosphate hydrolase
+ostta02g02980	18.2	16.1	 Proteasome A-type subunit
+ostta02g03070	16.4	5.1	 Histone-fold
+ostta02g03090	11	15.6	 Bromodomain transcription factor
+ostta02g03355	9.7	1.5	 Cation/H+ exchanger
+ostta02g03390	21.1	0.9	 HEAT repeat associated with sister chromatid cohesion protein
+ostta02g03490	22.5	14.4	 Aminoacyl-tRNA synthetase, class Ia
+ostta02g03500	22.1	15.8	 Protein phosphatase 2C
+ostta02g03540	0.9	18.3	 Clathrin alpha-adaptin/coatomer adaptor, appendage, C-terminal subdomain
+ostta02g03680	20.4	20.9	 Cyclin, N-terminal
+ostta02g03740	1.7	20.4	 Clathrin/coatomer adaptor, adaptin-like, N-terminal
+ostta02g03830	21.6	16.6	 Ribosomal protein L19/L19e domain
+ostta02g03900	15.8	19.5	 Peptidyl-prolyl cis-trans isomerase, FKBP-type
+ostta02g03910	2.8	14.3	 Phosphoglycerate kinase, C-terminal
+ostta02g03920	23.8	11.4	 unnamed product
+ostta02g03990	6.1	4.1	 unnamed product
+ostta02g04100	21.7	19.1	 Myo-inositol-1-phosphate synthase, GAPDH-like
+ostta02g04180	23.9	15.8	 Domain of unknown function DUF547
+ostta02g04280	17	12.3	 Ferredoxin thioredoxin reductase, alpha chain
+ostta02g04300	23.7	15.1	 Conserved oligomeric Golgi complex, subunit 3
+ostta02g04340	10.3	16	 Armadillo-type fold
+ostta02g04360	2.6	20.7	 Translation elongation/initiation factor/Ribosomal, beta-barrel
+ostta02g04550	1.5	13.6	 DNA-binding TFAR19-related protein
+ostta02g04680	8.2	0.3	 unnamed product
+ostta02g04740	10.4	11.4	 Flavodoxin/nitric oxide synthase
+ostta02g04750	4.1	8.8	 Peptidase M20, dimerisation domain
+ostta02g04860	0.3	23.1	 KOW
+ostta02g04905	2.5	16.9	 Armadillo-type fold
+ostta02g04910	19.3	14.2	 unnamed product
+ostta02g04930	7	20	 Uncharacterised protein family UPF0250
+ostta02g04990	9.6	21.4	 ATP-grasp fold, subdomain 2
+ostta02g05020	7.2	0.9	 UBA-like
+ostta02g05090	12.4	20.6	 unnamed product
+ostta02g05140	4.3	13.9	 RWP-RK domain
+ostta02g05150	18	15	 Short-chain dehydrogenase/reductase SDR
+ostta02g05170	2.5	4.8	 Pyruvate, phosphate dikinase
+ostta02g05190	18.3	21.2	 Patatin/Phospholipase A2-related
+ostta02g05210	22.3	11	 Ribosomal protein S1, RNA-binding domain
+ostta02g05390	22.6	21.8	 Peroxisome biogenesis factor 1, N-terminal
+ostta02g05430	5.9	13.5	 Lipopolysaccharide-modifying protein
+ostta02g05480	14.2	0.4	 unnamed product
+ostta02g05510	7.4	5.6	 Cobalamin vitamin B12 biosynthesis CobW-like, C-terminal
+ostta02g05540	2.1	20.5	 hypothetical protein
+ostta03g00040	8.2	4.9	 Peroxisome assembly protein 12
+ostta03g00240	15.1	21	 unnamed product
+ostta03g00300	10.3	15.9	 Translation elongation factor EFTs/EF1B, dimerisation
+ostta03g00430	0.4	19.6	 unnamed product
+ostta03g00490	4.3	20.2	 Glycoside hydrolase, family 13, N-terminal
+ostta03g00640	3.6	0.9	 tRNA-guanine15 transglycosylase-like
+ostta03g00710	20.9	15.4	 Nucleotide sugar epimerase
+ostta03g00720	4.1	14.2	 unnamed product
+ostta03g00820	2.5	15.6	 Protein of unknown function DUF3464
+ostta03g00880	13.7	21.5	 SANT/Myb domain
+ostta03g00920	21.9	11.4	 ENTH/VHS
+ostta03g01130	10	22.1	 Quinonprotein alcohol dehydrogenase-like superfamily
+ostta03g01160	0.5	16.7	 unnamed product
+ostta03g01300	9.7	0.6	 Ribosomal protein L10/acidic P0
+ostta03g01310	15	9.8	 Fatty acid desaturase, type 1
+ostta03g01390	23.8	20.5	 unnamed product
+ostta03g01510	23.6	19.2	 unnamed product
+ostta03g01570	22	16.5	 ABC transporter, conserved site
+ostta03g01590	19.5	21.4	 Concanavalin A-like lectin/glucanase, subgroup
+ostta03g01610	23.3	17	 Steadiness box
+ostta03g01640	11.7	1.5	 Thioredoxin-like fold
+ostta03g02140	23.4	15.8	 U6 snRNA-associated Sm-like protein LSm4/Small nuclear ribonucleoprotein Sm D1/
+ostta03g02230	10.9	2.7	 Phospholipid methyltransferase
+ostta03g02300	23.4	21.9	 Peptidase S1C
+ostta03g02530	0.1	20.6	 Armadillo-type fold
+ostta03g02630	21.4	13.2	 unnamed product
+ostta03g02650	1.3	20.8	 Carbohydrate kinase, FGGY, C-terminal
+ostta03g02730	23.6	18.5	 Prenyltransferase/squalene oxidase
+ostta03g02820	7.1	3.5	 Serine hydroxymethyltransferase
+ostta03g02840	1.9	18.3	 unnamed product
+ostta03g02960	10.6	1.5	 P-loop containing nucleoside triphosphate hydrolase
+ostta03g03015	7.4	4.1	' Orotidine 5''-phosphate decarboxylase, active site'
+ostta03g03040	9.6	4.8	 Tetratricopeptide repeat
+ostta03g03130	16.5	12	 unnamed product
+ostta03g03170	19.3	12.9	 unnamed product
+ostta03g03260	21.8	16.1	 P-loop containing nucleoside triphosphate hydrolase
+ostta03g03300	9.6	18.7	 Domain of unknown function DUF292, eukaryotic
+ostta03g03340	1.9	15.8	 Sel1-like
+ostta03g03410	23	14.3	 EMSY N-terminal
+ostta03g03580	0.9	15.6	 ABC transporter, conserved site
+ostta03g03600	17	10.6	 Ubiquitin supergroup
+ostta03g03650	1.6	10	 Serine/threonine-protein kinase, active site
+ostta03g03690	2.2	20.8	 Membrane insertase OXA1/ALB3/YidC
+ostta03g03700	14.9	16.4	 Pyridoxal phosphate-dependent transferase, major region, subdomain 2
+ostta03g03750	0.3	1.3	 Exoribonuclease, phosphorolytic domain 2
+ostta03g03780	14	13.7	 RNA-recognition motif RRM Nup35-type domain
+ostta03g03900	9.7	5.6	 Exodeoxyribonuclease III xth
+ostta03g04080	20.4	4.8	 Ribosome biogenesis protein BRX1
+ostta03g04130	3.6	22.3	 Cation efflux protein
+ostta03g04140	20.4	16.9	 3-isopropylmalate dehydratase, small subunit
+ostta03g04150	3.2	20	 Poly A polymerase, head domain
+ostta03g04330	2.1	14.8	 Ribosomal protein L28
+ostta03g04440	22.3	22.5	 Myb domain, plants
+ostta03g04620	23.4	16.1	 Translation elongation factor P/YeiP, central
+ostta03g04720	20.7	18.3	 Fatty acid desaturase, type 1
+ostta03g04920	6.2	8.9	 T-complex protein 1, alpha subunit
+ostta03g04950	9.7	20.2	 PapD-like
+ostta03g04960	21.5	17.5	 Phosphoserine aminotransferase
+ostta03g05240	3.4	15	 Ribosomal protein L39e, conserved site
+ostta03g05290	10.5	3.9	 Cyclophilin-type peptidyl-prolyl cis-trans isomerase, conserved site
+ostta03g05530	2.1	14	 Serine/threonine-protein kinase, active site
+ostta03g05570	0.5	1.5	 Arf GTPase activating protein
+ostta03g05620	4.1	2.3	 DEK, C-terminal
+ostta03g05680	0.6	14.5	 Tetratricopeptide repeat
+ostta03g05710	8	20.6	 unnamed product
+ostta03g05740	0.7	20.6	 Six-bladed beta-propeller, TolB-like
+ostta03g05880	3.3	21	 Glyoxalase/fosfomycin resistance/dioxygenase domain
+ostta03g05910	0.1	16.3	 Structural maintenance of chromosomes protein
+ostta04g00080	6.4	18.3	 Isochorismatase-like
+ostta04g00090	8.2	2	 Carotenoid oxygenase
+ostta04g00200	3.1	19.3	 Protein of unknown function DUF1749
+ostta04g00240	18.8	23.5	 Rubisco LS methyltransferase, substrate-binding domain
+ostta04g00370	14.4	10.4	 Armadillo-type fold
+ostta04g00380	0.7	16	 Quinolinate phosphoribosyl transferase, C-terminal
+ostta04g00430	22.5	17.1	 Cyclophilin-type peptidyl-prolyl cis-trans isomerase, conserved site n/a  Cyclotidyl-prolyl cis-trans isomerase, conserved site
+ostta04g00450	18.9	13.8	 NIF system FeS cluster assembly, NifU-like scaffold, N-terminal
+ostta04g00490	15.6	13.2	 6-phosphogluconate dehydrogenase, C-terminal-like
+ostta04g00510	6.2	21.5	 Short-chain dehydrogenase/reductase SDR
+ostta04g00730	23.6	19.1	 Chlorophyll A-B binding protein, plant
+ostta04g00750	1.9	23.2	 tRNA 2-selenouridine synthase
+ostta04g00840	22.3	17.7	 unnamed product
+ostta04g00880	14.2	23.5	 unnamed product
+ostta04g00930	18.6	2.8	 Chloroplast envelope membrane protein, CemA
+ostta04g01130	23.8	12.2	 tRNA modification GTPase MnmE domain 2
+ostta04g01550	10.1	15	 Zinc finger, PHD-finger
+ostta04g01570	17.3	14.3	 NADP-binding domain
+ostta04g01720	4.5	20.1	 DNA photolyase, class 2
+ostta04g01730	20.5	12.5	 DnaJ domain
+ostta04g01920	18.1	15.9	 Quinonprotein alcohol dehydrogenase-like superfamily
+ostta04g02090	10.1	6.8	 Ribosomal protein S23/S29, mitochondrial
+ostta04g02140	16.6	22.2	 Ribosomal protein L22, bacterial/chloroplast-type
+ostta04g02220	4.5	16.8	 Aldehyde dehydrogenase, C-terminal
+ostta04g02320	13.7	5.6	 unnamed product
+ostta04g02390	20.6	23.2	 Translation elongation factor EFTs/EF1B, dimerisation
+ostta04g02500	6.4	21.7	 Peptidoglycan-binding lysin domain
+ostta04g02520	17.5	22.8	 Cold-shock protein, DNA-binding
+ostta04g02610	23.5	16.8	 Flavin amine oxidase
+ostta04g02720	13.3	6.2	 Ankyrin repeat
+ostta04g02860	0.7	23.1	 Pyrophosphate-dependent phosphofructokinase TP0108
+ostta04g03000	8.4	17.3	 Serine/threonine-protein kinase, active site
+ostta04g03190	10.1	2.9	 Mini-chromosome maintenance, DNA-dependent ATPase
+ostta04g03200	17.8	2.6	 Zinc-finger domain of monoamine-oxidase A repressor R1
+ostta04g03310	23.4	14.4	 WD40 repeat
+ostta04g03400	1.2	21	 Helicase-associated
+ostta04g03550	3	1.4	 Sec1-like protein
+ostta04g03710	11.3	5.7	 Type II pantothenate kinase
+ostta04g03720	21.2	14.2	 Clathrin/coatomer adaptor, adaptin-like, N-terminal
+ostta04g03800	15.3	13	 ABC transporter, conserved site
+ostta04g03920	7.8	18	 Armadillo-type fold
+ostta04g03940	17.5	13.3	 SNARE associated Golgi protein
+ostta04g04040	0.7	14.1	 unnamed product
+ostta04g04110	24	19.2	 unnamed product
+ostta04g04120	1.4	18.2	 Ankyrin repeat
+ostta04g04140	16	11.3	 WD40/YVTN repeat-like-containing domain
+ostta04g04210	14	4.8	 Coatomer, alpha subunit, C-terminal
+ostta04g04270	18.3	13.5	 Aminoacyl-tRNA synthetase, class II
+ostta04g04630	14.2	11.7	 Zinc finger, TRAF-type
+ostta04g04820	18.3	15.3	 WD40 repeat
+ostta04g05050	8.8	19.2	 Zinc finger, PHD-finger
+ostta04g05190	21.7	15.9	 Magnesium chelatase, subunit H, N-terminal
+ostta04g05460	1.4	8.7	 Helicase, C-terminal
+ostta04g05470	16.6	13.5	 unnamed product
+ostta04g05510	19.6	19.3	 unnamed product
+ostta04g05560	3.8	17.5	 Glycoside hydrolase, superfamily
+ostta05g00070	9.3	20	 Mog1/PsbP, alpha/beta/alpha sandwich
+ostta05g00100	9	4.3	 Snf7
+ostta05g00380	19.5	19.2	 Clathrin/coatomer adaptor, adaptin-like, N-terminal
+ostta05g00490	3.2	5.5	 Epoxide hydrolase-like
+ostta05g00530	12.6	8.8	 unnamed product
+ostta05g00560	8.6	4.7	 unnamed product
+ostta05g00970	13.5	19	 Kelch-type beta propeller
+ostta05g01000	3.9	5.7	 Protein translocase subunit SecA
+ostta05g01010	8.6	0.5	 unnamed product
+ostta05g01200	6.1	19.2	 Isy1-like splicing
+ostta05g01220	14	18	 Aromatic-ring hydroxylase-like
+ostta05g01660	20.1	13	 unnamed product
+ostta05g01850	18.6	16.2	 Tetratricopeptide repeat
+ostta05g01870	1.1	3.5	 Malic enzyme, NAD-binding
+ostta05g02100	22.2	14.2	 Protein kinase-like domain
+ostta05g02330	0.7	16.9	 P-loop containing nucleoside triphosphate hydrolase
+ostta05g02340	15.4	13	 Pyrophosphate-energised proton pump
+ostta05g02450	22.3	12.8	 YL1 nuclear
+ostta05g02610	14.3	0.4	 Serine/threonine-protein kinase, active site
+ostta05g02650	23.7	10.7	 unnamed product
+ostta05g02740	1	11.6	 Glycosyl hydrolase, family 13, catalytic domain
+ostta05g02950	1.7	16.5	 Heat shock protein 70 family
+ostta05g03110	5	20	 Clathrin/coatomer adaptor, adaptin-like, N-terminal
+ostta05g03220	6.8	4.1	 Bacterial transferase hexapeptide repeat
+ostta05g03460	6.1	0.2	 unnamed product
+ostta05g03570	14.5	14.9	 unnamed product
+ostta05g03640	0	15.3	 Methyltransferase type 11
+ostta05g03850	4.6	18.7	 unnamed product
+ostta05g03960	10.6	8.9	 Beclin family
+ostta05g04070	0.1	20	 P-loop containing nucleoside triphosphate hydrolase
+ostta05g04340	6.2	3.1	 unnamed product
+ostta05g04430	3.4	20.8	 Interphotoreceptor retinol-binding
+ostta05g04440	22	20.9	 HCNGP-like
+ostta05g04550	22.5	13.6	 SNF2-related
+ostta05g04560	15.4	9.2	 Ankyrin repeat
+ostta05g04590	18.9	17.7	 unnamed product
+ostta05g04630	13.6	14.9	 Zinc finger, RING/FYVE/PHD-type
+ostta05g04680	15.7	15.2	 Cytochrome b5-like heme/steroid binding domain
+ostta05g04700	0.5	17.2	 Ribosomal protein L27e
+ostta05g04720	20	11.4	 HSP40/DnaJ peptide-binding
+ostta05g04730	5.3	1.4	 G-protein beta WD-40 repeat
+ostta05g04810	17.9	13	 Domain of unknown function DUF3351
+ostta05g04850	9.9	1	 Aminoacyl-tRNA synthetase, class 1a, anticodon-binding
+ostta05g04870	12.2	17.2	 Short-chain dehydrogenase/reductase SDR
+ostta05g04920	6.8	3.1	 Tetratricopeptide repeat
+ostta05g04960	11.6	6.7	 C-5 cytosine methyltransferase
+ostta06g00050	7.2	14.5	 unnamed product
+ostta06g00090	4.1	20.4	 Pentatricopeptide repeat
+ostta06g00100	22.8	13.3	 Ribosome biogenesis protein BMS1/TSR1, C-terminal
+ostta06g00135	3.4	23.5	 Beta-propeller repeat TECPR
+ostta06g00150	0.4	13	 G-protein beta WD-40 repeat
+ostta06g00160	1.6	14.9	 Nucleotide-binding, alpha-beta plait
+ostta06g00360	17.2	13.1	 Ubiquitin-conjugating enzyme, active site
+ostta06g00520	0.6	19.2	 Leucine aminopeptidase/peptidase B
+ostta06g00610	2.9	13.5	 Regulator of chromosome condensation, RCC1
+ostta06g00690	0.7	17.1	 WD40 repeat
+ostta06g00720	16.4	7.3	 MIF4-like, type 1/2/3
+ostta06g00740	17.9	15.9	 Peptidyl-prolyl cis-trans isomerase, PpiC-type
+ostta06g00790	6.1	0.4	 Thrombospondin, type 1 repeat
+ostta06g00880	11.7	23.7	 Inositol monophosphatase
+ostta06g01000	6	16.6	 Thioredoxin-like fold
+ostta06g01030	3.8	0.7	 Nucleotide-binding, alpha-beta plait
+ostta06g01270	18	21.2	 Threonine dehydratase, catabolic
+ostta06g01350	8.3	0.5	 Proteasome B-type subunit
+ostta06g01580	0.8	15.3	 Zinc finger, HIT-type
+ostta06g01650	7	4.1	 Maf1 regulator
+ostta06g01680	3.5	21.3	 Metalloenzyme, LuxS/M16 peptidase-like
+ostta06g01700	23.9	15.8	 Cytochrome b5-like heme/steroid binding domain
+ostta06g01750	1.8	20.2	 P-loop containing nucleoside triphosphate hydrolase
+ostta06g01880	16.7	11.3	 t-SNARE
+ostta06g02120	4.1	18.8	 Cytochrome b5-like heme/steroid binding domain
+ostta06g02190	12.9	1.1	 Armadillo-type fold
+ostta06g02440	22.2	13.9	 Glucosamine-fructose-6-phosphate aminotransferase, isomerising
+ostta06g02510	20.2	14.2	 Dedicator of cytokinesis
+ostta06g02720	23.1	13.7	 Thioredoxin-like fold
+ostta06g02780	21.4	9	 MATH
+ostta06g02810	18.6	16.9	 WD40 repeat
+ostta06g02840	9.6	6.8	 Thioredoxin-like fold
+ostta06g02890	21.2	13.1	 Photosystem II PsbR
+ostta06g02930	23.6	7	 Glucose-6-phosphate dehydrogenase, NAD-binding
+ostta06g02940	14.1	9.4	 unnamed product
+ostta06g02960	17.8	14.6	 Glycosyl transferase, family 1
+ostta06g03040	23.1	18.5	 Clp, N-terminal
+ostta06g03170	20.3	16.9	 Thioredoxin-like fold
+ostta06g03250	9.1	5.3	 Inositol monophosphatase, metal-binding site
+ostta06g03280	16	14.9	 MAGE protein
+ostta06g03310	7.9	18.6	 Rhodanese-like domain
+ostta06g03320	22.4	15.6	 P-loop containing nucleoside triphosphate hydrolase
+ostta06g03390	8	5.5	 Protein kinase-like domain
+ostta06g03480	22.4	14.9	 von Willebrand factor, type A
+ostta06g03510	16.8	3.1	 Adenylyl cyclase class-3/4/guanylyl cyclase
+ostta06g03620	16.1	12.4	 RNA polymerase III, subunit Rpc25
+ostta06g03730	21	23.3	 High mobility group box domain
+ostta06g04010	0.2	20.1	 hypothetical protein
+ostta06g04060	1.4	18.9	 Lactate dehydrogenase/glycoside hydrolase, family 4, C-terminal
+ostta06g04250	22.5	14.2	 Bacterial surface antigen D15
+ostta06g04300	20.3	12.7	 Tetratricopeptide repeat
+ostta06g04330	3.8	23.6	 ENTH/VHS
+ostta06g04370	7.8	19.2	 P-loop containing nucleoside triphosphate hydrolase
+ostta06g04450	23	18.7	 WD40/YVTN repeat-like-containing domain
+ostta07g00010	2.2	14.7	 Thioredoxin-like fold
+ostta07g00080	14	22.2	 K Homology domain, type 1
+ostta07g00110	21.7	6.4	 WD40 repeat
+ostta07g00120	3.1	2.4	 Serine/threonine-protein kinase, active site
+ostta07g00140	10.3	22.1	 Uso1/p115-like vesicle tethering protein, C-terminal
+ostta07g00380	13.9	6.4	 Histidine phosphatase superfamily, clade-1
+ostta07g00470	21.6	20.2	 GTP cyclohydrolase II, RibA
+ostta07g00490	7.3	3.8	 DSS1/SEM1
+ostta07g00650	22.1	17.7	 Ribosomal protein L13
+ostta07g00920	9.9	6.6	 GRAM domain
+ostta07g01030	20.6	19.8	 unnamed product
+ostta07g01040	23.6	0.2	 2Fe-2S ferredoxin-type domain
+ostta07g01400	0.5	14.8	 Glutathione synthase, substrate-binding, eukaryotic
+ostta07g01470	16	20.7	 Ribosomal protein S17
+ostta07g01490	0.6	11.1	 NADP-binding domain
+ostta07g01520	23.7	18	 Ribulose-phosphate binding barrel
+ostta07g01540	23.3	19.5	 unnamed product
+ostta07g01580	1.1	22.8	 WD40/YVTN repeat-like-containing domain
+ostta07g01760	6.3	0.6	 Protein phosphatase 2C, manganese/magnesium aspartate binding site
+ostta07g01810	16.2	20.7	 Ribosomal protein S17
+ostta07g01900	5.8	18	 Guanine nucleotide-binding protein-like 3, N-terminal domain
+ostta07g01970	15.6	15.4	 Carbohydrate binding module family 20
+ostta07g02260	17.7	13.9	 Cyclophilin-type peptidyl-prolyl cis-trans isomerase, conserved site
+ostta07g02310	1.5	24	 DnaJ domain
+ostta07g02350	13.7	21.8	 Zinc/iron permease
+ostta07g02370	1.8	22.5	 Protein of unknown function DUF490
+ostta07g02470	9.2	4.6	 Uncharacterised protein family FAM98
+ostta07g02550	18.2	13.5	 Conserved hypothetical protein CHP02058
+ostta07g02570	9.5	13.1	 Domain of unknown function DUF4057
+ostta07g02600	23	21.9	 Armadillo-like helical
+ostta07g02660	20	13.1	 NADH:ubiquinone oxidoreductase intermediate-associated protein 30
+ostta07g02710	19.7	13.9	 Carotene isomerase
+ostta07g03060	4.6	12.1	 Proliferating cell nuclear antigen, PCNA, N-terminal
+ostta07g03140	13.9	17.6	 Histidine phosphatase superfamily, clade-1
+ostta07g03170	19.3	23.7	 Glycosyl transferase, family 1
+ostta07g03340	5.6	3.5	 Rad21/Rec8-like protein, N-terminal
+ostta07g03420	0.1	23.4	 Nucleoporin Nup186/Nup192/Nup205
+ostta07g03440	14.5	11.3	 Synaptobrevin
+ostta07g03480	7.2	20.9	 Patatin/Phospholipase A2-related
+ostta07g03620	17.9	20.3	 Heat shock protein Hsp33, N-terminal
+ostta07g03900	9.2	21.8	 P-loop containing nucleoside triphosphate hydrolase
+ostta07g04060	4.1	9.6	 Syntaxin, N-terminal domain
+ostta07g04120	6.2	13.9	 IQ motif, EF-hand binding site
+ostta07g04240	19.8	15.3	 Photosystem I Ycf4, assembly
+ostta07g04350	21.5	14.6	 DNA helicase, DnaB-like, C-terminal
+ostta07g04530	8.3	4.1	 Radical SAM
+ostta07g04580	1.3	16.7	 ABC transporter, conserved site
+ostta07g04670	2.1	17.8	 U4/U6 small nuclear ribonucleoprotein Prp3
+ostta07g04750	7.5	12.2	 Translation elongation/initiation factor/Ribosomal, beta-barrel
+ostta08g00050	20.2	16.9	 Putative 5-3 exonuclease
+ostta08g00150	7.5	1.6	 Translation elongation/initiation factor/Ribosomal, beta-barrel
+ostta08g00190	4	4.4	 26S proteasome subunit P45
+ostta08g00470	21.7	15.4	 unnamed product
+ostta08g00510	7.3	20	 FMP27,  C-terminal
+ostta08g00560	17.4	15.2	 unnamed product
+ostta08g00620	22	12.6	 Two pore domain potassium channel domain
+ostta08g00710	17.4	13.2	 Thiolase-like, subgroup
+ostta08g00720	2.4	20.2	 FERM/acyl-CoA-binding protein, 3-helical bundle
+ostta08g00740	14.6	19.4	 RWP-RK domain
+ostta08g00750	18.5	20.3	 Rhodanese-like domain
+ostta08g00830	16.1	14.1	 ABC transporter, conserved site
+ostta08g00850	9.8	3.5	 unnamed product
+ostta08g01280	21.2	23.3	 Rhodanese-like domain
+ostta08g01330	22.9	16	 Cytochrome P450, E-class, group I
+ostta08g01360	2.1	17.5	 unnamed product
+ostta08g01410	19.4	14.4	 Basic-leucine zipper domain
+ostta08g01480	5.4	21.3	 unnamed product
+ostta08g01840	17.1	13.7	 Tetratricopeptide repeat
+ostta08g01940	5.7	18.6	 Nucleotide-binding, alpha-beta plait
+ostta08g01950	5.7	20.5	 TIP41-like protein
+ostta08g02010	2.1	21.8	 Malic enzyme, NAD-binding
+ostta08g02240	4.4	21.5	 unnamed product
+ostta08g02290	19.3	13.4	 Serine/threonine-protein kinase, active site
+ostta08g02330	19.1	18.6	 Alcohol dehydrogenase superfamily, zinc-type
+ostta08g02570	6.5	15.7	 Prenylated rab acceptor PRA1
+ostta08g02900	18.8	17.3	 Nuclear cap-binding protein subunit 1
+ostta08g02990	10	20.3	 Tetrahydrofolate dehydrogenase/cyclohydrolase, conserved site
+ostta08g03140	3.4	16	 unnamed product
+ostta08g03190	5.7	12.9	 ABC transporter, conserved site
+ostta08g03200	1.5	18.5	 Ribosomal protein L21
+ostta08g03210	0.6	20.2	 G-protein beta WD-40 repeat
+ostta08g03250	19.1	18	 Streptomyces cyclase/dehydrase
+ostta08g03610	21.6	22.2	 V-ATPase proteolipid subunit
+ostta08g03750	2.1	18.7	 Carbohydrate binding module family 20
+ostta08g03770	5.5	0.4	 unnamed product
+ostta08g03860	21.8	18	 Chaperonin Cpn60
+ostta08g03890	22.4	17.1	 Helicase, C-terminal
+ostta08g03980	1.5	14.3	 Activator of Hsp90 ATPase, N-terminal
+ostta08g04030	10.2	13.2	 Peptidase S16, lon N-terminal
+ostta08g04040	4.8	17.4	 Zinc finger, RING/FYVE/PHD-type
+ostta08g04080	10.1	15.8	 Structural maintenance of chromosomes protein 6
+ostta08g04090	3.2	3.5	 Mechanosensitive ion channel MscS
+ostta08g04180	16.8	6.7	 Non-structural maintenance of chromosomes element 1
+ostta08g04220	3	20.1	 Nucleic acid-binding, OB-fold n/a  Nucleic acid-binding, OB-fold
+ostta09g00030	20	18.2	 Tryptophan synthase beta chain/beta chain-like
+ostta09g00050	23.4	16	 Conserved oligomeric Golgi complex subunit 7
+ostta09g00060	18.8	14.6	 unnamed product
+ostta09g00100	22	14.9	 Amidohydrolase 2
+ostta09g00130	3.9	3.4	 1-acyl-sn-glycerol-3-phosphate acyltransferase
+ostta09g00160	21.5	16.4	 CCR4-Not complex component, Not1, C-terminal
+ostta09g00170	19	23.1	 Nucleotidyl transferase
+ostta09g00220	19.9	18.1	' RNA 3''-terminal phosphate cyclase/enolpyruvate transferase, alpha/beta'
+ostta09g00260	17.3	14.4	 Zinc finger, NHR/GATA-type
+ostta09g00310	0.5	19.4	 unnamed product
+ostta09g00360	6	22.9	 SNF2-related
+ostta09g00430	21.8	16.2	 Histidine phosphatase superfamily, clade-1
+ostta09g00700	21.4	13.5	 Phosphatidylinositol-4-phosphate 5-kinase, core
+ostta09g00750	4.4	21.3	 unnamed product
+ostta09g00770	10.3	17.2	 Phosphoglycolate phosphatase, domain 2
+ostta09g00785	15.1	21.5	 Armadillo-type fold
+ostta09g00792	0.2	18.1	 NADP-binding domain
+ostta09g00870	15	16.9	 Translation elongation/initiation factor/Ribosomal, beta-barrel
+ostta09g00950	2.7	1.6	 Phox/Bem1p
+ostta09g00970	0.5	2.8	 Methyltransferase type 11
+ostta09g01130	21.4	15.6	 von Willebrand factor, type A
+ostta09g01210	17	21	 Lactate dehydrogenase/glycoside hydrolase, family 4, C-terminal
+ostta09g01430	0.6	1	 Protein of unknown function DUF1751, integral membrane, eukaryotic
+ostta09g01530	21.6	18.2	 SUF system FeS cluster assembly, SufBD
+ostta09g01560	18.3	19.7	 Haem peroxidase, plant/fungal/bacterial
+ostta09g01590	21.5	15.1	 Glutathione peroxidase
+ostta09g01640	16.3	16.4	 Thioredoxin-like fold
+ostta09g01740	3.3	8.6	 Ferritin-like superfamily
+ostta09g01770	17.3	13.2	 Cytochrome b-c1 complex, subunit 6
+ostta09g02130	22.9	12.7	 Zinc finger, DNA-directed DNA polymerase, family B, alpha
+ostta09g02150	18.1	13.6	 Protein of unknown function DUF2930
+ostta09g02160	13.7	16.5	 WD40/YVTN repeat-like-containing domain
+ostta09g02170	0.2	17.2	 14-3-3 protein
+ostta09g02310	23.5	16.2	 Pyruvate phosphate dikinase, PEP/pyruvate-binding
+ostta09g02620	23.6	15.8	 ABC transporter, conserved site
+ostta09g02670	11.5	11.7	 unnamed product
+ostta09g02690	7.9	16.2	 Tetratricopeptide-like helical
+ostta09g02720	8.2	15	 High mobility group box domain
+ostta09g03020	1.8	0.2	 Actin-related protein
+ostta09g03090	20.3	13.7	 unnamed product
+ostta09g03170	8.7	6	 Zinc finger, RanBP2-type
+ostta09g03220	6.8	3.4	 Rad60/SUMO-like domain
+ostta09g03260	19.8	16.1	 Acyl-CoA N-acyltransferase
+ostta09g03465	22.9	17.9	 Zinc finger, PHD-finger
+ostta09g03550	21.2	11.5	 Aminoacyl-tRNA synthetase, class II
+ostta09g03660	0.1	16.7	 Branched-chain amino acid aminotransferase II
+ostta09g03760	17	11.8	 Helix-hairpin-helix motif, class 2
+ostta09g03780	6.3	1.3	 unnamed product
+ostta09g03830	21	14.6	 Small GTPase superfamily, Rho type
+ostta09g03910	0.2	18.7	 P-loop containing nucleoside triphosphate hydrolase
+ostta09g04130	0.2	1.9	 Nucleotide-binding, alpha-beta plait
+ostta09g04490	19.5	15.6	 unnamed product
+ostta10g00030	9.9	16.7	 TRAPP I complex, Bet3
+ostta10g00040	8.1	5.3	 LETM1-like
+ostta10g00050	3.5	4.5	 Peptidase S33
+ostta10g00110	22.2	3.5	 Squalene/phytoene synthase
+ostta10g00230	7.4	3.1	 Aspartate-tRNA ligase, class IIb, bacterial/mitochondrial-type
+ostta10g00430	5.3	20.8	 Tetratricopeptide-like helical
+ostta10g00500	13.9	11.5	 Aminoacyl-tRNA synthetase, class Ia
+ostta10g00545	0.5	21.9	 Glycoside hydrolase, superfamily
+ostta10g00580	8.3	22.2	 unnamed product
+ostta10g00640	17.7	12.9	 ETC complex I subunit
+ostta10g00740	18.9	15	 Proteasome B-type subunit
+ostta10g00850	21.8	16.6	 ATPase, V0 complex, subunit 116kDa, eukaryotic
+ostta10g00870	10	16.1	 Pre-mRNA-splicing factor  Cwf15/Cwc15
+ostta10g00920	7.8	0.3	 Cyclophilin-type peptidyl-prolyl cis-trans isomerase, conserved site
+ostta10g01110	23.1	18.1	 unnamed product
+ostta10g01240	10.3	14.9	 Aspartic peptidase
+ostta10g01270	2.5	19.3	 P-loop containing nucleoside triphosphate hydrolase
+ostta10g01380	22.5	17	 ABC transporter, conserved site
+ostta10g01430	19.5	17.4	 Alternative oxidase
+ostta10g01500	4.2	22.7	 Transmembrane receptor, eukaryota
+ostta10g01590	4.2	15.7	 NAD-dependent epimerase/dehydratase
+ostta10g01610	11.3	3.7	 P-loop containing nucleoside triphosphate hydrolase
+ostta10g01710	23.4	15.3	 Fructose-1,6-bisphosphatase class 1/Sedoheputulose-1,7-bisphosphatase
+ostta10g01920	23.2	18	 Metalloenzyme, LuxS/M16 peptidase-like
+ostta10g01950	0.7	20.4	 unnamed product
+ostta10g02100	19.9	13.3	 unnamed product
+ostta10g02140	23.8	19.6	 Glycosyl transferase, family 1
+ostta10g02180	11.8	14	 Scavenger mRNA decapping enzyme DcpS/DCS2
+ostta10g02240	16.3	19.1	 P-loop containing nucleoside triphosphate hydrolase n/a  P-loop containing nuclhate hydrolase
+ostta10g02270	0.4	21.8	 Peptidase S9, prolyl oligopeptidase, catalytic domain
+ostta10g02370	19.8	19.2	 WD40/YVTN repeat-like-containing domain
+ostta10g02460	4.2	18.6	 NADP-binding domain
+ostta10g02680	11.5	14.6	 Ubiquitin fusion degradation protein UFD1
+ostta10g02770	20.5	13.3	 Sulphate transporter
+ostta10g02780	2.2	5.2	 hypothetical protein
+ostta10g02850	2.2	5.5	 Rudiment single hybrid motif
+ostta10g02970	18.1	13.3	 Leucine-rich repeat, ribonuclease inhibitor subtype
+ostta10g03010	1.1	18.1	 unnamed product
+ostta10g03070	21.2	4.9	 Pyridoxal phosphate-dependent transferase, major region, subdomain 2 n/a  Pyriddependent transferase, major region, subdomain 2
+ostta10g03365	3	19.6	 Glutamine cyclotransferase
+ostta10g03400	21.6	15.8	 unnamed product
+ostta10g03410	7.9	4.8	 Pseudouridine synthase TruD, conserved site
+ostta10g03420	12.1	6	 Tyrosine-protein kinase, active site
+ostta10g03550	18	15.9	 Protein of unknown function DUF1092
+ostta11g00130	9.6	19.2	 Leucine-rich repeat
+ostta11g00270	17.9	15.3	 Ubiquitin interacting motif
+ostta11g00300	1.5	13.3	 ATPase, V1/A1 complex, subunit E
+ostta11g00330	11.4	8.5	 GC-rich sequence DNA-binding factor domain
+ostta11g00380	13	20.9	 Haem peroxidase, plant/fungal/bacterial
+ostta11g00410	13.9	14.2	 MOZ/SAS-like protein
+ostta11g00470	0.3	17.1	 Alpha/beta hydrolase fold-1
+ostta11g00690	9.3	7.5	 Tetratricopeptide repeat-containing domain
+ostta11g00800	1.2	20.8	 Cation-transporting P-type ATPase, C-terminal
+ostta11g00820	13.3	17.1	 Structural maintenance of chromosomes protein
+ostta11g00840	18.1	15.3	 NAD-dependent deacetylase sirtuin-2, sirtuin family, class I
+ostta11g00910	21.5	13.8	 26S proteasome, regulatory subunit Rpn7
+ostta11g00940	18.7	13.2	 O-acyltransferase, WSD1, N-terminal
+ostta11g00960	20.5	12.5	 Alcohol dehydrogenase superfamily, zinc-type
+ostta11g00985	3.6	21.4	 unnamed product
+ostta11g01190	7.1	4.4	 Rossmann-like alpha/beta/alpha sandwich fold
+ostta11g01280	10.5	18.6	 Pyridoxal phosphate-dependent transferase, major region, subdomain 2
+ostta11g01290	0.2	10.8	 Nucleic acid-binding, OB-fold
+ostta11g01400	17.9	12.9	 von Willebrand factor, type A
+ostta11g01470	17.9	13.9	 Dihydroneopterin aldolase
+ostta11g01500	21.8	13.9	 Magnesium transporter MRS2/LPE10
+ostta11g01580	3.2	18.9	 Adenylylsulphate kinase
+ostta11g01670	0.5	13.9	 Ankyrin repeat
+ostta11g01700	22.5	15.2	 Rubisco LS methyltransferase, substrate-binding domain
+ostta11g01900	14.1	11.7	 Kua-ubiquitin conjugating enzyme hybrid, localisation
+ostta11g01910	8.7	21	 WD40/YVTN repeat-like-containing domain
+ostta11g01950	19.2	13.1	 Armadillo-type fold
+ostta11g01980	21.1	22.4	 NADH:ubiquinone oxidoreductase intermediate-associated protein 30
+ostta11g02360	21.7	20	 G-protein beta WD-40 repeat
+ostta11g02480	17.9	21	 CASP, C-terminal
+ostta11g02510	2.7	9.3	 Protein phosphatase 2C
+ostta11g02600	20.5	14.5	 Armadillo-type fold
+ostta11g02710	22.4	19.2	 Peptidase C12, ubiquitin carboxyl-terminal hydrolase 1
+ostta11g02790	0.5	14.7	 unnamed product
+ostta11g02970	23.5	21.7	 Thioredoxin-like fold
+ostta11g03020	22.4	14.3	 Alpha/beta hydrolase fold-3
+ostta11g03110	0.5	6.6	 Cwf19-like protein, C-terminal domain-2
+ostta11g03190	0	0.4	 NADP-dependent oxidoreductase domain
+ostta12g00060	3.7	6.8	 NIF system FeS cluster assembly, NifU, C-terminal
+ostta12g00070	17.1	22.3	 Heat shock protein DnaJ, cysteine-rich domain
+ostta12g00110	11	14.2	 Transcription elongation factor S-II, central domain
+ostta12g00190	1.9	22.6	 Carbohydrate binding module family 20
+ostta12g00320	22	12.4	 Thioredoxin-like fold
+ostta12g00430	18.3	13.5	 Biotin synthase/Biotin biosynthesis bifunctional protein BioAB
+ostta12g00480	13.8	5.3	 DNA methylase, N-6 adenine-specific, conserved site
+ostta12g00490	19.8	16.1	 DNA ligase, ATP-dependent, conserved site
+ostta12g00530	1.1	19.8	 2-oxoacid dehydrogenase acyltransferase, catalytic domain
+ostta12g00580	3.1	18.4	 NUDIX hydrolase domain-like
+ostta12g00620	21.9	13.6	 Glycosyltransferase, DXD sugar-binding motif
+ostta12g00645	23.8	6.2	 Moybdenum cofactor oxidoreductase, dimerisation
+ostta12g00680	24	20.5	 SEC7-like
+ostta12g00820	18.3	13.8	 Transcription factor DP
+ostta12g00910	21.5	18.1	 BRO1 domain
+ostta12g00940	9.1	21.6	 RNA polymerase, Rpb8
+ostta12g00960	23.3	17.3	 Metal-dependent protein hydrolase
+ostta12g00970	21.1	18.3	 unnamed product
+ostta12g01000	0	16.4	 unnamed product
+ostta12g01130	0.7	20.8	 Mitochondrial import inner membrane translocase subunit Tim16
+ostta12g01220	10.7	3.6	 Serine/threonine-protein kinase, active site
+ostta12g01250	2.5	17.9	 hypothetical protein
+ostta12g01260	9.7	13.4	 unnamed product
+ostta12g01310	17.8	13.9	 Serine/threonine-specific protein phosphatase/bis5-nucleosyl-tetraphosphatase
+ostta12g01320	21	15.3	 tRNA-splicing ligase, RtcB
+ostta12g01530	1.7	18.2	 Helicase, C-terminal
+ostta12g01580	14.2	14.6	 DNA mismatch repair protein, MSH2
+ostta12g01600	7.9	7.9	 Nucleoporin, Nup133/Nup155-like, C-terminal
+ostta12g01760	14.8	20.3	 Methylosome subunit pICln
+ostta12g01770	23.5	17.5	 Aldehyde dehydrogenase, C-terminal
+ostta12g01810	9	3	 Pyridoxal phosphate-dependent transferase, major region, subdomain 1
+ostta12g01820	22.1	17.5	 Eukaryotic translation initiation factor 3 subunit J
+ostta12g01870	21.8	20.4	 Peptidyl-prolyl cis-trans isomerase, FKBP-type, domain
+ostta12g01900	13.5	7.7	 Axin interactor dorsalization-associated protein, C-terminal domain
+ostta12g02000	0.4	14.2	 unnamed product
+ostta12g02310	23.9	17.5	 unnamed product
+ostta12g02360	5.6	21.5	 Protein prenyltransferase, alpha subunit
+ostta12g02510	14.4	21.2	 Glutamine amidotransferase
+ostta12g02720	19.5	14.3	 Histone-like DNA-binding protein, conserved site
+ostta12g02890	17.5	21.9	 DNA recombination/repair protein RecA, monomer-monomer interface
+ostta12g03030	4.5	18.2	 GTP-binding protein TrmE/Glycine cleavage system T protein, domain 1
+ostta13g00150	8	24	 Nucleoside diphosphate kinase
+ostta13g00460	20.2	16.5	 Thioredoxin, conserved site
+ostta13g00630	6.7	3.3	 ATPase, F1 complex beta subunit/V1 complex, C-terminal
+ostta13g00850	15	20.7	 Mitochondrial Rho-like
+ostta13g00885	3.2	21.3	 Helicase, C-terminal
+ostta13g00920	4.8	21.7	 Thioredoxin, conserved site
+ostta13g00970	16.1	16.8	 Nucleotide-binding, alpha-beta plait
+ostta13g01100	0.7	21.8	 Signal transduction response regulator, receiver domain
+ostta13g01140	20.3	13.3	 Glyceraldehyde 3-phosphate dehydrogenase, NADP binding domain
+ostta13g01170	23.6	15.3	 NUDIX hydrolase, conserved site
+ostta13g01380	23.6	11	 CHCH
+ostta13g01470	21	14.7	 Armadillo-type fold
+ostta13g01480	2.4	17	 Peptidyl-tRNA hydrolase, PTH2
+ostta13g01550	10.6	5.2	 WD40/YVTN repeat-like-containing domain
+ostta13g01590	14	14.8	 Zinc finger, RanBP2-type
+ostta13g01850	11.7	14.5	 unnamed product
+ostta13g02020	21.6	13	 unnamed product
+ostta13g02120	0.3	18.7	 RNA polymerases, subunit N, zinc binding site
+ostta13g02130	17.1	13.4	 FERM/acyl-CoA-binding protein, 3-helical bundle
+ostta13g02170	10.5	4.1	 Tetratricopeptide repeat-containing domain
+ostta13g02230	23.5	16.2	 Tetrapyrrole biosynthesis, glutamyl-tRNA reductase, N-terminal
+ostta13g02260	22.4	0.2	 Ribulose-phosphate binding barrel
+ostta13g02440	8.3	2.1	 Quinonprotein alcohol dehydrogenase-like superfamily
+ostta13g02480	14.7	14.9	 RmlC-like jelly roll fold
+ostta13g02600	22.6	15.3	 Mini-chromosome maintenance, DNA-dependent ATPase
+ostta13g02640	22.6	13.9	 DNA primase large subunit, eukaryotic/archaeal
+ostta13g02790	17	22.2	 Glycosyl transferase, family 35
+ostta13g03020	2.7	12	 PPPDE putative peptidase domain
+ostta13g03040	3.2	23.2	 ABC transporter, conserved site
+ostta14g00020	16.5	18	 unnamed product
+ostta14g00050	19.9	20.1	 Histidine phosphatase superfamily, clade-1
+ostta14g00300	10	19.7	' 4''-phosphopantetheinyl transferase superfamily'
+ostta14g00400	19.8	14.9	 Zinc finger, CW-type
+ostta14g00490	22.4	21.2	 DNA polymerase alpha, subunit B
+ostta14g00500	3.8	18.6	 UDP-galactopyranose mutase
+ostta14g00660	4.5	15.6	 unnamed product
+ostta14g00700	5.9	1.6	 Alternative oxidase
+ostta14g00795	2.8	22	 Dak kinase
+ostta14g00840	9.5	5.3	 NADH:cytochrome b5 reductase CBR
+ostta14g00850	21.8	15.4	 Pyridoxal phosphate-dependent transferase, major region, subdomain 2
+ostta14g00880	3.8	20.5	 unnamed product
+ostta14g01050	8	13.3	 Ubiquitin-associated/translation elongation factor EF1B, N-terminal, eukaryote
+ostta14g01240	8.6	18.7	 hypothetical protein
+ostta14g01245	20.3	4	 unnamed product
+ostta14g01270	23.5	12.5	 P-loop containing nucleoside triphosphate hydrolase
+ostta14g01290	15.8	20.6	 Flavoprotein pyridine nucleotide cytochrome reductase
+ostta14g01310	21.1	17.3	 Ribosomal protein L25/Gln-tRNA synthetase, beta-barrel domain
+ostta14g01380	11.2	9.6	 Lariat debranching enzyme n/a  Lariat debranching enzyme, C-terminal
+ostta14g01580	24	6.7	 Filamin/ABP280 repeat-like
+ostta14g01730	21.9	8.2	 Nucleoside diphosphate kinase
+ostta14g01840	1.3	19.4	 unnamed product
+ostta14g01850	7.9	2.4	 unnamed product
+ostta14g01960	23.1	20.8	 Protein of unknown function DUF2358
+ostta14g02340	18	19.6	 unnamed product
+ostta14g02660	16.5	20.8	 Annexin
+ostta14g02710	7.6	20.1	 Nucleoside diphosphate kinase
+ostta14g02730	16.5	14.6	 UTP--glucose-1-phosphate uridylyltransferase
+ostta14g02775	9.6	23.6	 WD40 repeat
+ostta14g03010	0.3	20.4	 Thioredoxin-like fold n/a  Thioredoxin-like fold
+ostta14g03050	24	23.2	 Bystin n/a  Bystin
+ostta14g03060	5.9	0.1	 DNA polymerase alpha/epsilon, subunit B
+ostta15g00060	22.6	14.7	 Thioredoxin-like fold
+ostta15g00180	7.4	6.6	 Glycosyl hydrolase, family 13, catalytic domain
+ostta15g00195	0.3	10.4	 Peptidoglycan-binding lysin domain
+ostta15g00230	22.8	9.5	' 5''-Nucleotidase/apyrase'
+ostta15g00280	15.8	5.1	 unnamed product
+ostta15g00350	0.4	15.3	 Clathrin/coatomer adaptor, adaptin-like, N-terminal
+ostta15g00390	9.7	2.1	 Ankyrin repeat
+ostta15g00570	3.6	16.8	 unnamed product
+ostta15g00650	20.4	12.3	 hypothetical protein
+ostta15g00670	19.4	15.6	 Tryptophan RNA-binding attenuator protein-like domain
+ostta15g00680	4.9	3.8	 Cohesin loading factor
+ostta15g00900	6.1	6.2	 Steroid receptor RNA activator-protein/coat protein complex II, Sec31
+ostta15g01060	2.3	19.7	 ABC transporter type 1, transmembrane domain
+ostta15g01090	19.2	14.3	 Thiaminase-2/PQQ biosynthesis protein C
+ostta15g01110	11.6	21.1	 Hydroxyethylthiazole kinase
+ostta15g01265	17.5	10.5	 unnamed product
+ostta15g01420	23	16	 AMP-dependent synthetase/ligase
+ostta15g01470	1.8	3.6	 Syntaxin/epimorphin, conserved site
+ostta15g01510	0.7	16.9	 Protein kinase-like domain
+ostta15g01530	0.5	20.3	 Armadillo repeat-containing protein 3 and Serine/threonine-protein kinase CTR1 repeat-containing protein 3 and Serine/threonine-protein kinase CTR1
+ostta15g01550	20.2	15.1	 Peptidase S10, serine carboxypeptidase, active site
+ostta15g01560	8.9	21.3	 unnamed product
+ostta15g01890	15.9	3.4	 Tubulin/FtsZ, 2-layer sandwich domain
+ostta15g01920	5.7	10.9	 Serine/threonine dehydratase, pyridoxal-phosphate-binding site
+ostta15g02170	8.2	22	 unnamed product
+ostta15g02550	9.7	17.3	 RmlC-like jelly roll fold
+ostta15g02555	21.6	14.1	 Alpha/beta hydrolase fold-1
+ostta15g02710	17.8	19	 Oxoglutarate/iron-dependent dioxygenase
+ostta15g02810	0.1	21.7	 Taurine catabolism dioxygenase TauD/TfdA
+ostta15g02900	11.5	6.7	 Rab-GTPase-TBC domain
+ostta16g00040	23.2	12.8	 Flavin monooxygenase-like
+ostta16g00100	4.9	21.2	 unnamed product
+ostta16g00240	21.6	21	 ApaG domain
+ostta16g00330	6.9	0.2	 Carotene isomerase
+ostta16g00350	12.1	20.3	 Erv1/Alr
+ostta16g00520	18.5	17.4	 Guanylate kinase
+ostta16g01180	7.4	18.4	 Acyl-CoA oxidase/dehydrogenase, central domain
+ostta16g01400	3.5	18.7	 Histidine kinase-like ATPase, ATP-binding domain n/a  Histidine kinase-like ATPg domain
+ostta16g01460	24	16	 P-loop containing nucleoside triphosphate hydrolase
+ostta16g01560	15.9	3.9	 2Fe-2S ferredoxin-type domain n/a  2Fe-2S ferredoxin-type domain
+ostta16g01580	3	21.4	 Rubredoxin, iron-binding site
+ostta16g01640	20.3	15.8	 Malic enzyme, NAD-binding
+ostta16g01690	22.5	18.9	 Protein of unknown function DUF1350
+ostta16g01720	11	0.8	 unnamed product
+ostta16g01730	17.5	18.1	 tRNA-dihydrouridine synthase
+ostta16g01770	5.1	6.9	 Helicase, C-terminal
+ostta16g02010	2.4	1.8	 P-loop containing nucleoside triphosphate hydrolase
+ostta16g02030	2.6	21.1	 Ankyrin repeat-containing domain
+ostta16g02040	8.9	2.7	 Galactose oxidase, beta-propeller
+ostta16g02045	18.2	20.9	 Senescence marker protein-30 SMP-30
+ostta16g02300	2.4	14	 unnamed product
+ostta16g02370	17.7	13.6	 SANT/Myb domain
+ostta16g02470	22	0.9	 unnamed product
+ostta16g02540	4	22.5	 Serine/threonine-protein kinase, active site
+ostta16g02560	2.4	0.5	 Ribonuclease II/R
+ostta16g02680	14.4	16.2	 hypothetical protein
+ostta17g00030	0.5	16.8	 unnamed product
+ostta17g00100	11.3	5.4	 Initiation factor 2B-related
+ostta17g00200	19.8	17.1	 Peptidyl-prolyl cis-trans isomerase, FKBP-type, domain
+ostta17g00250	22.7	20.7	 Replication protein A, C-terminal
+ostta17g00320	10.9	3.3	 Small GTPase superfamily, Rho type
+ostta17g00490	11.7	14.5	 Mss4-like
+ostta17g00550	0.5	10.9	 Cobalamin vitamin B12 biosynthesis CobW-like, C-terminal
+ostta17g00560	22	0	 Succinate dehydrogenase/fumarate reductase flavoprotein, catalytic domain
+ostta17g00780	20.8	16.9	 unnamed product
+ostta17g00840	9.5	20.4	 Zinc finger, ZZ-type
+ostta17g00890	20.6	12.9	 Cytochrome b5-like heme/steroid binding domain
+ostta17g01110	6	18.9	 EAP30
+ostta17g01150	2.4	21.9	 unnamed product
+ostta17g01255	7.9	5.2	 Peptidase C2, calpain family
+ostta17g01280	22.2	17.3	 unnamed product
+ostta17g01390	11.4	0.7	 ELYS-like domain
+ostta17g01400	8.2	5.4	 unnamed product
+ostta17g01470	1.1	21	 Chlorophyll a/b binding protein domain
+ostta17g01640	12.6	21.3	 Chaperonin TCP-1, conserved site
+ostta17g01820	22.1	21.6	 Translation elongation/initiation factor/Ribosomal, beta-barrel
+ostta17g01880	0.2	2.3	 Cytochrome P450, conserved site
+ostta17g01950	21.1	0.9	 unnamed product
+ostta17g02020	6.6	19.3	 Clathrin alpha-adaptin/coatomer adaptor, appendage, C-terminal subdomain n/a  Cdaptin/coatomer adaptor, appendage, C-terminal subdomain
+ostta17g02070	4.8	17.3	 Peptidase M1, membrane alanine aminopeptidase, N-terminal
+ostta17g02090	23.5	15.8	 Arf GTPase activating protein
+ostta17g02160	5.3	21.4	 Rieske iron-sulphur protein n/a  Rieske iron-sulphur protein
+ostta17g02230	7.8	8.6	 P-loop containing nucleoside triphosphate hydrolase n/a  P-loop containing nuclhate hydrolase
+ostta17g02305	19.5	14	 Zinc finger, RING-CH-type
+ostta17g02320	20.9	12.7	 Lipase, class 3 n/a  Lipase, class 3
+ostta17g02360	6.8	2	 Splicing factor motif
+ostta18g00120	22	14.1	 Alfin
+ostta18g00310	8.9	22.5	 Polyketide cyclase/dehydrase
+ostta18g00380	15.5	13.4	 SAICAR synthetase
+ostta18g00420	18.1	10	 Ubiquitin-conjugating enzyme, active site
+ostta18g00610	18	14.1	 Lycopene cyclase-type, FAD-binding
+ostta18g00750	15.7	12.3	 NADP-binding domain n/a  NADP-binding domain
+ostta18g00880	8.4	10.6	 Thioredoxin-like fold
+ostta18g00940	8.9	1.8	 Sister chromatid cohesion protein Dcc1
+ostta18g00980	19.5	16.1	 Ribosomal protein S18
+ostta18g01000	17.1	1.1	 Helix-turn-helix, base-excision DNA repair, C-terminal
+ostta18g01010	23.4	19.7	 Mini-chromosome maintenance complex protein 4 n/a  Mini-chromosome maintenance                                                                                                                                                                                                                                                                                                                                                                                                                                                         4
+ostta18g01060	2.5	1	 Adenosylcobalamin biosynthesis, ATP:cobIalamin adenosyltransferase-like n/a  Ad biosynthesis, ATP:cobIalamin adenosyltransferase-like
+ostta18g01110	17.5	21	 unnamed product
+ostta18g01130	12.3	13.5	 Vps53-like, N-terminal
+ostta18g01440	15.2	14	 FMN-binding split barrel n/a  FMN-binding split barrel
+ostta18g01520	7.9	4.6	 Helicase, C-terminal
+ostta18g01940	23.8	13.6	 Saccharopine dehydrogenase / Homospermidine synthase
+ostta18g01980	3.6	21.2	 unnamed product
+ostta19g00440	20.9	0.1	 C2 calcium-dependent membrane targeting n/a  C2 calcium-dependent membrane targ
+ostta19g00640	18.1	23.3	 Transcription factor CBF/NF-Y/archaeal histone n/a  Transcription factor CBF/NFtone
+ostta20g00140	22.2	12.5	 Peptidase M32, carboxypeptidase Taq metallopeptidase
+ostta20g00160	17.8	14.6	 WD40 repeat
+ostta20g00410	15.8	14.5	 Lysine-tRNA ligase, class II
+ostta20g00550	1	23.2	 Ribosomal protein L31
+ostta20g00630	15.1	13	 Formyl transferase, N-terminal
+ostta20g00640	14.9	23.3	 Mitochondrial substrate/solute carrier
+ostta01g00020	3.8	18.4	 Peptide chain release factor class I/class II
+ostta01g01090	12	13.5	 Nucleolar protein 12 n/a  Nucleolar protein 12
+ostta01g01350	2.7	12.8	 Ribosomal RNA small subunit methyltransferase E
+ostta01g02760	7.9	13.9	  n/a  unnamed product
+ostta01g04120	2	23.4	 Tetratricopeptide repeat n/a  Tetratricopeptide repeat
+ostta01g05240	16.1	23.8	 P-loop containing nucleoside triphosphate hydrolase n/a  P-loop containing nuclhate hydrolase
+ostta01g05430	5.9	15.4	 Ion transport 2
+ostta01g05450	9.4	15.2	 BTB/POZ-like
+ostta01g05870	1.4	15	 Pyridoxal phosphate-dependent transferase, major region, subdomain 1
+ostta02g00950	14.7	20.1	 Protein of unknown function DUF597
+ostta02g01010	4.2	21.4	 Aspartate carbamoyltransferase n/a  Aspartate carbamoyltransferase
+ostta02g01460	7.4	18.3	 RmlC-like jelly roll fold
+ostta02g01610	23.1	18.2	 NAD-dependent epimerase/dehydratase
+ostta02g02700	23.4	20	  n/a  hypothetical protein
+ostta02g04710	23.1	19.4	 Sec1-like protein
+ostta02g05060	17.3	14.5	 Acyl-CoA N-acyltransferase
+ostta03g00030	21.6	17.2	 unnamed product
+ostta03g00520	15.2	6.2	 Serine/threonine-specific protein phosphatase/bis5-nucleosyl-tetraphosphatase
+ostta03g01060	18.1	15	 Translation elongation/initiation factor/Ribosomal, beta-barrel n/a  Translatioitiation factor/Ribosomal, beta-barrel
+ostta03g02200	0.7	19.5	 Protein of unknown function DUF544 n/a  Protein of unknown function DUF544
+ostta03g02540	20.6	18.5	 Proline-tRNA ligase, class IIa
+ostta03g02980	19	3.4	 Succinate dehydrogenase/fumarate reductase iron-sulphur protein
+ostta03g03825	22.1	13.1	 Serine/threonine-protein kinase, active site
+ostta03g05380	2.5	21.6	 Cytochrome P450, conserved site
+ostta04g00220	3.1	22.6	 NADP-binding domain n/a  NADP-binding domain
+ostta04g00740	18.6	20.3	 G-protein beta WD-40 repeat n/a  G-protein beta WD-40 repeat n/a  G-protein betn/a  G-protein beta WD-40 repeat
+ostta04g00910	5.9	23.2	 Basic-leucine zipper domain
+ostta04g01160	6.3	19.5	 Replication factor-A protein 1, N-terminal
+ostta04g01410	19.3	19.5	 Glycosyl transferase, family 1 n/a  Glycosyl transferase, family 1
+ostta04g01610	1.1	2.7	 Regulator of nonsense-mediated decay, UPF3 n/a  Regulator of nonsense-mediated
+ostta04g02890	4.7	21.6	 Serine/threonine-protein kinase, active site n/a  Serine/threonine-protein kina
+ostta04g03210	15.9	20.8	 Thiolase-like, subgroup
+ostta04g03455	20.3	21.1	 unnamed product
+ostta04g03840	17.1	16.7	 unnamed product
+ostta04g03880	0.5	15	 Actin-binding, cofilin/tropomyosin type
+ostta04g04650	11.4	13.2	 Uncharacterised domain NUC173
+ostta05g00110	21.8	20.1	 ABC transporter, conserved site
+ostta05g00280	19.6	19.4	 Peptidase M18
+ostta05g00460	8.8	21.3	 Thiolase-like, subgroup
+ostta05g01080	4.7	21.7	 Oxysterol-binding protein
+ostta05g01880	22	19.9	 SANT/Myb domain
+ostta05g02690	4.5	21.7	 Tubulin binding cofactor C
+ostta05g03270	20.8	19.5	 Alcohol dehydrogenase superfamily, zinc-type
+ostta05g04100	12.5	11.8	 Molybdenum cofactor sulfurase, C-terminal n/a  Molybdenum cofactor sulfurase, C
+ostta06g00380	11.8	18.2	 unnamed product
+ostta06g00850	23	16.8	 Glutamate 5-kinase n/a  Glutamate 5-kinase
+ostta06g00870	21.7	2.3	 Glycine cleavage H-protein, subgroup n/a  Glycine cleavage H-protein, subgroup
+ostta06g01190	19.4	16.8	 AMP-dependent synthetase/ligase n/a  AMP-dependent synthetase/ligase
+ostta06g01430	19.5	19.8	 Ribosomal RNA-processing protein 7
+ostta06g01530	0.2	15.2	 Serine/threonine-protein kinase, active site
+ostta06g01800	20.9	18.9	 Ribosomal protein L4/L1e n/a  Ribosomal protein L4/L1e
+ostta06g01830	23.2	21.7	 Oxoglutarate/iron-dependent dioxygenase
+ostta06g02310	9	13.5	 Glutathione S-transferase, N-terminal
+ostta06g02480	14.7	19.8	 2-oxoglutarate dehydrogenase, E1 component n/a  2-oxoglutarate dehydrogenase, E
+ostta06g03200	16.5	16.2	 Acylneuraminate cytidylyltransferase
+ostta06g03780	5.4	23.6	 U2 auxiliary factor small subunit
+ostta06g03910	4.2	21.5	 unnamed product
+ostta07g00230	9.3	9.7	 DnaJ domain
+ostta07g00500	6.3	4.7	 Carbohydrate binding module family 25
+ostta07g01390	19.3	16.4	 Protein of unknown function DUF227
+ostta07g01560	20.7	13.5	 ResB-like domain n/a  ResB-like domain
+ostta07g02270	20.8	12.4	 Leucine-rich repeat n/a  Leucine-rich repeat
+ostta07g02810	23.3	6.4	 6-phosphogluconolactonase, DevB-type
+ostta07g03790	5	20.9	 Ribosomal protein S16 domain n/a  Ribosomal protein S16 domain
+ostta07g04150	7.3	20.3	 Ribosomal protein S21e n/a  Ribosomal protein S21e n/a  Ribosomal protein S21e
+ostta07g04360	0.8	22.2	 Ribosomal protein L10/L12
+ostta08g00140	0.7	21.1	 Tetratricopeptide repeat n/a  Tetratricopeptide repeat
+ostta08g00970	14.6	14.6	  n/a  hypothetical protein
+ostta08g04260	22	21.7	 Methylenetetrahydrofolate reductase
+ostta09g00280	21.7	15.2	 Helix-turn-helix, base-excision DNA repair, C-terminal n/a  Helix-turn-helix, bA repair, C-terminal
+ostta09g00400	11.8	22.9	 Helix-turn-helix, base-excision DNA repair, C-terminal n/a  Helix-turn-helix, bA repair, C-terminal
+ostta09g01090	11.7	22.7	 Zinc/iron permease
+ostta09g01440	2.8	4.9	 Pseudouridine synthase I, TruA, N-terminal n/a  Pseudouridine synthase I, TruA,
+ostta09g01480	11.4	18.8	 Protein of unknown function DUF3493
+ostta09g01495	16.5	16.5	 Serine/threonine-protein kinase, active site
+ostta09g02350	6.6	22.8	 Argininosuccinate synthase
+ostta09g02370	7.9	17.7	 Conserved oligomeric Golgi complex subunit 5 n/a  Conserved oligomeric Golgi co
+ostta09g02400	2.6	18.8	 Flavoprotein pyridine nucleotide cytochrome reductase n/a  Flavoprotein pyridintochrome reductase
+ostta09g02590	11.8	23.5	 GUN4-like
+ostta10g00600	19.6	18.6	 Molybdopterin biosynthesis MoaE
+ostta10g01190	19.2	10.4	 Quinonprotein alcohol dehydrogenase-like superfamily
+ostta10g01705	20.4	16.5	 unnamed product
+ostta10g01830	5.2	22.9	 Tetratricopeptide repeat
+ostta10g02190	4.7	17.2	 P-loop containing nucleoside triphosphate hydrolase
+ostta10g02200	19	19	 Serine/threonine-protein kinase, active site
+ostta10g02360	4.7	18.2	 DEK, C-terminal
+ostta10g02380	6.1	12.4	 Ribosomal protein L46
+ostta10g02430	23.3	19.1	 WD40 repeat
+ostta10g03290	16	21.6	 Putative ParB-like nuclease n/a  Putative ParB-like nuclease
+ostta10g03435	16.4	9.8	 Nucleotide-binding, alpha-beta plait
+ostta11g00210	4.4	21.6	 Phospholipid/glycerol acyltransferase
+ostta11g00280	8.3	21.5	 Rubredoxin-type fold n/a  Rubredoxin-type fold
+ostta11g01110	6	20.4	 Transaldolase
+ostta11g01230	2.6	15.1	 Clp protease proteolytic subunit /Translocation-enhancing protein TepA
+ostta11g01410	17.5	14.9	 Polyprenyl synthetase
+ostta11g01915	4.4	19.2	 Cytochrome c/c1 haem-lyase
+ostta11g02090	5.6	1.3	 unnamed product
+ostta11g02450	22.1	18	 IKI3
+ostta11g03250	20.4	13.6	 P-loop containing nucleoside triphosphate hydrolase
+ostta12g00870	4.3	12.6	 Alpha/beta hydrolase fold-1
+ostta12g01540	10.8	15.5	 Mycolic acid cyclopropane synthase
+ostta12g01700	17.9	23	 DNA methylase, N-6 adenine-specific, conserved site
+ostta12g01950	16.3	14.6	 Snf7
+ostta12g02485	3.3	12.9	 Citrate synthase-like, small alpha subdomain
+ostta12g02500	22.1	13.4	 Helicase, C-terminal
+ostta12g02650	8.8	21.3	 Protein of unknown function DUF3411, plant
+ostta12g02690	6.8	3.4	 DeoxyUTP pyrophosphatase n/a  DeoxyUTP pyrophosphatase
+ostta13g00440	13.4	18.5	 P-loop containing nucleoside triphosphate hydrolase
+ostta13g00660	14.8	18.6	 Glutamine amidotransferase subunit PdxT n/a  Glutamine amidotransferase subunit
+ostta13g00740	6.8	16.1	 Rossmann-like alpha/beta/alpha sandwich fold
+ostta13g00750	4.2	19.2	 GTP-binding protein TrmE/Glycine cleavage system T protein, domain 1
+ostta13g00820	7.5	16.4	 RNA-binding protein Lupus La
+ostta13g01440	9.2	23.9	 Domain of unknown function DUF262
+ostta13g01520	10	16.4	 Inositol monophosphatase, conserved site n/a  Inositol monophosphatase, conserv
+ostta13g02100	18.3	20.2	 unnamed product
+ostta14g00980	10.4	15.7	 K Homology domain, type 1
+ostta14g01075	14	1.5	 Glycosyl transferase, family 1
+ostta14g01140	5.1	18.6	 Formate-tetrahydrofolate ligase, FTHFS
+ostta14g01550	16.9	13	  n/a  unnamed product
+ostta14g02700	16.4	14.1	 unnamed product
+ostta14g02750	11.6	18.2	 Orn/DAP/Arg decarboxylase 2, N-terminal
+ostta14g02980	8.7	12.3	 NAD-dependent epimerase/dehydratase
+ostta15g00130	21.3	21.1	 Serine/threonine-specific protein phosphatase/bis5-nucleosyl-tetraphosphatase
+ostta15g00340	20.3	17.8	 TRAPP III complex, Trs85
+ostta15g00620	9.9	0	 Replication factor A, C-terminal n/a  Replication factor A, C-terminal
+ostta15g00950	22.5	18.2	 Methyltransferase type 11
+ostta15g01730	18.3	21.7	 HSP20-like chaperone
+ostta15g01820	0.9	17.4	 unnamed product
+ostta15g02410	19.3	15.1	 unnamed product
+ostta16g00470	10.7	20.5	 unnamed product
+ostta16g01010	6	21.3	 Metalloenzyme, LuxS/M16 peptidase-like
+ostta16g01590	6.6	0.7	 Peroxisomal biogenesis factor 11
+ostta16g02025	2.5	22.4	 Legume lectin, beta chain, Mn/Ca-binding site
+ostta17g01030	5.5	10.6	 Methylthiotransferase/radical SAM-type protein
+ostta17g01450	0.1	0.7	 ARP2/3 complex, 21kDa subunit p21-Arc
+ostta17g02370	16.7	10.7	 Calcium/calmodulin-dependent/calcium-dependent protein kinase

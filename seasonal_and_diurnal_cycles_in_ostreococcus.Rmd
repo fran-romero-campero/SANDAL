@@ -267,6 +267,8 @@ rhythmic.genes.ld.12 <- rownames(subset(results.ld.12, pVal < 0.05))
 print("Number of genes presenting a 12h rhythmic profile LD condition")
 length(rhythmic.genes.ld.12)
 
+write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.ld.12),file="gene_sets/LD_2_peaks_genes.tsv",row.names = F)
+
 results.ld.8 <- rain(t(ld.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
 print("Percentage of genes presenting a 8h rhythmic profile LD condition")
 sum(results.ld.8$pVal < 0.05)/number.genes
@@ -336,6 +338,8 @@ sum(results.sd.12$pVal < 0.05)/number.genes
 rhythmic.genes.sd.12 <- rownames(subset(results.sd.12, pVal < 0.05))
 print("Number of genes presenting a 12h rhythmic profile under SD condition")
 length(rhythmic.genes.sd.12)
+
+write.table(x = subset(gene.annotation, geneID %in% rhythmic.genes.sd.12),file="gene_sets/SD_2_peaks_genes.tsv",row.names = F)
 
 results.sd.8 <- rain(t(sd.gene.expression), deltat=4, period=8, verbose=FALSE, nr.series=3)
 print("Number of genes presenting a 8h rhythmic profile under SD condition")
@@ -610,6 +614,8 @@ length(intersect(rhythmic.genes.ld.ll,rhythmic.genes.ld.12))
 
 genes.two.peaks.ld.one.peak.ll <- intersect(rhythmic.genes.ld.ll,rhythmic.genes.ld.12)
 
+length(genes.two.peaks.ld.one.peak.ll)
+
 length(rhythmic.genes.ld.ll.12)
 
 length(rhythmic.genes.ld.12)
@@ -673,8 +679,8 @@ length(rhythmic.genes.ld.12)
 
 write.table(x = subset(gene.annotation, geneID %in% complete.ld.dd.rhythmic.genes),file="gene_sets/LD_DD_rhythmic_genes.tsv",row.names = F)
 
-
-
+genes.two.peaks.ld.one.peak.dd.ll <- intersect(genes.two.peaks.ld.one.peak.dd, genes.two.peaks.ld.one.peak.ll)
+length(genes.two.peaks.ld.one.peak.dd.ll)
 ```
 
 We found that 53.39% of the genes identified previously as rhythmic under LD condition still presented cycling expression patterns when transferred to free running conditions consisting of constant darkness. Specifically, we identified 3311 genes under DD conditions comprising 53.39% of the entire genome that maintain rhythmicity under constant darkness after entrainment in LD condition. The 2890 remaining genes cycling under LD condition presented either a flat or noisy expression profile under DD conditions.      
@@ -857,6 +863,7 @@ genes.two.peaks.sd.one.peak.ll.dd <- intersect(genes.two.peaks.sd.one.peak.ll,
                                                genes.two.peaks.sd.one.peak.dd)
 
 length(genes.two.peaks.sd.one.peak.ll.dd)
+length(genes.two.peaks.ld.one.peak.dd.ll)
 length(genes.two.peaks.sd.one.peak.ll.dd) / length(rhythmic.genes.sd.12)
 
 complete.sd.dd.rhythmic.genes <- unique(c(rhythmic.genes.sd.dd,rhythmic.genes.sd.dd.12))
@@ -2081,35 +2088,6 @@ plot.expression.profile(gene.id ="ostta18g01250", gene.name = "FNR",
                         gene.expression,entrainment="SD",
                         free.running="DD",param=F) # peak zt20
 
-gene.id <- "ostta06g02940"
-gene.id <- "ostta18g01250"
-
-sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
-current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
-current.gene.expression.sd.ll <- gene.expression[gene.id,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
-current.gene.expression.sd.dd <- gene.expression[gene.id,c(paste(sd.zt,6,sep="_"),paste(sd.zt,7,sep="_"))]
-
-time.points <- seq(from=0,by=4,length.out = 12)
-
-sd.ll.dd.df <- data.frame(time=c(time.points,time.points),
-                          measure=c(current.gene.expression.sd.ll, 
-                                    current.gene.expression.sd.dd),
-                          group=c(rep("sd_ll",12),rep("sd_dd",12)))
-
-sd.out.i <- circacompare(x = sd.ll.dd.df, col_time = "time", 
-                         col_group = "group", 
-                         col_outcome = "measure",alpha_threshold = 1)
-circa.values.sd <- sd.out.i$summary$value
-names(circa.values.sd) <- sd.out.i$summary$parameter
-
-mesor.sd.ll <- circa.values.sd["sd_ll mesor estimate"]
-mesor.sd.dd <- circa.values.sd["sd_dd mesor estimate"]
-
-amplitude.sd.ll <- circa.values.sd["sd_ll amplitude estimate"]
-amplitude.sd.dd <- circa.values.sd["sd_dd amplitude estimate"]
-
-phase.sd.ll <- circa.values.sd["sd_ll peak time hours"]
-phase.sd.dd <- circa.values.sd["sd_dd peak time hours"]
 
 two.waves.combination <- function(x,beta1,beta2,phi,offset)
 {
@@ -2123,56 +2101,277 @@ two.waves.combination <- function(x,beta1,beta2,phi,offset)
  return(res)
 }
 
-time.points <- seq(from=0,by=4,length.out = 18)
-gene.expression.df.2 <- data.frame(x=time.points,                                y=current.gene.expression.sd/mean(current.gene.expression.sd))
+library(magick)
+bimodal.gene.model <- function(gene.id, gene.name)
+{
+ ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+ current.gene.expression.ld.ll <- gene.expression[gene.id,c(paste(ld.zt,4,sep="_"),paste(ld.zt,5,sep="_"))]
+ current.gene.expression.ld.dd <- gene.expression[gene.id,c(paste(ld.zt,6,sep="_"),paste(ld.zt,7,sep="_"))]
+ 
+ sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+ current.gene.expression.sd.ll <- gene.expression[gene.id,c(paste(sd.zt,4,sep="_"),paste(sd.zt,5,sep="_"))]
+ current.gene.expression.sd.dd <- gene.expression[gene.id,c(paste(sd.zt,6,sep="_"),paste(sd.zt,7,sep="_"))]
+ 
+ time.points <- seq(from=0,by=4,length.out = 12)
+ 
+ sd.ll.dd.df <- data.frame(time=c(time.points,time.points),
+                           measure=c(current.gene.expression.sd.ll, 
+                                     current.gene.expression.sd.dd),
+                           group=c(rep("sd_ll",12),rep("sd_dd",12)))
+ 
+ sd.out.i <- circacompare(x = sd.ll.dd.df, col_time = "time", 
+                          col_group = "group", 
+                          col_outcome = "measure",alpha_threshold = 1)
+ circa.values.sd <- sd.out.i$summary$value
+ names(circa.values.sd) <- sd.out.i$summary$parameter
+ 
+ mesor.sd.ll <- circa.values.sd["sd_ll mesor estimate"]
+ mesor.sd.dd <- circa.values.sd["sd_dd mesor estimate"]
+ 
+ amplitude.sd.ll <- circa.values.sd["sd_ll amplitude estimate"]
+ amplitude.sd.dd <- circa.values.sd["sd_dd amplitude estimate"]
+ 
+ phase.sd.ll <- circa.values.sd["sd_ll peak time hours"]
+ phase.sd.dd <- circa.values.sd["sd_dd peak time hours"]
+ 
+ time.points <- seq(from=0,by=4,length.out = 18)
+ time.points.smooth <- seq(from=0,to=68,by=1)
+ gene.expression.df.2 <- data.frame(x=time.points,
+                                    y=current.gene.expression.sd/mean(current.gene.expression.sd))
+ 
+ m.2 <- nls( y ~ two.waves.combination(x,beta1,beta2,phi,offset), data = gene.expression.df.2,
+             start = list(beta1=amplitude.sd.dd/mesor.sd.dd,
+                          beta2=amplitude.sd.ll/mesor.sd.ll,
+                          phi=phase.sd.dd,
+                          offset=12),#phase.sd.ll-phase.sd.dd),
+             lower = c(0.02,0.02,0,8), upper = c(2,2,24,16),algorithm = "port", 
+             control=stats::nls.control(maxiter = 100, minFactor = 1/10000,warnOnly = T),
+             trace = T)
+ 
+ summariy.m.2 <- summary(m.2)
+ estimates.2 <- summariy.m.2$coefficients[,"Estimate"]
+ beta1.estimate.2 <- estimates.2[["beta1"]]
+ beta2.estimate.2 <- estimates.2[["beta2"]]
+ phi1.estimate.2 <- estimates.2[["phi"]]
+ phi2.estimate.2 <- ((phi1.estimate.2 + estimates.2[["offset"]]) %% 24)
+ 
+ dos.ondas.2 <- two.waves.combination(x=seq(from=0,to=68,by=0.01), 
+                                      beta1=beta1.estimate.2,
+                                      beta2=beta2.estimate.2,
+                                      phi=phi1.estimate.2,
+                                      offset=phi2.estimate.2 - phi1.estimate.2)
+ 
+ wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = phi1.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+ wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
+ 
+ time.points <- seq(from=0,by=4,length.out = 18)
+
+ ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.ld <- gene.expression[gene.id,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+ 
+ sd.zt <- paste("sd",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
+ current.gene.expression.sd <- gene.expression[gene.id,c(paste(sd.zt,1,sep="_"),paste(sd.zt,2,sep="_"),paste(sd.zt,3,sep="_"))]
+ 
+ 
+ max.expr <- ceiling(max(c(unlist(current.gene.expression.ld), unlist(current.gene.expression.sd))))
+ min.expr <- floor(min(c(unlist(current.gene.expression.ld), unlist(current.gene.expression.sd))))
+ range.expr <- max.expr - min.expr
+ 
+ width.rectangule <- floor(range.expr / 10)
+ 
+ time.points <- seq(from=0,by=4,length.out = 18)
+ 
+ ld.sd.df <- data.frame(time=c(time.points,time.points),
+                        measure=c(unlist(current.gene.expression.ld), 
+                                  unlist(current.gene.expression.sd)),
+                        group=c(rep("ld",18),rep("sd",18)))
+ 
+ out.i <- circacompare(x = ld.sd.df, col_time = "time", 
+                       col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+ 
+ circa.values <- out.i$summary$value
+ names(circa.values) <- out.i$summary$parameter
+ 
+ mesor.ld <- circa.values["ld mesor estimate"]
+ amplitude.ld <- circa.values["ld amplitude estimate"]
+ phase.ld <- circa.values["ld peak time hours"]
+ 
+ 
+ mesor.sd <- circa.values["sd mesor estimate"]
+ amplitude.sd <- circa.values["sd amplitude estimate"]
+ phase.sd <- circa.values["sd peak time hours"]
+ 
+ phase.sd.1 <- phi1.estimate.2
+ amplitude.sd.1 <- beta2.estimate.2*mesor.sd
+ phase.sd.2 <- phi2.estimate.2
+ # phase.sd.1 <- phi2.estimate.2
+ # phase.sd.2 <- phi1.estimate.2
+ 
+ phase.sd <- phase.sd.2
+ 
+ # transitions.sd.ld <- matrix(nrow = 48,ncol=18)
+ # fixed.sd.ld <- matrix(nrow = 48,ncol=18)
+ transitions.sd.ld <- matrix(nrow = 48,ncol=length(time.points.smooth))
+ fixed.sd.ld <- matrix(nrow = 48,ncol=length(time.points.smooth))
+ 
+ mesors <- seq(from=mesor.sd,to=mesor.ld,length.out = 48)
+ amplitudes <- seq(from=amplitude.sd.1,to=amplitude.ld,length.out = 48)
+ 
+ if(phase.sd <= phase.ld)
+ {
+  phases <- seq(from=phase.sd,to=phase.ld,length.out = 48)
+ } else
+ {
+  until.dawn <- 24 - phase.sd
+  
+  phases <- seq(from=0,to=phase.ld+until.dawn,length.out = 48)-until.dawn
+  phases[phases < 0] <- phases[phases < 0] + 24
+ }
+ 
+ for(i in 1:48)
+ {
+  # transitions.sd.ld[i,] <- wave.form(mesor = mesors[i], amplitude = amplitudes[i], 
+  #                                    phase = phases[i],time = time.points,period = 24)   
+  # fixed.sd.ld[i,] <- wave.form(mesor = mesor.sd, amplitude = amplitude.sd, 
+  #                              phase = phase.sd.1,time = time.points,period = 24)
+  
+  transitions.sd.ld[i,] <- wave.form(mesor = mesors[i], amplitude = amplitudes[i], 
+                                     phase = phases[i],time = time.points.smooth,period = 24)   
+  fixed.sd.ld[i,] <- wave.form(mesor = mesor.sd, amplitude = amplitude.sd, 
+                               phase = phase.sd.1,time = time.points.smooth,period = 24)
+  
+ }
+ 
+ months <- c("January", "February", "March", "April","May", "June", "July", 
+             "August", "September", "October", "November", "December")
+ 
+ months <- rep(months,each=8)
+ colors <- colorRampPalette(c("red","blue"))(48)
+ dusk <- seq(from=8,to=16,length.out = 48)
+ k <- 1
+ 
+ image.number <- 1
+ image.dir <- paste0("gif_images/",gene.id)
+ dir.create(path = image.dir)
+ 
+ for(i in 1:48)
+ {
+  png(filename = paste0(image.dir,"/",paste0(paste(gene.id,sprintf(fmt = "%03d",image.number),sep="_"),".png")))
+  plot(time.points,current.gene.expression.ld,type="o",col="blue",lwd=0.25,pch=19,cex=0.5,
+       main=paste(c(months[k], " (Day ",floor(dusk[i]), " hours : Night ",
+                    24-floor(dusk[i]), " hours)"),collapse=""),
+       ylim=c(min.expr - 2 * width.rectangule,max.expr),axes=F,xlab="",ylab="")
+  lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
+  
+  for(l in 0:2)
+  {
+   polygon(x = c(24*l, 24*l+dusk[i], 24*l+dusk[i], 24*l),
+           y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+               min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+           lwd=2,border=colors[i])
+   polygon(x = c(24*l+dusk[i],24*(l+1),24*(l+1),24*l+dusk[i]),
+           y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+               min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+           lwd=2,border=colors[i],col=colors[i])
+  }
+  
+  text(x = 32,y=min.expr-2.2*width.rectangule,labels=paste(gene.id,gene.name,sep=" - "),cex=1.2,adj=0.5)
+  
+  
+  # lines(time.points,transitions.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=2)
+  # lines(time.points,fixed.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=3)
+  # combined.wave.i <- apply(X = matrix(data = c(transitions.sd.ld[i,],fixed.sd.ld[i,]),ncol=2),MARGIN = 1,FUN = max)
+  # lines(time.points,combined.wave.i,type="l",col=colors[i],lwd=2,lty=1)
+
+  lines(time.points.smooth,transitions.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=2)
+  lines(time.points.smooth,fixed.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=3)
+  combined.wave.i <- apply(X = matrix(data = c(transitions.sd.ld[i,],fixed.sd.ld[i,]),ncol=2),MARGIN = 1,FUN = max)
+  lines(time.points.smooth,combined.wave.i,type="l",col=colors[i],lwd=2,lty=1)
+  
+  dev.off()
+  image.number <- image.number + 1
+  k <- k + 1
+  # Sys.sleep(0.25)
+  # print(i)
+ }
+ 
+ for(i in 48:1)
+ {
+  png(filename = paste0(image.dir,"/",paste0(paste(gene.id,sprintf(fmt = "%03d",image.number),sep="_"),".png")))
+  plot(time.points,current.gene.expression.ld,type="o",col="blue",lwd=0.25,pch=19,cex=0.5,
+       main=paste(c(months[k], " (Day ",floor(dusk[i]), " hours : Night ",
+                    24-floor(dusk[i]), " hours)"),collapse=""),
+       ylim=c(min.expr - 2 * width.rectangule,max.expr),axes=F,xlab="",ylab="")
+  lines(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)
+  
+  for(l in 0:2)
+  {
+   polygon(x = c(24*l, 24*l+dusk[i], 24*l+dusk[i], 24*l),
+           y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+               min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+           lwd=2,border=colors[i])
+   polygon(x = c(24*l+dusk[i],24*(l+1),24*(l+1),24*l+dusk[i]),
+           y=c(min.expr-1.5*width.rectangule, min.expr-1.5*width.rectangule, 
+               min.expr-0.5*width.rectangule, min.expr-0.5*width.rectangule),
+           lwd=2,border=colors[i],col=colors[i])
+  }
+  
+  text(x = 32,y=min.expr-2.2*width.rectangule,labels=paste(gene.id,gene.name,sep=" - "),cex=1.2,adj=0.5)
+  # lines(time.points,transitions.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=2)
+  # lines(time.points,fixed.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=3)
+  # combined.wave.i <- apply(X = matrix(data = c(transitions.sd.ld[i,],fixed.sd.ld[i,]),ncol=2),MARGIN = 1,FUN = max)
+  # lines(time.points,combined.wave.i,type="l",col=colors[i],lwd=2,lty=1)
+  
+  lines(time.points.smooth,transitions.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=2)
+  lines(time.points.smooth,fixed.sd.ld[i,],type="l",col=colors[i],lwd=1.5,lty=3)
+  combined.wave.i <- apply(X = matrix(data = c(transitions.sd.ld[i,],fixed.sd.ld[i,]),ncol=2),MARGIN = 1,FUN = max)
+  lines(time.points.smooth,combined.wave.i,type="l",col=colors[i],lwd=2,lty=1)
+  
+  dev.off()
+  image.number <- image.number + 1
+  k <- k + 1
+  # Sys.sleep(0.25)
+  # print(i)
+ }
+ 
+ imgs <- list.files(image.dir, full.names = TRUE)
+ img.list <- lapply(imgs, image_read)
+ img.joined <- image_join(img.list)
+ img.animated <- image_animate(img.joined, fps = 5)
+ image_write(image = img.animated,
+             path = paste0(c("gif_images/",paste(gene.id,gene.name,sep="_"),".gif"),collapse=""))
+ unlink(x = image.dir,recursive = TRUE)
+}
+
+bimodal.gene.model(gene.id = "ostta06g02940",gene.name = "GBSS")
+bimodal.gene.model(gene.id = "ostta04g04000",gene.name = "PWD")
+bimodal.gene.model(gene.id = "ostta03g03980",gene.name = "PA200")
+bimodal.gene.model(gene.id = "ostta05g03730",gene.name = "PAS2")
 
 
-m.2 <- nls( y ~ two.waves.combination(x,beta1,beta2,phi,offset), data = gene.expression.df.2,
-            start = list(beta1=amplitude.sd.dd/mesor.sd.dd,
-                         beta2=amplitude.sd.ll/mesor.sd.ll,
-                         phi=phase.sd.dd,
-                         offset=8),#phase.sd.ll-phase.sd.dd),
-            lower = c(0.02,0.02,20,8), upper = c(2,2,24,12),algorithm = "port", 
-            control=stats::nls.control(maxiter = 100, minFactor = 1/10000,warnOnly = T),
-            trace = T)
+bimodal.gene.model(gene.id = "ostta07g03850",gene.name = " ")
+bimodal.gene.model(gene.id = "ostta06g02730",gene.name = "PIP5K1")
+bimodal.gene.model(gene.id = "ostta10g02350",gene.name = " ")
+
+genes.two.peaks.ld.one.peak.dd.ll
+write.table(x = subset(gene.annotation, geneID %in% genes.two.peaks.sd.one.peak.ll.dd),file="gene_sets/genes_two_peaks_sd_one_peak_dd_ll.tsv",row.names = F)
+
+genes.two.peaks.sd.one.peak.ll.dd.atha <- subset(ostta2atha, ostta %in% genes.two.peaks.sd.one.peak.ll.dd)$atha
 
 
-summariy.m.2 <- summary(m.2)
-estimates.2 <- summariy.m.2$coefficients[,"Estimate"]
-beta1.estimate.2 <- estimates.2[["beta1"]]
-beta2.estimate.2 <- estimates.2[["beta2"]]
-phi1.estimate.2 <- estimates.2[["phi"]]
-phi2.estimate.2 <- ((phi1.estimate.2 + estimates.2[["offset"]]) %% 24)
+library(clusterProfiler)
+library(org.At.tair.db)
+enrich.genes.two.peaks.sd.one.peak.ll.dd.ath <- enrichGO(gene = genes.two.peaks.sd.one.peak.ll.dd.atha,
+                                          OrgDb = org.At.tair.db,
+                                          ont = "BP",
+                                          pAdjustMethod = "BH",
+                                          pvalueCutoff  = 0.05,
+                                          keyType = "TAIR")
+as.data.frame(enrich.genes.two.peaks.sd.one.peak.ll.dd.ath)
 
-dos.ondas.2 <- two.waves.combination(x=seq(from=0,to=68,by=0.01), 
-                                     beta1=beta1.estimate.2,
-                                     beta2=beta2.estimate.2,
-                                     phi=phi1.estimate.2,
-                                     offset=phi2.estimate.2 - phi1.estimate.2)
-
-wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = phi1.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
-wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=68,by=0.01))
-
-time.points <- seq(from=0,by=4,length.out = 18)
-plot(time.points,current.gene.expression.sd,type="o",col="red",lwd=0.25,pch=19,cex=0.5)#,
-lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*dos.ondas.2,type="l",col="red",lwd=2,pch=19,cex=0.5)
-lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave1,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
-lines(seq(from=0,to=68,by=0.01),mean(current.gene.expression.sd)*wave2,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
-
-wave1 <- wave.form(mesor = 1, amplitude = beta1.estimate.2, phase = 
-                    phi1.estimate.2,period = 24, time = seq(from=0,to=116,by=0.01))
-wave2 <- wave.form(mesor = 1, amplitude = beta2.estimate.2, phase = phi2.estimate.2,period = 24, time = seq(from=0,to=116,by=0.01))
-
-
-plot.expression.profile(gene.id ="ostta18g01250", gene.name = "FNR", 
-                        gene.expression,entrainment="SD",
-                        free.running="DD",param=F) # peak zt20
-lines(seq(from=0,to=116,by=0.01),mean(current.gene.expression.sd)*wave1,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
-
-plot.expression.profile(gene.id ="ostta18g01250", gene.name = "FNR", 
-                        gene.expression,entrainment="SD",
-                        free.running="LL",param=F) # peak zt20
-lines(seq(from=0,to=116,by=0.01),mean(current.gene.expression.sd)*wave2,type="l",col="red",lwd=2,pch=19,cex=0.5,lty=2)
+write(x = genes.two.peaks.sd.one.peak.ll.dd.atha, file="gene_sets/genes_two_peaks_sd_one_peak_dd_ll_atha.tsv")
 
 
 
@@ -2944,6 +3143,10 @@ dynamic.transition.sd.ld <- function(gene.id, gene.name)
 dynamic.transition.sd.ld(gene.id = "ostta08g03680",gene.name = "POLAB")
 dynamic.transition.sd.ld(gene.id = "ostta01g02580",gene.name = "MCM6")
 dynamic.transition.sd.ld(gene.id = "ostta06g02890",gene.name = "PCNA")
+
+dynamic.transition.sd.ld(gene.id = "ostta04g00770",gene.name = "Utp14")
+dynamic.transition.sd.ld(gene.id = "ostta03g03015",gene.name = "YeiP")
+
 
 
 dynamic.transition.sd.ld(gene.id = "ostta01g03170",gene.name = "PsbP")
@@ -4537,7 +4740,11 @@ colnames(ld.protein.abundance) <- c(paste("zt0",1:3,sep="_"),
                                     paste("zt12",1:3,sep="_"),
                                     paste("zt16",1:3,sep="_"),
                                     paste("zt20",1:3,sep="_"))
- 
+
+write.table(x = ld.protein.abundance,file = "swath_proteomic_data/LD_proteomic_data.tsv",quote = F,sep = "\t")
+
+ld.protein.abundance <- read.table(file="swath_proteomic_data/LD_proteomic_data.tsv",header = T,sep = "\t")
+
 results.ld.proteomics <- rain(t(ld.protein.abundance), deltat=4, period=24, verbose=FALSE, nr.series=3)
 sum(results.ld.proteomics$pVal < 0.05)/nrow(ld.protein.abundance)
 rhythmic.proteins.ld <- rownames(subset(results.ld.proteomics, pVal < 0.05))
@@ -4856,6 +5063,9 @@ circacompare.ld.gene.protein["ostta01g00550",]
 circacompare.ld.gene.protein["ostta01g01080",]
 circacompare.ld.gene.protein["ostta01g02010",]
 
+circacompare.ld.gene.protein["ostta11g00910",]
+
+
 circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,]
 
 hist(circacompare.ld.gene.protein[,11],breaks = 12)
@@ -4873,6 +5083,68 @@ hist(phase.diffs.ld,col="blue",border="black",lwd=3,xlab="",ylab="",main="",cex.
 axis(side = 2,lwd=3,cex.axis=1.5)
 axis(side = 1,lwd=3,cex.axis=1.5,at = seq(from=0,to=24,by=4),labels = seq(from=0,to=24,by=4))
 ```
+
+
+
+```{r ld_gene_vs_protein_only_rhythmic}
+circacompare.ld.gene.protein <- matrix(nrow=length(ld.protein.ids),ncol=15)
+rownames(circacompare.ld.gene.protein) <- ld.protein.ids
+
+time.points <- seq(from=0,by=4,length.out = 18)
+
+for(i in 1:length(ld.protein.ids))
+{
+  print(i)
+  gene.i <- ld.protein.ids[i]
+  
+  ld.expression.i <- gene.expression[gene.i,c(paste(ld.zt,1,sep="_"),paste(ld.zt,2,sep="_"),paste(ld.zt,3,sep="_"))]
+  ld.abundance.i <- ld.protein.abundance[gene.i,c(paste(paste("zt",seq(from=0, to=20,by=4),sep=""),1,sep="_"),paste(paste("zt",seq(from=0, to=20,by=4),sep=""),2,sep="_"),paste(paste("zt",seq(from=0, to=20,by=4),sep=""),3,sep="_") )]
+  
+  ld.gene.protein.df <- data.frame(time=c(time.points,time.points),
+                         measure=c(ld.expression.i, ld.abundance.i),
+                         group=c(rep("gene",18),rep("protein",18)))
+  
+  out.i <- circacompare(x = ld.gene.protein.df, col_time = "time", col_group = "group", col_outcome = "measure",alpha_threshold = 1)
+  
+  if(!is.null(out.i))
+  {
+    circacompare.ld.gene.protein[i,] <- out.i[[2]][,2]
+  }
+}
+
+
+colnames(circacompare.ld.gene.protein) <- out.i$summary$parameter
+circa.rhythmic.ld.proteins <- ld.protein.ids[circacompare.ld.gene.protein[,2] < 0.05]
+length(ld.protein.ids)
+length(complete.rhythmic.proteins.ld)
+
+length(intersect(complete.rhythmic.proteins.ld,ld.protein.ids))
+
+circacompare.ld.gene.protein["ostta01g00550",]
+circacompare.ld.gene.protein["ostta01g01080",]
+circacompare.ld.gene.protein["ostta01g02010",]
+
+circacompare.ld.gene.protein["ostta11g00910",]
+
+
+circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,]
+
+hist(circacompare.ld.gene.protein[,11],breaks = 12)
+hist(circacompare.ld.gene.protein[,13])
+par(lwd=3)
+hist(circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,"protein peak time hours"],breaks = 12,col="blue",border="black",lwd=3,xlab="",ylab="",main="",cex.axis=1.5,las=2)
+
+phase.diffs.ld <- circacompare.ld.gene.protein[complete.rhythmic.proteins.ld,"Phase difference estimate"]
+phase.diffs.ld[phase.diffs.ld < 0] <- phase.diffs.ld[phase.diffs.ld < 0] + 24
+hist(phase.diffs.ld)
+
+
+par(lwd=3)
+hist(phase.diffs.ld,col="blue",border="black",lwd=3,xlab="",ylab="",main="",cex.axis=1.5,las = 2,axes = F)
+axis(side = 2,lwd=3,cex.axis=1.5)
+axis(side = 1,lwd=3,cex.axis=1.5,at = seq(from=0,to=24,by=4),labels = seq(from=0,to=24,by=4))
+```
+
 
 
 ```{r ld_sets}
@@ -5120,6 +5392,8 @@ colnames(sd.protein.abundance) <- c(paste("zt0",1:3,sep="_"),
                                     paste("zt12",1:3,sep="_"),
                                     paste("zt16",1:3,sep="_"),
                                     paste("zt20",1:3,sep="_"))
+
+write.table(x = sd.protein.abundance,file = "swath_proteomic_data/SD_proteomic_data.tsv",quote = F,sep = "\t")
  
 results.sd.proteomics <- rain(t(sd.protein.abundance), deltat=4, period=24, verbose=FALSE, nr.series=3)
 sum(results.sd.proteomics$pVal < 0.05)/nrow(sd.protein.abundance)
@@ -5341,6 +5615,8 @@ colnames(circacompare.sd.gene.protein) <- out.i$summary$parameter
 circa.rhythmic.sd.proteins <- sd.protein.ids[circacompare.sd.gene.protein[,2] < 0.05]
 length(sd.protein.ids)
 length(complete.rhythmic.proteins.sd)
+
+circacompare.sd.gene.protein["ostta11g00910",]
 
 length(complete.rhythmic.proteins.sd)/length(sd.protein.ids)
 length(circa.rhythmic.sd.proteins)/length(sd.protein.ids)
@@ -6092,7 +6368,7 @@ names(G2.percentage.LD) <- time.points
 G2.day1.LD <- G2.percentage.LD[1:6]
 names(G2.day1.LD) <- time.points[1:6]
 G2.day2.LD <- G2.percentage.LD[7:12]
-names(G2.day2.LD) <- time.points.LD[7:12]
+names(G2.day2.LD) <- time.points[7:12]
 G2.day3.LD <- G2.percentage.LD[13:18]
 names(G2.day3.LD) <- time.points[13:18]
 G2.day4.LD <- G2.percentage.LD[19:24]
@@ -6456,13 +6732,13 @@ names(G2.day4.SD) <- time.points[19:24]
 
 S.percentage.SD <- percentage$S
 names(S.percentage.SD) <- time.points
-S.day1.SD <- S.percentage[1:6]
+S.day1.SD <- S.percentage.SD[1:6]
 names(S.day1.SD) <- time.points[1:6]
-S.day2.SD <- S.percentage[7:12]
+S.day2.SD <- S.percentage.SD[7:12]
 names(S.day2.SD) <- time.points[7:12]
-S.day3.SD <- S.percentage[13:18]
+S.day3.SD <- S.percentage.SD[13:18]
 names(S.day3.SD) <- time.points[13:18]
-S.day4.SD <- S.percentage[19:24]
+S.day4.SD <- S.percentage.SD[19:24]
 names(S.day4.SD) <- time.points[19:24]
 
 t.percentage<- t(percentage)
@@ -6766,6 +7042,7 @@ circos.clear()
 ```
 
 ```{r cell_cycle_LD_SD_comparison}
+library(circacompare)
 cell.cycle.time.points <- seq(from=0,by=4,length.out = 18)
 circacompare.data <- data.frame(time=c(cell.cycle.time.points,
                                        cell.cycle.time.points),
@@ -7044,6 +7321,8 @@ colnames(ld.sd.protein.abundance) <- paste("zt",seq(from=0,to=20,by=4),sep="")
 head(ld.sd.protein.abundance)
 ld.sem.protein.abundance <- ld.sd.protein.abundance/sqrt(3)
 head(ld.sem.protein.abundance)
+
+sd.protein.abundance <- read.table(file="swath_proteomic_data/SD_proteomic_data.tsv",header = T,sep = "\t")
 
 
 head(sd.protein.abundance)
@@ -7439,13 +7718,19 @@ polygon(x = c(8,8,24,24),y=c(-4,-3,-3,-4),lwd=2,col="red",border="red") #510 420
 
 
 ```{r cyclins_cdk_LD_SD}
-ld.cyca.expression <- ld.mean.gene.expression["ostta18g01570",]
-ld.cycb.expression <- ld.mean.gene.expression["ostta01g06150",]
-ld.cycd.expression <- ld.mean.gene.expression["ostta18g01420",]
 
-ld.cyca.expression.sem <- ld.sem.gene.expression["ostta18g01570",]
+
+#ld.cyca.expression <- ld.mean.gene.expression["ostta18g01570",]
+ld.cyca.expression <- ld.mean.gene.expression["ostta02g00150",]
+ld.cycb.expression <- ld.mean.gene.expression["ostta01g06150",]
+ld.cycd.expression <- ld.mean.gene.expression["ostta18g01570",]
+#ld.cycd.expression <- ld.mean.gene.expression["ostta18g01420",]
+
+#ld.cyca.expression.sem <- ld.sem.gene.expression["ostta18g01570",]
+ld.cyca.expression.sem <- ld.sem.gene.expression["ostta02g00150",]
 ld.cycb.expression.sem <- ld.sem.gene.expression["ostta01g06150",]
-ld.cycd.expression.sem <- ld.sem.gene.expression["ostta18g01420",]
+ld.cycd.expression.sem <- ld.sem.gene.expression["ostta18g01570",]
+#ld.cycd.expression.sem <- ld.sem.gene.expression["ostta18g01420",]
 
 plot(x = seq(from=0,to=24,by=4),y = c(ld.cyca.expression,ld.cyca.expression[1]),
      type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-50,500),
@@ -7466,13 +7751,22 @@ polygon(x = c(0,16,16,0),y=c(-50, -50, -20, -20),lwd=2,border="blue")
 polygon(x = c(16,24,24,16),y=c(-50, -50, -20, -20),lwd=2,border="blue",col="blue") #490 460
 
 
-sd.cyca.expression <- sd.mean.gene.expression["ostta18g01570",]
-sd.cycb.expression <- sd.mean.gene.expression["ostta01g06150",]
-sd.cycd.expression <- sd.mean.gene.expression["ostta18g01420",]
+# sd.cyca.expression <- sd.mean.gene.expression["ostta18g01570",]
+# sd.cycb.expression <- sd.mean.gene.expression["ostta01g06150",]
+# sd.cycd.expression <- sd.mean.gene.expression["ostta18g01420",]
 
-sd.cyca.expression.sem <- sd.sem.gene.expression["ostta18g01570",]
+sd.cyca.expression <- sd.mean.gene.expression["ostta02g00150",]
+sd.cycb.expression <- sd.mean.gene.expression["ostta01g06150",]
+sd.cycd.expression <- sd.mean.gene.expression["ostta18g01570",]
+
+
+# sd.cyca.expression.sem <- sd.sem.gene.expression["ostta18g01570",]
+# sd.cycb.expression.sem <- sd.sem.gene.expression["ostta01g06150",]
+# sd.cycd.expression.sem <- sd.sem.gene.expression["ostta18g01420",]
+
+sd.cyca.expression.sem <- sd.sem.gene.expression["ostta02g00150",]
 sd.cycb.expression.sem <- sd.sem.gene.expression["ostta01g06150",]
-sd.cycd.expression.sem <- sd.sem.gene.expression["ostta18g01420",]
+sd.cycd.expression.sem <- sd.sem.gene.expression["ostta18g01570",]
 
 
 plot(x = seq(from=0,to=24,by=4),y = c(sd.cyca.expression,sd.cyca.expression[1]),
@@ -7562,6 +7856,19 @@ polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #
 
 ```{r ftsz_SD_LD}
 gene <- "ostta07g01610"
+gene <- "ostta08g02230"
+gene <- "ostta14g00150"
+
+sd.current.gene.expression <- scale(sd.mean.gene.expression[gene,],center = T,scale = T)[,1]
+sd.current.protein.abundance <- scale(sd.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+sd.current.gene.expression <- scale(sd.mean.gene.expression[gene,],center = T,scale = T)[,1]
+sd.current.protein.abundance <- scale(sd.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+ld.current.gene.expression <- scale(ld.mean.gene.expression[gene,],center = T,scale = T)[,1]
+ld.current.protein.abundance <- scale(ld.mean.protein.abundance[gene,],center = T,scale = T)[,1]
+
+
 
 plot(x = seq(from=0,to=24,by=4),y = c(sd.current.gene.expression,sd.current.gene.expression[1]),
      type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
@@ -7576,6 +7883,27 @@ axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=
 
 polygon(x = c(0,8,8,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red")
 polygon(x = c(8,24,24,8),y=c(-3, -3, -2.6, -2.6),lwd=2,border="red",col="red") #490 460
+
+
+
+plot(x = seq(from=0,to=24,by=4),y = c(ld.current.gene.expression,ld.current.gene.expression[1]),
+     type="o",lwd=3,axes=F,xlab="",ylab="", ylim=c(-3,2),
+     cex.lab=1.3,main="",cex.main=2,pch=20,cex=1.5,col="grey",lty=2)
+
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.gene.expression,ld.current.gene.expression[1]) - c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.gene.expression,ld.current.gene.expression[1]) + c(scaled.sem.ld.gene.expression[gene,],scaled.sem.ld.gene.expression[gene,1]),length = 0.05,angle = 90,code = 3,col = "grey",lwd=3)
+
+lines(x = seq(from=0,to=24,by=4),y = c(ld.current.protein.abundance,ld.current.protein.abundance[1]),
+      lwd=3, col="black",type="o",pch=20,cex=1.5)
+arrows(x0 = seq(from=0,to=24,by=4),y0 =  c(ld.current.protein.abundance,ld.current.protein.abundance[1]) - c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),x1 = seq(from=0,to=24,by=4), y1 = c(ld.current.protein.abundance,ld.current.protein.abundance[1]) + c(scaled.sem.ld.protein.abundance[gene,],scaled.sem.ld.protein.abundance[gene,1]),length = 0.05,angle = 90,code = 3,col = "black",lwd=3)
+axis(side=2,lwd=3,at = seq(from=-2,to=2,by=1),labels=rep("",5),cex.axis=1.2,las=2)
+
+polygon(x = c(0,16,16,0),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue")
+polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue") #490 460
+
+
+
+
+
 
 
 ld.current.gene.expression <- scale(ld.mean.gene.expression[gene,],center = T,scale = T)[,1]
@@ -7621,9 +7949,50 @@ polygon(x = c(16,24,24,16),y=c(-3, -3, -2.6, -2.6),lwd=2,border="blue",col="blue
 ### **Photosynthesis**
 
 ```{r fvfm}
+library(rain)
+sorted.zts <- c(paste("zt0",1:3,sep="_"),paste("zt4",1:3,sep="_"),paste("zt8",1:3,sep="_"),paste("zt12",1:3,sep="_"),paste("zt16",1:3,sep="_"),paste("zt20",1:3,sep="_"))
+
 ld.fvfm.data <- read.table(file = "physiological_data/photosynthesis/Fv_Fm_LD.tsv",sep="\t",as.is=T,header=T)
 
+ld.fvfm.values <- ld.fvfm.data$fvfm
+names(ld.fvfm.values) <- ld.fvfm.data$time_point
+
+rain(x = ld.fvfm.values[sorted.zts],deltat = 4,nr.series = 3,period = 24)
+rain(x = ld.fvfm.values[sorted.zts],deltat = 4,nr.series = 3,period = 12)
+
 sd.fvfm.data <- read.table(file = "physiological_data/photosynthesis/Fv_Fm_SD.tsv",sep="\t",as.is=T,header=T)
+
+sd.fvfm.values <- sd.fvfm.data$fvfm
+names(sd.fvfm.values) <- sd.fvfm.data$time_point
+
+rain(x = sd.fvfm.values[sorted.zts],deltat = 4,nr.series = 3,period = 24)
+rain(x = sd.fvfm.values[sorted.zts],deltat = 4,nr.series = 3,period = 12)
+
+library(circacompare)
+fvfm.time.points <- seq(from=0,by=4,length.out = 18)
+circacompare.fvfm <- data.frame(time=c(fvfm.time.points,
+                                       fvfm.time.points),
+                                measure=c(ld.fvfm.values,
+                                          sd.fvfm.values),
+                                group=c(rep("LD",18),rep("SD",18)))
+
+result.fvfm <- circacompare(x = circacompare.fvfm, 
+                              col_time = "time", 
+                              col_group = "group", 
+                              col_outcome = "measure",
+                              alpha_threshold = 1)
+result.fvfm.values <- result.fvfm$summary$value
+names(result.fvfm.values) <- result.fvfm$summary$parameter
+
+
+ld.fvfm.max.val <- (0.6065163 + 0.6091954 + 0.6112469)/3
+sd.fvfm.max.val <- (0.5597190 + 0.5621891 + 0.5773710)/3
+
+(ld.fvfm.max.val - sd.fvfm.max.val)/ld.fvfm.max.val * 100
+
+ld.fvfm.min.val <- (0.5723270 + 0.5612903 + 0.5769231)/3
+sd.fvfm.min.val <- (0.4528986 + 0.4586207 + 0.4669118)/3
+(ld.fvfm.min.val - sd.fvfm.min.val)/ld.fvfm.min.val * 100
 
 plot(x = seq(from=0,by=4,length.out=18),ld.fvfm.data$fvfm,type="o",col="blue",lwd=4,ylim=c(0.4,0.65),axes=F,xlab="",ylab="")
 
@@ -7754,6 +8123,10 @@ polygon(x=c(cell.cycle.splines$x,rev(cell.cycle.splines$x)),y = c(10 + cell.cycl
 
 polygon(x = c(0,0,8,8),y=c(-4,-3,-3,-4),border="red",lwd=2)
 polygon(x = c(8,8,24,24),y=c(-4,-3,-3,-4),lwd=2,col="red",border="red") #510 420
+
+
+
+
 ```
 
 
@@ -8413,6 +8786,11 @@ starch.content.sd <- starch.data$V2[starch.data$V3 == "SD"]
 names(starch.content.sd) <- starch.data$V1[starch.data$V3 == "SD"]
 rain.sd.starch <- rain(starch.content.sd[sorted.zts], deltat=4, period=24, verbose=FALSE, nr.series=2)
 
+starch.content.ld.max <- (41.87 + 40.46)/2
+starch.content.sd.max <- (33.65 + 33.11)/2
+
+100*(starch.content.ld.max - starch.content.sd.max)/starch.content.ld.max
+
 library(circacompare)
 starch.time.points <- seq(from=0,by=4,length.out = 12)
 circacompare.data <- data.frame(time=c(starch.time.points,
@@ -8608,5 +8986,102 @@ lineplot.sd.gene.protein(gene = "ostta10g00920")
 
 lineplot.ld.gene.protein(gene = "ostta01g05020")
 lineplot.sd.gene.protein(gene = "ostta01g05020")
+
+enzymatic.activity <- read.table(file="physiological_data/nitrate_assimilation/enzymatic_activities.csv",header=T,sep=",")
+
+nr.activity.ld <- enzymatic.activity$NR[enzymatic.activity$Condition == "LD"]
+names(nr.activity.ld) <- enzymatic.activity$Time[enzymatic.activity$Condition == "LD"]
+
+nr.ld.results <- rain(nr.activity.ld[c("ZT0_1","ZT0_2","ZT4_1","ZT4_2","ZT8_1","ZT8_2",
+"ZT12_1","ZT12_2","ZT16_1","ZT16_2","ZT20_1","ZT20_2")], deltat=4, period=24, verbose=FALSE, nr.series=2)
+
+nr.activity.sd <- enzymatic.activity$NR[enzymatic.activity$Condition == "SD"]
+names(nr.activity.sd) <- enzymatic.activity$Time[enzymatic.activity$Condition == "SD"]
+nr.sd.results <- rain(nr.activity.sd[c("ZT0_1","ZT0_2","ZT4_1","ZT4_2","ZT8_1","ZT8_2",
+"ZT12_1","ZT12_2","ZT16_1","ZT16_2","ZT20_1","ZT20_2")], deltat=4, period=24, verbose=FALSE, nr.series=2)
+
+
+library(circacompare)
+time.points <- seq(from=0,by=4,length.out = 12)
+circacompare.data <- data.frame(time=c(time.points,
+                                       time.points),
+                                measure=c(nr.activity.ld,
+                                          nr.activity.sd),
+                                group=c(rep("LD",12),rep("SD",12)))
+
+result.nr <- circacompare(x = circacompare.data, 
+                              col_time = "time", 
+                              col_group = "group", 
+                              col_outcome = "measure",
+                              alpha_threshold = 1)
+result.nr.values <- result.nr$summary$value
+names(result.nr.values) <- result.nr$summary$parameter
+
+gs.activity.ld <- enzymatic.activity$GS[enzymatic.activity$Condition == "LD"]
+names(gs.activity.ld) <- enzymatic.activity$Time[enzymatic.activity$Condition == "LD"]
+
+gs.ld.results <- rain(gs.activity.ld[c("ZT0_1","ZT0_2","ZT4_1","ZT4_2","ZT8_1","ZT8_2",
+"ZT12_1","ZT12_2","ZT16_1","ZT16_2","ZT20_1","ZT20_2")], deltat=4, period=24, verbose=FALSE, nr.series=2)
+
+gs.activity.sd <- enzymatic.activity$GS[enzymatic.activity$Condition == "SD"]
+names(gs.activity.sd) <- enzymatic.activity$Time[enzymatic.activity$Condition == "SD"]
+gs.sd.results <- rain(gs.activity.sd[c("ZT0_1","ZT0_2","ZT4_1","ZT4_2","ZT8_1","ZT8_2",
+"ZT12_1","ZT12_2","ZT16_1","ZT16_2","ZT20_1","ZT20_2")], deltat=4, period=24, verbose=FALSE, nr.series=2)
+
+
+
+circacompare.data <- data.frame(time=c(time.points,
+                                       time.points),
+                                measure=c(gs.activity.ld,
+                                          gs.activity.sd),
+                                group=c(rep("LD",12),rep("SD",12)))
+
+result.gs <- circacompare(x = circacompare.data, 
+                              col_time = "time", 
+                              col_group = "group", 
+                              col_outcome = "measure",
+                              alpha_threshold = 1)
+result.gs.values <- result.gs$summary$value
+names(result.nr.values) <- result.nr$summary$parameter
+
+
+
+
+
+
+
+
+
+
+mean.enzymatic.activity <- (enzymatic.activity$NR[enzymatic.activity$Condition == "SD"][1:6] + enzymatic.activity$NR[enzymatic.activity$Condition == "SD"][7:12])/2
+mean.enzymatic.activity <- (enzymatic.activity$GS[enzymatic.activity$Condition == "SD"][1:6] + enzymatic.activity$GS[enzymatic.activity$Condition == "SD"][7:12])/2
+
+mean.enzymatic.activity.splines <- spline(x=seq(from=0,to=24,by=4),y=c(mean.enzymatic.activity, mean.enzymatic.activity[1]),n = 100)
+col_fun_enzymatic_activity = colorRamp2(c(min(mean.enzymatic.activity.splines$y),max(mean.enzymatic.activity.splines$y)), 
+                               c("black", "yellow"))
+cols <- col_fun_enzymatic_activity(x = mean.enzymatic.activity.splines$y)
+plot(x=1,y=1,col="white",xlim=c(-1,25),ylim=c(-10,10),axes=F,xlab="",ylab="")
+for(i in 1:99)
+{
+ polygon(x = c(mean.enzymatic.activity.splines$x[i],mean.enzymatic.activity.splines$x[i+1],
+               mean.enzymatic.activity.splines$x[i+1],mean.enzymatic.activity.splines$x[i]),
+         y=c(-2.5, -2.5, 2.5, 2.5),lwd=2,border=cols[i],col=cols[i]) 
+}
+
+
+
+plot((enzymatic.activity$NR[enzymatic.activity$Condition == "LD"][1:6] + enzymatic.activity$NR[enzymatic.activity$Condition == "LD"][7:12])/2,type="o")
+plot((enzymatic.activity$NR[enzymatic.activity$Condition == "SD"][1:6] + enzymatic.activity$NR[enzymatic.activity$Condition == "SD"][7:12])/2,type="o")
+
+plot((enzymatic.activity$GS[enzymatic.activity$Condition == "LD"][1:6] + enzymatic.activity$GS[enzymatic.activity$Condition == "LD"][7:12])/2,type="o")
+plot((enzymatic.activity$GS[enzymatic.activity$Condition == "SD"][1:6] + enzymatic.activity$GS[enzymatic.activity$Condition == "SD"][7:12])/2,type="o")
+
+
+lineplot.ld.gene.protein(gene = "ostta01g05020")
+lineplot.sd.gene.protein(gene = "ostta01g05020")
+
+
+
+
 ```
 
