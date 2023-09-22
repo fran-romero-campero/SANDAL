@@ -2075,8 +2075,8 @@ plot.ld.sd(gene.id = "ostta07g01350",gene.name = "ATPD", gene.expression)
 plot.expression.profile(gene.id ="ostta07g01350", gene.name = "ATPD", 
                         gene.expression,entrainment="SD",
                         free.running="LL",param=F) # peak zt4
-plot.expression.profile(gene.id ="ostta07g01350", gene.name = "ATPD", 
-                        gene.expression,entrainment="SD",
+plot.expression.profile(gene.id ="ostta08g01150", gene.name = "", 
+                        gene.expression,entrainment="LD",
                         free.running="DD",param=F) # peak zt0??
 
 
@@ -2102,6 +2102,9 @@ two.waves.combination <- function(x,beta1,beta2,phi,offset)
 }
 
 library(magick)
+gene.id <- "ostta18g01250"
+gene.name <- "??"
+
 bimodal.gene.model <- function(gene.id, gene.name)
 {
  ld.zt <- paste("ld",paste0("zt",sprintf(fmt = "%02d",seq(from=0,to=20,by=4))),sep="_")
@@ -2336,6 +2339,7 @@ bimodal.gene.model <- function(gene.id, gene.name)
   # print(i)
  }
  
+ 
  imgs <- list.files(image.dir, full.names = TRUE)
  img.list <- lapply(imgs, image_read)
  img.joined <- image_join(img.list)
@@ -2349,7 +2353,14 @@ bimodal.gene.model(gene.id = "ostta06g02940",gene.name = "GBSS")
 bimodal.gene.model(gene.id = "ostta04g04000",gene.name = "PWD")
 bimodal.gene.model(gene.id = "ostta03g03980",gene.name = "PA200")
 bimodal.gene.model(gene.id = "ostta05g03730",gene.name = "PAS2")
-
+bimodal.gene.model(gene.id = "ostta10g02350",gene.name = "SSS?")
+bimodal.gene.model(gene.id = "ostta01g00730",gene.name = "???") #ok
+bimodal.gene.model(gene.id = "ostta01g02510",gene.name = "???") #ok
+bimodal.gene.model(gene.id = "ostta01g02520",gene.name = "???") #ok
+bimodal.gene.model(gene.id = "ostta01g02845",gene.name = "???") #ok?
+bimodal.gene.model(gene.id = "ostta14g02390",gene.name = "???") #ok
+bimodal.gene.model(gene.id = "ostta11g02060",gene.name = "???") #ok
+bimodal.gene.model(gene.id = "ostta08g01440",gene.name = "???") #ok
 
 bimodal.gene.model(gene.id = "ostta07g03850",gene.name = " ")
 bimodal.gene.model(gene.id = "ostta06g02730",gene.name = "PIP5K1")
@@ -3231,7 +3242,7 @@ plot.ld.nd.sd <- function(gene.id, gene.name, ld.gene.expression,nd.gene.express
 
   if(nd)
   {
-  lines(x = seq(from=0,by=3,to=69),current.gene.expression.nd,type="o",lwd=3,col="black")
+  lines(x = seq(from=0,by=3,to=69),current.gene.expression.nd,type="o",lwd=3,col="darkorchid4")
 }
 
   for(i in 0:2)
@@ -3253,10 +3264,10 @@ plot.ld.nd.sd <- function(gene.id, gene.name, ld.gene.expression,nd.gene.express
   {
     polygon(x = c(24*i, 24*i+12, 24*i+12, 24*i),
             y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
-            lwd=2,border="black")
+            lwd=2,border="darkorchid4")
     polygon(x = c(24*i+12,24*(i+1),24*(i+1),24*i+12),
             y=c(min.expr-current.line, min.expr-current.line, min.expr-(current.line+0.25), min.expr-(current.line +0.25)),
-            lwd=2,border="black",col="black")
+            lwd=2,border="darkorchid4",col="darkorchid4")
     current.line <- current.line + 0.5
   }
 
@@ -3279,6 +3290,9 @@ plot.ld.nd.sd(gene.id = "ostta01g02580",gene.name = "MCM6", ld.gene.expression,n
 plot.ld.nd.sd(gene.id = "ostta04g00450",gene.name = "MCM5", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=T)
 
 plot.ld.nd.sd(gene.id = "ostta01g01370",gene.name = "???", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=T,sd=T,nd=F)
+
+plot.ld.nd.sd(gene.id = "ostta01g00730",gene.name = "", ld.gene.expression,nd.gene.expression,sd.gene.expression,ld=F,sd=F,nd=T,scale=F)
+
 
 
 # i <- 1
@@ -4898,7 +4912,7 @@ plot.ld.gene.prot <- function(gene.id, gene.name, gene.expression, protein.data)
   current.gene.expression.ld <- (current.gene.expression.ld - mean(current.gene.expression.ld))/sd(current.gene.expression.ld)
   
   zts <- paste("zt",seq(from=0,to=20,by=4),sep="")
-  current.protein.ld <- 2^protein.data[gene.id,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))]
+  current.protein.ld <-unlist(2^protein.data[gene.id,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))])
   
   current.protein.ld <- current.protein.ld/max(current.protein.ld)
   
@@ -5511,7 +5525,7 @@ plot.sd.gene.prot <- function(gene.id, gene.name, gene.expression, protein.data)
   current.gene.expression.sd <- (current.gene.expression.sd - mean(current.gene.expression.sd))/sd(current.gene.expression.sd)
   
   zts <- paste("zt",seq(from=0,to=20,by=4),sep="")
-  current.protein.sd <- 2^protein.data[gene.id,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))]
+  current.protein.sd <- unlist(2^protein.data[gene.id,c(paste(zts,"1",sep="_"),paste(zts,"2",sep="_"),paste(zts,"3",sep="_"))])
   
   current.protein.sd <- current.protein.sd/max(current.protein.sd)
   
